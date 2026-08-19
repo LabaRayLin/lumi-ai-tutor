@@ -1,0 +1,20 @@
+﻿{
+    "test_learner_1618":  {
+                              "updatedAt":  1787126619506,
+                              "ciphertext":  "99998888777766665555",
+                              "ivHex":  "abcdef0123456789abcdef01",
+                              "saltHex":  "0123456789abcdef0123456789abcdef"
+                          },
+    "test_learner_3386":  {
+                              "updatedAt":  1787126587287,
+                              "ciphertext":  "99998888777766665555",
+                              "ivHex":  "abcdef0123456789abcdef01",
+                              "saltHex":  "0123456789abcdef0123456789abcdef"
+                          },
+    "test_learner_3090":  {
+                              "updatedAt":  1787126652248,
+                              "ciphertext":  "99998888777766665555",
+                              "ivHex":  "abcdef0123456789abcdef01",
+                              "saltHex":  "0123456789abcdef0123456789abcdef"
+                          }
+}

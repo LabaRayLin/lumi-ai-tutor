@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Lumi AI 智慧英文家教 (PWA 獨立版)</title>
+  
+  <!-- PWA Manifest & Meta Tags -->
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="shortcut icon" href="./assets/favicon.webp" />
+  <link rel="apple-touch-icon" href="./assets/favicon.webp" />
+  <meta name="theme-color" content="#111217" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Lumi AI" />
+  <meta name="application-name" content="Lumi AI" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- 1. Offline Core Interceptor, AI Service, E2EE Sync & Settings Control Center -->
+  <script src="./mock-api.js"></script>
+  <script src="./ai-service.js"></script>
+  <script src="./e2ee-sync.js"></script>
+  <script src="./settings-modal.js"></script>
+
+  <!-- 2. Next.js CSS Stylesheets -->
+  <link rel="stylesheet" href="./_next/static/css/92dd231bb3a5bc1c.css" />
+  <link rel="stylesheet" href="./_next/static/css/1ba5ded7943c543d.css" />
+  <link rel="stylesheet" href="./_next/static/css/1bff5a024019dd7b.css" />
+
+  <!-- 3. Official Pretendard Font & Brand Design System -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" />
+
+  <style>
+    :root {
+      --mobile-safe-area-top: max(0px, env(safe-area-inset-top, 0));
+      --mobile-safe-area-bottom: max(0px, env(safe-area-inset-bottom, 0));
+      --mobile-safe-area-left: max(0px, env(safe-area-inset-left, 0));
+      --mobile-safe-area-right: max(0px, env(safe-area-inset-right, 0));
+
+      /* Lumi AI Design Tokens */
+      --santa-bg-root: #111217;
+      --santa-bg-surface: #1c1e27;
+      --santa-bg-card: #222532;
+      --santa-bg-hover: #292d3e;
+      --santa-border: #2c3040;
+      --santa-border-focus: #3972f6;
+
+      --santa-blue: #3972f6;
+      --santa-blue-hover: #4e82f8;
+      --santa-blue-soft: #4da2ff;
+      --santa-coral: #ff3b5c;
+      --santa-coral-soft: #ff6b84;
+      --santa-gold: #ffb800;
+      --santa-green: #10b981;
+
+      --santa-text-primary: #ffffff;
+      --santa-text-secondary: #9da5b4;
+      --santa-text-muted: #656d7e;
+    }
+    
+    /* CRITICAL RESET: Override Next.js body > * { white-space: pre-line } */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      white-space: normal;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body, body > *, #__next, .santa-view, .santa-container, .santa-box, #exam-content-area {
+      white-space: normal !important;
+      margin: 0;
+      padding: 0;
+    }
+    
+    html {
+      height: auto !important;
+      min-height: 100% !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      scroll-behavior: smooth;
+      background-color: var(--santa-bg-root);
+    }
+    body {
+      width: 100%;
+      min-height: 100vh !important;
+      height: auto !important;
+      background-color: var(--santa-bg-root);
+      color: var(--santa-text-primary);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden !important;
+      overflow-y: visible !important;
+      padding-top: var(--mobile-safe-area-top);
+      padding-bottom: var(--mobile-safe-area-bottom);
+      padding-left: var(--mobile-safe-area-left);
+      padding-right: var(--mobile-safe-area-right);
+    }
+    #__next {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--santa-bg-root);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2b2f3e;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3c4257;
+    }
+
+    /* Views Display Specificity Control */
+    .santa-view {
+      display: none !important;
+      flex-direction: column;
+      width: 100%;
+      background-color: var(--santa-bg-root);
+      padding-bottom: 40px;
+    }
+    .santa-view.active {
+      display: flex !important;
+    }
+
+    /* 1. Intro View */
+    #view-intro {
+      min-height: 100vh;
+      padding-bottom: 0;
+      background: var(--santa-bg-root);
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .santa-intro-hero {
+      flex: 1;
+      min-height: 38vh;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 35%, #1d2130 0%, var(--santa-bg-root) 80%);
+      padding: 12px;
+    }
+    .santa-intro-hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center bottom;
+      max-width: 800px;
+      max-height: 420px;
+    }
+    .santa-bottom-card {
+      background-color: var(--santa-bg-surface);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 20px 18px calc(24px + var(--mobile-safe-area-bottom));
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.6);
+    }
+    .santa-title-group {
+      width: 100%;
+      text-align: center;
+      max-width: 600px;
+    }
+    .santa-sub-title {
+      font-size: 13px;
+      color: var(--santa-blue-soft);
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .santa-main-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.35;
+      letter-spacing: -0.5px;
+    }
+    .santa-primary-btn {
+      width: 100%;
+      max-width: 480px;
+      background: var(--santa-blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(57, 114, 246, 0.35);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .santa-primary-btn:active {
+      transform: scale(0.98);
+    }
+    .santa-primary-btn:hover {
+      background: var(--santa-blue-hover);
+      box-shadow: 0 6px 20px rgba(57, 114, 246, 0.5);
+    }
+
+    /* Top Navigation Bar */
+    .santa-nav-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--santa-border);
+      background: rgba(17, 18, 23, 0.95);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+      gap: 8px;
+    }
+    .santa-nav-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .santa-nav-title .brand-accent {
+      color: var(--santa-coral);
+    }
+    .santa-nav-tabs {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .santa-nav-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    .santa-nav-btn {
+      background: var(--santa-bg-surface);
+      color: var(--santa-text-secondary);
+      border: 1px solid var(--santa-border);
+      padding: 5px 11px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.18s;
+    }
+    .santa-nav-btn:hover {
+      background: var(--santa-bg-hover);
+      color: #ffffff;
+      border-color: #3b4256;
+    }
+    .santa-nav-btn.active {
+      background: var(--santa-blue);
+      color: #ffffff;
+      border-color: var(--santa-blue);
+      box-shadow: 0 2px 8px rgba(57, 114, 246, 0.35);
+    }
+
+    /* Layout Containers */
+    .santa-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 8px 12px;
+      width: 100%;
+    }
+    .santa-box {
+      background: var(--santa-bg-surface);
+      border: 1px solid var(--santa-border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    .santa-select-card {
+      background: var(--santa-bg-card);
+      border: 1.5px solid var(--santa-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .santa-select-card:hover {
+      border-color: var(--santa-blue);
+      background: var(--santa-bg-hover);
+    }
+    .santa-select-card.selected {
+      border-color: var(--santa-blue);
+      background: rgba(57, 114, 246, 0.12);
+      box-shadow: 0 0 12px rgba(57, 114, 246, 0.15);
+    }
+
+    /* Exam Options Grid */
+    .santa-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .santa-option-btn {
+      background: var(--santa-bg-card);
+      border: 1px solid var(--santa-border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: left;
+      color: var(--santa-text-primary);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      min-height: 46px;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .santa-option-btn:hover {
+      background: var(--santa-bg-hover);
+      border-color: var(--santa-blue-soft);
+    }
+    .santa-option-btn:active {
+      transform: scale(0.99);
+    }
+    .santa-option-btn.correct {
+      background: rgba(16, 185, 129, 0.18) !important;
+      border-color: var(--santa-green) !important;
+      color: #6ee7b7 !important;
+      font-weight: 700;
+    }
+    .santa-option-btn.wrong {
+      background: rgba(255, 59, 92, 0.18) !important;
+      border-color: var(--santa-coral) !important;
+      color: #fca5a5 !important;
+    }
+
+    /* Vocabulary & Mistake Grid */
+    .santa-voca-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 8px;
+    }
+    .santa-voca-card {
+      background: var(--santa-bg-card);
+      border: 1px solid var(--santa-border);
+      border-radius: 10px;
+      padding: 9px 12px;
+      border-left: 3px solid var(--santa-blue);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: all 0.15s;
+    }
+    .santa-voca-card:hover {
+      background: var(--santa-bg-hover);
+      border-left-color: var(--santa-coral);
+    }
+    .voca-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .voca-word-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--santa-blue-soft);
+    }
+    .voca-phonetic {
+      font-size: 11px;
+      color: var(--santa-text-muted);
+      margin-left: 6px;
+    }
+    .voca-meaning {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .voca-example {
+      font-size: 11px;
+      color: var(--santa-text-secondary);
+      font-style: italic;
+      line-height: 1.3;
+    }
+    .santa-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      background: rgba(57, 114, 246, 0.15);
+      color: var(--santa-blue-soft);
+      border: 1px solid rgba(57, 114, 246, 0.3);
+    }
+    .santa-btn {
+      background: var(--santa-blue);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .santa-btn:hover { background: var(--santa-blue-hover); }
+    .santa-btn-outline {
+      background: var(--santa-bg-card);
+      border: 1px solid var(--santa-border);
+      color: var(--santa-text-secondary);
+    }
+    .santa-btn-outline:hover {
+      background: var(--santa-bg-hover);
+      color: #fff;
+      border-color: #3b4256;
+    }
+    .santa-input {
+      background: var(--santa-bg-card);
+      border: 1px solid var(--santa-border);
+      border-radius: 6px;
+      padding: 5px 8px;
+      color: #ffffff;
+      font-size: 12px;
+    }
+    .santa-input:focus {
+      outline: none;
+      border-color: var(--santa-blue);
+      box-shadow: 0 0 0 2px rgba(57, 114, 246, 0.25);
+    }
+
+    /* Mistake Card */
+    .santa-mistake-card {
+      background: var(--santa-bg-card);
+      border: 1px solid var(--santa-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      border-left: 4px solid var(--santa-coral);
+      margin-bottom: 8px;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 640px) {
+      .santa-container { padding: 6px 8px; }
+      .santa-main-title { font-size: 18px; }
+      .santa-bottom-card { padding: 16px 14px calc(24px + var(--mobile-safe-area-bottom)); }
+      .santa-options-grid { grid-template-columns: 1fr !important; gap: 6px !important; }
+      .santa-option-btn { padding: 11px 12px; font-size: 13.5px; }
+      .santa-voca-grid { grid-template-columns: 1fr !important; }
+      .santa-box { padding: 10px 12px; border-radius: 10px; }
+      #santa-floating-btn {
+        bottom: calc(14px + var(--mobile-safe-area-bottom)) !important;
+        right: 12px !important;
+        padding: 6px 12px !important;
+        font-size: 11.5px !important;
+      }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .santa-container { max-width: 780px; padding: 10px 16px; }
+      .santa-options-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .santa-voca-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    }
+    @media (min-width: 1025px) {
+      .santa-container { max-width: 980px; }
+      .santa-options-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .santa-voca-grid { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 10px; }
+    }
+  </style>
+
+  <!-- 4. Next.js Static Chunks -->
+  <script defer src="./_next/static/chunks/polyfills-42372ed130431b0a.js"></script>
+  <script defer src="./_next/static/chunks/webpack-50c5564d99b24dc1.js"></script>
+  <script defer src="./_next/static/chunks/framework-dc0c8ce2bb6ada39.js"></script>
+  <script defer src="./_next/static/chunks/main-93efd2d72a01a9d0.js"></script>
+  <script defer src="./_next/static/chunks/pages/_app-17f5f6443af84651.js"></script>
+  <script defer src="./_next/static/jENNU3H58B-tIoLQn3RGy/_buildManifest.js"></script>
+</head>
+<body>
+  <div id="__next">
+    
+    <!-- Top Sticky Navigation Bar -->
+    <header id="santa-nav" class="santa-nav-header" style="display: flex;">
+      <div class="santa-nav-title" onclick="switchView('course')">
+        <span>✨ Lumi</span> <span class="brand-accent">AI</span>
+      </div>
+      <div class="santa-nav-tabs">
+        <button class="santa-nav-btn active" data-target="course" onclick="switchView('course')">🏠 學習主頁</button>
+        <button class="santa-nav-btn" data-target="exam" onclick="switchView('exam')">📝 擬真診斷 (AI無限題庫)</button>
+        <button class="santa-nav-btn" data-target="mistakes" onclick="switchView('mistakes')">❌ 錯題本 (<span id="nav-mistakes-count">0</span>)</button>
+        <button class="santa-nav-btn" data-target="speaking" onclick="switchView('speaking')">🎙️ AI 口說</button>
+        <button class="santa-nav-btn" data-target="voca" onclick="switchView('voca')">📖 單字本</button>
+        <button class="santa-nav-btn" data-target="lumi" onclick="switchView('lumi')">🤖 Lumi 導師</button>
+      </div>
+      <div style="display: flex; gap: 4px; align-items: center;">
+        <span id="nav-sync-badge" class="santa-badge" style="display: none; background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">🟢 已同步</span>
+        <button id="pwa-install-btn" class="santa-btn" style="display: none; background: rgba(57, 114, 246, 0.2); color: var(--santa-blue-soft); border: 1px solid rgba(57, 114, 246, 0.4); font-size: 11px; padding: 4px 8px; white-space: nowrap;">
+          📲 安裝 App
+        </button>
+      </div>
+    </header>
+
+    <!-- VIEW 1: Modern Learning Dashboard (Main Home) -->
+    <section id="view-course" class="santa-view active" style="padding-bottom: calc(32px + var(--mobile-safe-area-bottom));">
+      <div class="santa-container">
+        
+        <!-- User Profile & Target Score Hero Card -->
+        <div class="santa-box" style="background: linear-gradient(135deg, #1c1e27 0%, #151720 100%); border-left: 4px solid var(--santa-blue); padding: 14px 16px; margin-bottom: 10px;">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span class="santa-badge" style="background: rgba(255, 184, 0, 0.15); color: var(--santa-gold); border-color: rgba(255, 184, 0, 0.3); font-size: 10.5px;">👑 VIP UNLIMITED PASS (離線完整版)</span>
+                <span style="font-size: 11px; color: var(--santa-text-muted);">🔥 連續學習 3 天</span>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: #ffffff;" id="course-profile-name">Lumi 學習者</div>
+              <div style="font-size: 12.5px; color: var(--santa-text-secondary); margin-top: 4px;">
+                衝刺領域: <b style="color: #ffffff;">TOEIC 多益測驗</b> | 目標分數: <b id="course-target-score" style="color: var(--santa-gold);">900 分</b> | AI 預測實力: <b id="course-predicted-score" style="color: var(--santa-blue-soft);">845 分</b>
+              </div>
+            </div>
+            <button class="santa-primary-btn" style="padding: 9px 18px; font-size: 13px; max-width: 180px;" onclick="switchView('exam')">
+              <span>🚀 立即開始刷題</span> <span>&rarr;</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5 High-Productivity Quick Launch Action Cards -->
+        <div style="margin-bottom: 12px;">
+          <div style="font-size: 13px; font-weight: 700; color: var(--santa-text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span>⚡ 今日學習快捷入口</span>
+            <span style="font-size: 11px; color: var(--santa-blue-soft);">點擊直達功能</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+            
+            <!-- Card 1: AI Infinite Quiz -->
+            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-blue); margin: 0;" onclick="switchView('exam')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">📝 AI 擬真診斷題庫</span>
+                <span style="font-size: 16px;">⚡</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">Part 1~7 全題型無限生成，即時詳解</div>
+              <div style="font-size: 11px; color: var(--santa-blue-soft); margin-top: 6px; font-weight: 600;">進入刷題 &gt;</div>
+            </div>
+
+            <!-- Card 2: Mistake Notebook -->
+            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-coral); margin: 0;" onclick="switchView('mistakes')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 13.5px; color: var(--santa-coral-soft);">❌ 錯題專屬重練本</span>
+                <span style="font-size: 16px;">🚨</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--santa-text-secondary);"><span id="course-mistakes-count" style="font-weight: 800; color: #ffffff;">0</span> 道待攻克錯題，反覆練習</div>
+              <div style="font-size: 11px; color: var(--santa-coral-soft); margin-top: 6px; font-weight: 600;">複習錯題 &gt;</div>
+            </div>
+
+            <!-- Card 3: AI Speaking -->
+            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid #a855f7; margin: 0;" onclick="switchView('speaking')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">🎙️ TOEIC 口說實戰</span>
+                <span style="font-size: 16px;">🗣️</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">11 大官方題型與 Gemini 多模態發音診斷</div>
+              <div style="font-size: 11px; color: #c084fc; margin-top: 6px; font-weight: 600;">開始口說 &gt;</div>
+            </div>
+
+            <!-- Card 4: Vocabulary SRS -->
+            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-green); margin: 0;" onclick="switchView('voca')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">📖 單字庫與 SRS 測驗</span>
+                <span style="font-size: 16px;">🧠</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">艾賓浩斯遺忘曲線，4選1測驗與翻卡</div>
+              <div style="font-size: 11px; color: #6ee7b7; margin-top: 6px; font-weight: 600;">背單字 &gt;</div>
+            </div>
+
+            <!-- Card 5: AI Tutor Lumi -->
+            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-gold); margin: 0;" onclick="switchView('lumi')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">🤖 Lumi AI 專屬家教</span>
+                <span style="font-size: 16px;">💬</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">全天候即時英語文法解惑與考試技巧指導</div>
+              <div style="font-size: 11px; color: var(--santa-gold); margin-top: 6px; font-weight: 600;">詢問導師 &gt;</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Learning Overview & Strengths -->
+        <div class="santa-box" style="padding: 12px 14px;">
+          <div style="font-size: 13px; font-weight: 700; color: #ffffff; margin-bottom: 6px;">📊 學習成效與題型掌握度</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; text-align: center;">
+            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
+              <div style="font-size: 11px; color: var(--santa-text-muted);">Part 5 文法單句</div>
+              <div style="font-size: 15px; font-weight: 800; color: var(--santa-green); margin-top: 2px;">92% 正確率</div>
+            </div>
+            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
+              <div style="font-size: 11px; color: var(--santa-text-muted);">Part 6 長篇克漏</div>
+              <div style="font-size: 15px; font-weight: 800; color: var(--santa-blue-soft); margin-top: 2px;">85% 正確率</div>
+            </div>
+            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
+              <div style="font-size: 11px; color: var(--santa-text-muted);">Part 7 雙篇閱讀</div>
+              <div style="font-size: 15px; font-weight: 800; color: var(--santa-gold); margin-top: 2px;">78% 待加強</div>
+            </div>
+            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
+              <div style="font-size: 11px; color: var(--santa-text-muted);">口說發音平均</div>
+              <div style="font-size: 15px; font-weight: 800; color: #c084fc; margin-top: 2px;">88 分</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 4: Practice & Diagnostic Exam -->
+    <section id="view-exam" class="santa-view">
+      <div class="santa-container">
+        <div class="santa-box" style="padding: 10px 14px; margin: 0;">
+          
+          <!-- Unified Header & Control Bar -->
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; border-bottom: 1px solid var(--santa-border); padding-bottom: 6px; margin-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+              <span id="exam-part-badge" style="font-size: 13px; font-weight: 700; color: var(--santa-blue-soft);">Part 5</span>
+              <select id="exam-part-select" class="santa-input" onchange="handlePartChange()">
+                <option value="part5">Part 5 - 單句文法/詞彙</option>
+                <option value="part6">Part 6 - 篇章克漏字</option>
+                <option value="part7">Part 7 - 閱讀理解</option>
+                <option value="part1">Part 1 - 圖片題</option>
+                <option value="random">隨機綜合測驗</option>
+              </select>
+              <select id="exam-diff-select" class="santa-input" onchange="handlePartChange()">
+                <option value="900">900+ (金色)</option>
+                <option value="750">750 分 (中級)</option>
+                <option value="600">600 分 (基礎)</option>
+              </select>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span id="exam-prefetch-status" style="font-size: 11px; background: rgba(57, 114, 246, 0.15); color: var(--santa-blue-soft); padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(57, 114, 246, 0.3);">⚡ 預載已備: <b>2</b> 題</span>
+              <span style="font-size: 11px; color: var(--santa-text-muted);">
+                已答: <b id="exam-solved-count" style="color: var(--santa-gold);">0</b> 題 | 正確率: <b id="exam-accuracy-rate" style="color: var(--santa-green);">100%</b>
+              </span>
+              <button id="ai-gen-next-btn" class="santa-btn" style="background: linear-gradient(135deg, #3972f6 0%, #ff3b5c 100%);" onclick="generateNewAiQuestion()">
+                ⚡ AI 換題
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Spinner Box -->
+          <div id="exam-loading-spinner" style="display: none; text-align: center; padding: 12px 0;">
+            <div style="font-size: 18px;">⚡</div>
+            <div style="font-size: 12px; color: var(--santa-blue-soft); font-weight: 600; margin-top: 2px;">AI 導師正在即時生成試題...</div>
+          </div>
+
+          <!-- Question Content Container -->
+          <div id="exam-content-area" style="display: block; margin: 0; padding: 0;">
+            <div id="exam-passage-box" style="display: none; background: var(--santa-bg-card); padding: 8px 10px; border-radius: 6px; font-size: 12.5px; color: var(--santa-text-secondary); line-height: 1.45; border-left: 3px solid var(--santa-blue); white-space: pre-wrap !important; margin: 4px 0;"></div>
+            <div id="exam-question-text" style="font-size: 14px; font-weight: 700; line-height: 1.35; color: #ffffff; margin: 4px 0;"></div>
+            <div id="exam-options-container" class="santa-options-grid"></div>
+            <div id="exam-explanation-box" style="display: none; background: var(--santa-bg-card); border-left: 3px solid var(--santa-green); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--santa-border); margin-top: 6px;">
+              <div style="font-weight: 700; color: var(--santa-green); margin-bottom: 2px; font-size: 12.5px;">💡 答案與詳解解析</div>
+              <div id="exam-explanation-text" style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.4;"></div>
+              <button class="santa-primary-btn" style="margin-top: 6px; padding: 6px 12px; max-width: 170px; font-size: 12px;" onclick="generateNewAiQuestion()">✨ AI 繼續生成下一題 &rarr;</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4.5: Mistake Notebook (錯題本) -->
+    <section id="view-mistakes" class="santa-view">
+      <div class="santa-container">
+        <div class="santa-box" style="padding: 10px 14px;">
+          
+          <!-- Header & Controls -->
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--santa-border); padding-bottom: 8px;">
+            <div>
+              <h3 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                <span>❌ 錯題本與弱點強化中心</span>
+                <span id="mistakes-total-badge" class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">0 題錯題</span>
+              </h3>
+              <div style="font-size: 11px; color: var(--santa-text-muted); margin-top: 2px;">
+                針對常錯考點進行重練，答對自動標記為已掌握
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button class="santa-btn santa-btn-outline" style="font-size: 11px;" onclick="clearMasteredMistakes()">🧹 清理已掌握錯題</button>
+            </div>
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 2px;">
+            <button class="santa-nav-btn active mistake-cat-btn" data-cat="all" onclick="filterMistakes('all', this)">全部錯題 (<span id="m-count-all">0</span>)</button>
+            <button class="santa-nav-btn mistake-cat-btn" data-cat="unsolved" onclick="filterMistakes('unsolved', this)">🚨 待攻克</button>
+            <button class="santa-nav-btn mistake-cat-btn" data-cat="mastered" onclick="filterMistakes('mastered', this)">✅ 已掌握</button>
+            <button class="santa-nav-btn mistake-cat-btn" data-cat="part5" onclick="filterMistakes('part5', this)">Part 5</button>
+            <button class="santa-nav-btn mistake-cat-btn" data-cat="part6" onclick="filterMistakes('part6', this)">Part 6</button>
+            <button class="santa-nav-btn mistake-cat-btn" data-cat="part7" onclick="filterMistakes('part7', this)">Part 7</button>
+          </div>
+
+          <!-- Mistakes List Container -->
+          <div id="mistakes-list-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: AI Speaking Practice Simulator (11 Questions + AI Dynamic Generator) -->
+    <section id="view-speaking" class="santa-view">
+      <div class="santa-container">
+        <div class="santa-box" style="padding: 10px 14px;">
+          
+          <!-- Top Control Header -->
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--santa-border); padding-bottom: 8px;">
+            <div>
+              <h3 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                <span>🎙️ TOEIC Speaking 擬真口說題庫 (Q1~Q11)</span>
+                <span id="speaking-part-badge" class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">Part 1</span>
+              </h3>
+              <div style="font-size: 11px; color: var(--santa-text-muted); margin-top: 2px;">
+                涵蓋官方 5 大口說題型，支援即時倒數、Gemini 多模態發音評測與 AI 無限定制出題
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button class="santa-btn santa-btn-outline" style="font-size: 11px;" onclick="navigateSpeakingQuestion(-1)">⏮️ 上一題</button>
+              <span id="speaking-q-index-text" style="font-size: 12px; font-weight: 700; color: var(--santa-blue-soft);">第 1 / 11 題</span>
+              <button class="santa-btn santa-btn-outline" style="font-size: 11px;" onclick="navigateSpeakingQuestion(1)">下一題 ⏭️</button>
+              <button id="ai-gen-speaking-btn" class="santa-btn" style="background: linear-gradient(135deg, #3972f6 0%, #ff3b5c 100%); font-size: 11px; padding: 4px 8px;" onclick="generateAiSpeakingQuestion()">
+                ✨ AI 出新題
+              </button>
+            </div>
+          </div>
+
+          <!-- Part Filter Pills -->
+          <div style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 2px;">
+            <button class="santa-nav-btn active spk-cat-btn" data-part="all" onclick="filterSpeakingPart('all', this)">🌟 全部 11 題</button>
+            <button class="santa-nav-btn spk-cat-btn" data-part="part1" onclick="filterSpeakingPart('part1', this)">Q1-2 朗讀短文</button>
+            <button class="santa-nav-btn spk-cat-btn" data-part="part2" onclick="filterSpeakingPart('part2', this)">Q3-4 圖片描述</button>
+            <button class="santa-nav-btn spk-cat-btn" data-part="part3" onclick="filterSpeakingPart('part3', this)">Q5-7 快速問答</button>
+            <button class="santa-nav-btn spk-cat-btn" data-part="part4" onclick="filterSpeakingPart('part4', this)">Q8-10 表格回答</button>
+            <button class="santa-nav-btn spk-cat-btn" data-part="part5" onclick="filterSpeakingPart('part5', this)">Q11 意見表達</button>
+          </div>
+
+          <!-- Question Content Box -->
+          <div class="santa-box" style="padding: 14px; margin-bottom: 8px; border-left: 4px solid var(--santa-coral);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <div id="spk-title" style="font-size: 13.5px; font-weight: 700; color: var(--santa-coral-soft);">
+                Question 1: Read a text aloud (朗讀短文)
+              </div>
+              <div id="spk-timer-info" style="font-size: 11px; color: var(--santa-text-muted);">
+                準備: 45秒 | 作答: 45秒
+              </div>
+            </div>
+
+            <!-- Question Directions / Scenario Text -->
+            <div id="spk-directions" style="font-size: 12px; color: var(--santa-text-secondary); margin-bottom: 8px; font-style: italic;">
+              Directions: In this part, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read aloud.
+            </div>
+
+            <!-- Main Question Passage / Prompt -->
+            <div id="spk-passage" style="background: var(--santa-bg-surface); border-radius: 8px; padding: 12px 14px; font-size: 14px; line-height: 1.5; color: #ffffff; margin-bottom: 10px; border: 1px solid var(--santa-border); white-space: pre-wrap;">
+              "Welcome to the annual Green City Expo. Today, you will discover the latest innovations in solar energy, electric transportation, and sustainable living. Please remember to visit the interactive showcase on the second floor before the keynote session begins at two o'clock."
+            </div>
+
+            <!-- Audio Recording & Timer Control Area -->
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0;">
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <button id="spk-prep-timer-btn" class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="startPrepCountdown()">
+                  ⏱️ 準備倒數 (45s)
+                </button>
+                <button id="speaking-mic-btn" class="santa-primary-btn" style="background: var(--santa-coral); max-width: 200px; padding: 8px 16px; font-size: 13.5px;" onclick="toggleSpeakingRecord()">
+                  🔴 開始作答錄音
+                </button>
+                <button class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="toggleModelAnswer()">
+                  🌟 滿分示範答案
+                </button>
+              </div>
+              <div id="speaking-status-text" style="font-size: 11px; color: var(--santa-text-muted);">點擊「開始作答錄音」按鈕後請朗讀上方文字或作答</div>
+              <audio id="speaking-audio-player" controls style="display: none; width: 100%; max-width: 400px; margin-top: 4px;"></audio>
+            </div>
+
+            <!-- Model Answer Accordion (Hidden by default) -->
+            <div id="spk-model-answer-box" style="display: none; background: rgba(57, 114, 246, 0.08); border: 1px solid rgba(57, 114, 246, 0.3); border-radius: 8px; padding: 10px 12px; margin-top: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <div style="font-size: 12.5px; font-weight: 700; color: var(--santa-blue-soft);">🌟 ETS 滿分示範回答 (High-Score Sample Answer)</div>
+                <button class="santa-btn santa-btn-outline" style="padding: 2px 6px; font-size: 11px;" onclick="speakModelAnswer()">🔊 播放示範發音</button>
+              </div>
+              <div id="spk-model-answer-text" style="font-size: 12px; color: #cbd5e1; line-height: 1.45;"></div>
+            </div>
+
+            <!-- Evaluation Result Box -->
+            <div id="speaking-result-box" style="display: none; margin-top: 10px; background: var(--santa-bg-surface); border: 1px solid var(--santa-border); border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--santa-blue-soft); margin-bottom: 4px;">📊 AI 多模態語音診斷評分報告</div>
+              <div id="speaking-transcription" style="font-size: 12px; color: #ffffff; margin-bottom: 6px; padding: 6px 8px; background: var(--santa-bg-card); border-radius: 6px; border-left: 3px solid var(--santa-blue);"></div>
+              <div id="speaking-scores" style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.5;"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: Vocabulary Wordbook, SRS Spaced Repetition & Quiz -->
+    <section id="view-voca" class="santa-view">
+      <div class="santa-container">
+        <div class="santa-box" style="padding: 10px 14px;">
+          
+          <!-- Vocabulary Header & Controls -->
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--santa-border); padding-bottom: 8px;">
+            <div>
+              <h3 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+                <span>📖 TOEIC 必考高頻核心單字庫</span>
+                <span id="voca-total-badge" class="santa-badge">50+ 核心詞彙</span>
+                <span id="voca-due-badge" class="santa-badge" style="background: rgba(255, 184, 0, 0.15); color: var(--santa-gold); border-color: rgba(255, 184, 0, 0.3); display: none;">⏰ 0 個待複習</span>
+              </h3>
+              <div style="font-size: 11px; color: var(--santa-text-muted); margin-top: 2px;">
+                艾賓浩斯間隔記憶 (SRS) 演算法：答錯自動反覆重練，答對自動定期排程複習
+              </div>
+            </div>
+
+            <!-- Top Mode Switch Tabs -->
+            <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+              <button id="voca-tab-btn-list" class="santa-nav-btn active" onclick="switchVocaSubMode('list')">📖 單字列表</button>
+              <button id="voca-tab-btn-quiz" class="santa-nav-btn" onclick="switchVocaSubMode('quiz')">🎯 智能測驗 / 錯題重練</button>
+              <button id="voca-tab-btn-card" class="santa-nav-btn" onclick="switchVocaSubMode('card')">🎴 翻轉記憶卡</button>
+              <button id="ai-expand-voca-btn" class="santa-btn" style="background: linear-gradient(135deg, #3972f6 0%, #ff3b5c 100%); font-size: 11px; padding: 4px 8px;" onclick="expandVocabularyWithAI()">
+                ✨ AI 擴充
+              </button>
+            </div>
+          </div>
+
+          <!-- ================= SUBMODE 1: LIST VIEW ================= -->
+          <div id="voca-submode-list">
+            
+            <!-- Quick Review Banner if words are due -->
+            <div id="voca-due-banner" style="display: none; background: linear-gradient(135deg, rgba(255, 184, 0, 0.12) 0%, rgba(57, 114, 246, 0.12) 100%); border: 1px solid rgba(255, 184, 0, 0.3); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; justify-content: space-between; align-items: center;">
+              <div style="font-size: 12px; color: #fef08a;">
+                ⏰ <b>今日複習提醒:</b> 您有 <b id="voca-due-count-num" style="color: #ffffff; font-size: 14px;">0</b> 個單字已到達遺忘臨界點，建議立即複習以鞏固長期記憶！
+              </div>
+              <button class="santa-btn" style="background: var(--santa-gold); color: #000; font-weight: 700; font-size: 11.5px; padding: 4px 10px; white-space: nowrap;" onclick="startVocaQuiz('due')">
+                ⚡ 立即開始今日複習測驗
+              </button>
+            </div>
+
+            <!-- Filter Pills (Mastery & Categories) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+              <div style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; flex: 1;">
+                <button class="santa-nav-btn active voca-cat-btn" data-cat="all" onclick="filterVocaCategory('all', this)">🌟 全部 (<span id="count-all">0</span>)</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="due" onclick="filterVocaCategory('due', this)" style="border-color: rgba(255, 184, 0, 0.4); color: var(--santa-gold);">⏰ 需複習 (<span id="count-due">0</span>)</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="weak" onclick="filterVocaCategory('weak', this)" style="border-color: rgba(255, 59, 92, 0.4); color: var(--santa-coral-soft);">🚨 易錯待攻克 (<span id="count-weak">0</span>)</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="mastered" onclick="filterVocaCategory('mastered', this)" style="color: var(--santa-green);">👑 已掌握 (<span id="count-mastered">0</span>)</button>
+                <span style="color: var(--santa-border); align-self: center;">|</span>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="biz" onclick="filterVocaCategory('biz', this)">💼 商務</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="finance" onclick="filterVocaCategory('finance', this)">💰 財務</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="hr" onclick="filterVocaCategory('hr', this)">👥 人事</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="logistics" onclick="filterVocaCategory('logistics', this)">📦 物流</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="marketing" onclick="filterVocaCategory('marketing', this)">📣 行銷</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="travel" onclick="filterVocaCategory('travel', this)">✈️ 差旅</button>
+              </div>
+
+              <input type="text" id="voca-search-input" class="santa-input" placeholder="🔍 搜尋單字或中文..." oninput="handleVocaSearch()" style="width: 140px; font-size: 11.5px;" />
+            </div>
+
+            <!-- Vocabulary Cards Grid -->
+            <div id="voca-list-container" class="santa-voca-grid"></div>
+          </div>
+
+          <!-- ================= SUBMODE 2: INTERACTIVE QUIZ & RETAKE ================= -->
+          <div id="voca-submode-quiz" style="display: none;">
+            
+            <!-- Quiz Launcher Menu -->
+            <div id="voca-quiz-launcher" style="text-align: center; padding: 20px 12px; max-width: 600px; margin: 0 auto;">
+              <div style="font-size: 32px; margin-bottom: 8px;">🎯</div>
+              <h3 style="font-size: 17px; font-weight: 800; color: #ffffff; margin: 0 0 6px 0;">單字智能速測與錯題循環重練</h3>
+              <p style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.45; margin: 0 0 16px 0;">
+                測驗中答錯的單字會<b>自動重新排入本次測驗佇列</b>，反覆出現直到您完全掌握為止；答對的單字將自動依記憶曲線排定下次複習時間。
+              </p>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-gold); text-align: left;" onclick="startVocaQuiz('due')">
+                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-gold);">⏰ 今日到期複習測驗</div>
+                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">只測驗已達遺忘臨界點的單字</div>
+                </div>
+                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-coral); text-align: left;" onclick="startVocaQuiz('weak')">
+                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-coral-soft);">🚨 易錯弱點單字特訓</div>
+                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">專項攻克曾答錯的重點難詞</div>
+                </div>
+                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-blue); text-align: left;" onclick="startVocaQuiz('all')">
+                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-blue-soft);">🌟 全單字庫綜合速測 (10題)</div>
+                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">隨機抽取核心必考商務詞彙</div>
+                </div>
+                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-green); text-align: left;" onclick="startVocaQuiz('active_cat')">
+                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-green);">💼 當前分類專項測驗</div>
+                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">測驗目前選定分類的單字</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Active Quiz Container -->
+            <div id="voca-quiz-active" style="display: none; max-width: 680px; margin: 0 auto;">
+              
+              <!-- Progress & Queue Info -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11.5px; color: var(--santa-text-muted);">
+                <div>
+                  進度: <b id="vq-progress-text" style="color: #ffffff; font-size: 13px;">1 / 10</b>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <span id="vq-requeue-badge" class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3); display: none;">
+                    🚨 待重練錯題: <b id="vq-requeue-count">0</b>
+                  </span>
+                  <button class="santa-btn santa-btn-outline" style="font-size: 11px; padding: 2px 6px;" onclick="exitVocaQuiz()">結束測驗</button>
+                </div>
+              </div>
+
+              <!-- Question Card -->
+              <div class="santa-box" style="padding: 16px; border-left: 4px solid var(--santa-blue); margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <span id="vq-word" style="font-size: 22px; font-weight: 800; color: var(--santa-blue-soft);">word</span>
+                    <span id="vq-phonetic" style="font-size: 12px; color: var(--santa-text-muted);">/phonetic/</span>
+                    <span id="vq-pos" style="font-size: 10.5px; background: rgba(57, 114, 246, 0.2); color: var(--santa-blue-soft); padding: 1px 5px; border-radius: 4px;">pos</span>
+                  </div>
+                  <button class="santa-btn santa-btn-outline" style="padding: 4px 8px; font-size: 13px;" onclick="speakCurrentQuizWord()">🔊 播放發音</button>
+                </div>
+
+                <!-- Cloze / Example Sentence Prompt -->
+                <div style="background: var(--santa-bg-surface); padding: 8px 10px; border-radius: 6px; font-size: 12.5px; color: var(--santa-text-secondary); line-height: 1.45; margin-bottom: 12px; border: 1px solid var(--santa-border);">
+                  💡 <b>例句語境:</b> <span id="vq-example-cloze" style="color: #ffffff;">...</span>
+                </div>
+
+                <!-- 4 Choices -->
+                <div id="vq-options-container" class="santa-options-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;"></div>
+
+                <!-- Feedback Box -->
+                <div id="vq-feedback-box" style="display: none; margin-top: 10px; padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.45;"></div>
+              </div>
+            </div>
+
+            <!-- Quiz Result Summary Screen -->
+            <div id="voca-quiz-summary" style="display: none; text-align: center; padding: 24px 16px; max-width: 600px; margin: 0 auto;">
+              <div style="font-size: 36px; margin-bottom: 8px;">🎉</div>
+              <h2 style="font-size: 20px; font-weight: 800; color: #ffffff; margin: 0 0 6px 0;">單字測驗圓滿完成！</h2>
+              <p style="font-size: 12.5px; color: var(--santa-text-secondary); margin: 0 0 16px 0;">
+                本次測驗的所有錯題皆已反覆重練完畢，記憶間隔時間已更新。
+              </p>
+
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
+                <div class="santa-box" style="padding: 10px;">
+                  <div style="font-size: 11px; color: var(--santa-text-muted);">總測驗單字</div>
+                  <div id="vq-res-total" style="font-size: 18px; font-weight: 800; color: #ffffff;">10</div>
+                </div>
+                <div class="santa-box" style="padding: 10px;">
+                  <div style="font-size: 11px; color: var(--santa-text-muted);">首輪答對率</div>
+                  <div id="vq-res-acc" style="font-size: 18px; font-weight: 800; color: var(--santa-green);">90%</div>
+                </div>
+                <div class="santa-box" style="padding: 10px;">
+                  <div style="font-size: 11px; color: var(--santa-text-muted);">晉升熟練</div>
+                  <div id="vq-res-upgraded" style="font-size: 18px; font-weight: 800; color: var(--santa-gold);">8 個</div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 8px; justify-content: center;">
+                <button class="santa-primary-btn" style="max-width: 180px; font-size: 13px;" onclick="startVocaQuiz('all')">🔄 再測一輪</button>
+                <button class="santa-btn santa-btn-outline" style="padding: 8px 16px; font-size: 13px;" onclick="switchVocaSubMode('list')">📖 返回單字本</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ================= SUBMODE 3: FLASHCARD FLIP ================= -->
+          <div id="voca-submode-card" style="display: none; max-width: 580px; margin: 0 auto; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; color: var(--santa-text-muted);">
+              <div>卡片: <b id="vf-index-text" style="color: #fff;">1 / 48</b></div>
+              <div style="font-size: 11px;">點擊卡片翻面檢視中文釋義與例句</div>
+            </div>
+
+            <!-- Flip Card -->
+            <div id="vf-card-element" class="santa-box" style="min-height: 220px; padding: 24px 18px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border-left: 4px solid var(--santa-blue); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 24px rgba(0,0,0,0.4);" onclick="toggleFlashcardFlip()">
+              <!-- Front Side -->
+              <div id="vf-card-front">
+                <div id="vf-word" style="font-size: 26px; font-weight: 800; color: var(--santa-blue-soft); margin-bottom: 4px;">substantial</div>
+                <div id="vf-phonetic" style="font-size: 13px; color: var(--santa-text-muted); margin-bottom: 10px;">/səbˈstæn.ʃəl/</div>
+                <div id="vf-pos" class="santa-badge" style="font-size: 11px;">adj.</div>
+                <div style="margin-top: 14px; font-size: 11px; color: var(--santa-text-muted);">👆 點擊翻轉查看釋義 &gt;</div>
+              </div>
+
+              <!-- Back Side -->
+              <div id="vf-card-back" style="display: none;">
+                <div id="vf-meaning" style="font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 8px;">大量的；實質的；重要的</div>
+                <div id="vf-example" style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.45; font-style: italic; background: var(--santa-bg-surface); padding: 8px 12px; border-radius: 6px;">"The company achieved a substantial increase in revenue."</div>
+                <button class="santa-btn santa-btn-outline" style="margin-top: 12px; font-size: 11.5px; padding: 3px 8px;" onclick="event.stopPropagation(); speakWord(document.getElementById('vf-word').innerText)">🔊 朗讀發音</button>
+              </div>
+            </div>
+
+            <!-- Action Rating Buttons -->
+            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
+              <button class="santa-btn" style="flex: 1; max-width: 180px; background: rgba(255, 59, 92, 0.2); color: var(--santa-coral-soft); border: 1px solid rgba(255, 59, 92, 0.4); padding: 10px; font-size: 13px; font-weight: 700;" onclick="handleFlashcardAction(false)">
+                ❌ 不熟 / 忘記了
+              </button>
+              <button class="santa-btn" style="flex: 1; max-width: 180px; background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); padding: 10px; font-size: 13px; font-weight: 700;" onclick="handleFlashcardAction(true)">
+                ✅ 記住了 / 熟練
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: Lumi AI Tutor Chat -->
+    <section id="view-lumi" class="santa-view">
+      <div class="santa-container">
+        <div class="santa-box" style="display: flex; flex-direction: column; height: 75vh; padding: 10px;">
+          <div style="display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--santa-border); padding-bottom: 4px; margin-bottom: 6px;">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--santa-coral); display: flex; align-items: center; justify-content: center; font-size: 14px;">🤖</div>
+            <div>
+              <div style="font-weight: 700; font-size: 12.5px; color: #ffffff;">Lumi (AI 專屬英文導師)</div>
+              <div style="font-size: 9.5px; color: var(--santa-green);">● 線上支援中 (BYOK AI)</div>
+            </div>
+          </div>
+
+          <div id="lumi-chat-box" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px;">
+            <div style="background: var(--santa-bg-card); border: 1px solid var(--santa-border); padding: 6px 10px; border-radius: 8px 8px 8px 0; max-width: 80%; font-size: 12px; line-height: 1.4; color: #ffffff;">
+              Hello! 我是 Lumi 導師。歡迎來到 Lumi AI 英文學習空間！今天想練習文法解析、口說技巧，還是解答任何 TOEIC 疑惑呢？
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 4px; margin-top: 6px;">
+            <input type="text" id="lumi-input" class="santa-input" style="padding: 5px 8px; font-size: 11.5px; width: 100%;" placeholder="輸入您的英文學習問題..." onkeydown="if(event.key==='Enter') sendLumiMessage()" />
+            <button class="santa-btn" style="padding: 5px 10px; font-size: 11.5px;" onclick="sendLumiMessage()">發送</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // PWA Service Worker Registration & Install Prompt
+    // ==========================================
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('[Lumi PWA] Service Worker registered with scope:', reg.scope);
+        }).catch((err) => {
+          console.warn('[Lumi PWA] Service Worker registration failed:', err);
+        });
+      });
+    }
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.getElementById('pwa-install-btn');
+      if (installBtn) {
+        installBtn.style.display = 'inline-block';
+        installBtn.onclick = async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log('[Lumi PWA] User install choice:', outcome);
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+          }
+        };
+      }
+    });
+
+    // ==========================================
+    // Standalone View Router
+    // ==========================================
+    let currentView = 'course';
+    let selectedDomainVal = 'TOEIC';
+    let selectedScoreVal = 900;
+
+    function switchView(viewName) {
+      currentView = viewName;
+      document.querySelectorAll('.santa-view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById('view-' + viewName);
+      if (target) target.classList.add('active');
+
+      const nav = document.getElementById('santa-nav');
+      if (nav) {
+        nav.style.display = 'flex';
+        document.querySelectorAll('.santa-nav-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.target === viewName);
+        });
+      }
+
+      if (viewName === 'course') renderCourseDashboard();
+      if (viewName === 'exam') startExamSession();
+      if (viewName === 'mistakes') renderMistakesView();
+      if (viewName === 'speaking') renderCurrentSpeakingQuestion();
+      if (viewName === 'voca') renderVocaWordbook();
+      window.scrollTo(0, 0);
+    }
+
+    function selectDomain(domain, el) {
+      selectedDomainVal = domain;
+      el.parentElement.querySelectorAll('.santa-select-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function selectScore(score, el) {
+      selectedScoreVal = score;
+      el.parentElement.querySelectorAll('.santa-select-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function saveSetupAndContinue() {
+      if (window.SantaDB) {
+        window.SantaDB.saveProfile({
+          learningDomain: selectedDomainVal,
+          targetScore: selectedScoreVal,
+          onboardingStatus: 'SETUP_DONE'
+        });
+      }
+      if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+      switchView('guide');
+    }
+
+    function renderCourseDashboard() {
+      if (window.SantaDB) {
+        const p = window.SantaDB.getProfile();
+        let displayName = p.name || 'Lumi 學習者';
+        if (displayName.includes('Santa') || displayName === 'Santa Offline Learner') {
+          displayName = 'Lumi 學習者';
+          window.SantaDB.saveProfile({ name: displayName });
+        }
+        document.getElementById('course-profile-name').innerText = displayName;
+        document.getElementById('course-target-score').innerText = (p.targetScore || 900) + ' 分';
+        document.getElementById('course-predicted-score').innerText = (p.predictedScore || 845) + ' 分';
+
+        const mistakes = window.SantaDB.getMistakes();
+        const unsolved = mistakes.filter(m => m.status !== 'MASTERED').length;
+        const countEl = document.getElementById('course-mistakes-count');
+        const navCountEl = document.getElementById('nav-mistakes-count');
+        if (countEl) countEl.innerText = unsolved;
+        if (navCountEl) navCountEl.innerText = unsolved;
+      }
+    }
+
+    // ==========================================
+    // AI Background Prefetch Queue & Instant Delivery Engine
+    // ==========================================
+    let totalSolved = 0;
+    let totalCorrect = 0;
+    let currentQuestionData = null;
+
+    const AI_PREFETCH_BUFFER = {
+      part5: [],
+      part6: [],
+      part7: [],
+      part1: []
+    };
+    const isFetchingMap = {
+      part5: false,
+      part6: false,
+      part7: false,
+      part1: false
+    };
+
+    async function replenishPrefetchBuffer(partKey) {
+      const cleanKey = (partKey || 'part5').toLowerCase();
+      if (!AI_PREFETCH_BUFFER[cleanKey]) AI_PREFETCH_BUFFER[cleanKey] = [];
+      if (AI_PREFETCH_BUFFER[cleanKey].length >= 3 || isFetchingMap[cleanKey]) return;
+
+      isFetchingMap[cleanKey] = true;
+      const diffSelect = document.getElementById('exam-diff-select');
+      const diffVal = diffSelect ? diffSelect.value : '900';
+
+      try {
+        if (window.SantaAIService) {
+          const q = await window.SantaAIService.generateQuestion({
+            part: cleanKey,
+            difficulty: diffVal,
+            domain: selectedDomainVal
+          });
+          if (q && q.question) {
+            AI_PREFETCH_BUFFER[cleanKey].push(q);
+            updatePrefetchBadge(cleanKey);
+          }
+        }
+      } catch (err) {
+        console.warn(`[Lumi AI Prefetch] Prefetch error for ${cleanKey}:`, err);
+      } finally {
+        isFetchingMap[cleanKey] = false;
+        if (AI_PREFETCH_BUFFER[cleanKey].length < 2) {
+          setTimeout(() => replenishPrefetchBuffer(cleanKey), 1000);
+        }
+      }
+    }
+
+    function warmupQuestionBuffers() {
+      ['part5', 'part7', 'part6', 'part1'].forEach(k => {
+        replenishPrefetchBuffer(k);
+      });
+    }
+
+    function updatePrefetchBadge(cleanKey) {
+      const count = AI_PREFETCH_BUFFER[cleanKey] ? AI_PREFETCH_BUFFER[cleanKey].length : 0;
+      const badge = document.getElementById('exam-prefetch-status');
+      if (badge) {
+        badge.innerHTML = count > 0 ? `⚡ 預載已備: <b>${count}</b> 題` : `⏳ 背景補充中...`;
+      }
+    }
+
+    function startExamSession() {
+      warmupQuestionBuffers();
+      if (!currentQuestionData) {
+        generateNewAiQuestion();
+      }
+    }
+
+    function handlePartChange() {
+      generateNewAiQuestion();
+    }
+
+    async function generateNewAiQuestion() {
+      const spinner = document.getElementById('exam-loading-spinner');
+      const contentArea = document.getElementById('exam-content-area');
+      const partSelect = document.getElementById('exam-part-select');
+      const diffSelect = document.getElementById('exam-diff-select');
+
+      const rawPart = partSelect.value;
+      const partVal = rawPart === 'random' ? (Math.random() > 0.5 ? 'part5' : (Math.random() > 0.5 ? 'part6' : 'part7')) : rawPart;
+      const cleanKey = partVal.toLowerCase();
+      const diffVal = diffSelect ? diffSelect.value : '900';
+
+      if (AI_PREFETCH_BUFFER[cleanKey] && AI_PREFETCH_BUFFER[cleanKey].length > 0) {
+        const nextQ = AI_PREFETCH_BUFFER[cleanKey].shift();
+        currentQuestionData = nextQ;
+        renderQuestionData(nextQ);
+        spinner.style.display = 'none';
+        contentArea.style.display = 'block';
+        updatePrefetchBadge(cleanKey);
+        replenishPrefetchBuffer(cleanKey);
+        return;
+      }
+
+      spinner.style.display = 'block';
+      contentArea.style.display = 'none';
+
+      try {
+        if (window.SantaAIService) {
+          const q = await window.SantaAIService.generateQuestion({
+            part: cleanKey,
+            difficulty: diffVal,
+            domain: selectedDomainVal
+          });
+          currentQuestionData = q;
+          renderQuestionData(q);
+        }
+      } catch (err) {
+        console.error('[Lumi AI] Question Generation Error:', err);
+      } finally {
+        spinner.style.display = 'none';
+        contentArea.style.display = 'block';
+        replenishPrefetchBuffer(cleanKey);
+      }
+    }
+
+    function renderQuestionData(q) {
+      document.getElementById('exam-part-badge').innerText = q.part || (q.title || 'Part 5 - Incomplete Sentences');
+      
+      const pBox = document.getElementById('exam-passage-box');
+      if (q.passage && q.passage.trim().length > 0) {
+        pBox.innerText = q.passage.trim();
+        pBox.style.display = 'block';
+      } else {
+        pBox.style.display = 'none';
+        pBox.innerText = '';
+      }
+
+      document.getElementById('exam-question-text').innerText = q.question;
+      document.getElementById('exam-explanation-box').style.display = 'none';
+
+      const optContainer = document.getElementById('exam-options-container');
+      optContainer.innerHTML = q.options.map(opt => `
+        <button class="santa-option-btn" onclick="checkAnswer('${opt.key}', this)">
+          <b style="color: var(--santa-blue-soft); font-size: 13px;">(${opt.key})</b> <span>${opt.text}</span>
+        </button>
+      `).join('');
+    }
+
+    function checkAnswer(selectedKey, btnEl) {
+      if (!currentQuestionData) return;
+      const isCorrect = (selectedKey === currentQuestionData.correct);
+
+      totalSolved++;
+      if (isCorrect) {
+        totalCorrect++;
+      } else {
+        if (window.SantaDB) {
+          window.SantaDB.addMistake(currentQuestionData, selectedKey);
+          renderCourseDashboard();
+        }
+      }
+
+      document.getElementById('exam-solved-count').innerText = totalSolved;
+      const rate = Math.round((totalCorrect / totalSolved) * 100);
+      document.getElementById('exam-accuracy-rate').innerText = rate + '%';
+
+      if (window.SantaDB) {
+        const estScore = Math.min(990, Math.max(400, 500 + Math.round(rate * 4.5)));
+        window.SantaDB.saveProfile({ predictedScore: estScore });
+      }
+
+      document.querySelectorAll('.santa-option-btn').forEach(b => {
+        b.disabled = true;
+        if (b.innerText.includes('(' + currentQuestionData.correct + ')')) b.classList.add('correct');
+      });
+
+      if (!isCorrect) {
+        btnEl.classList.add('wrong');
+      }
+
+      const expBox = document.getElementById('exam-explanation-box');
+      document.getElementById('exam-explanation-text').innerHTML = `
+        <div style="font-weight: 700; margin-bottom: 2px; color: ${isCorrect ? 'var(--santa-green)' : 'var(--santa-coral)'};">
+          ${isCorrect ? '✅ 答對了！' : '❌ 答錯了，已自動記錄至「錯題本」。正確答案為 (' + currentQuestionData.correct + ')'}
+        </div>
+        <div>${currentQuestionData.explanation}</div>
+      `;
+      expBox.style.display = 'block';
+
+      const partSelect = document.getElementById('exam-part-select');
+      if (partSelect) replenishPrefetchBuffer(partSelect.value);
+
+      if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+    }
+
+    // ==========================================
+    // Mistake Notebook Management & Retake Engine
+    // ==========================================
+    let currentMistakeFilter = 'all';
+
+    function renderMistakesView() {
+      const container = document.getElementById('mistakes-list-container');
+      if (!window.SantaDB) return;
+
+      const list = window.SantaDB.getMistakes();
+      const countEl = document.getElementById('m-count-all');
+      const totalBadge = document.getElementById('mistakes-total-badge');
+      const navCount = document.getElementById('nav-mistakes-count');
+
+      const unsolvedCount = list.filter(m => m.status !== 'MASTERED').length;
+      if (countEl) countEl.innerText = list.length;
+      if (totalBadge) totalBadge.innerText = `${unsolvedCount} 題待攻克 / 共 ${list.length} 題`;
+      if (navCount) navCount.innerText = unsolvedCount;
+
+      const filtered = list.filter(m => {
+        if (currentMistakeFilter === 'all') return true;
+        if (currentMistakeFilter === 'unsolved') return m.status !== 'MASTERED';
+        if (currentMistakeFilter === 'mastered') return m.status === 'MASTERED';
+        return (m.part || '').toLowerCase().includes(currentMistakeFilter);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 32px 16px; color: var(--santa-text-muted);">
+            <div style="font-size: 28px; margin-bottom: 6px;">🎉</div>
+            <div style="font-size: 14px; font-weight: 700; color: #ffffff;">太棒了！目前沒有未解決的錯題</div>
+            <div style="font-size: 12px; margin-top: 2px;">在模擬測驗中答錯的題目會自動保存在這裡進行強化練習。</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map((m, idx) => `
+        <div class="santa-mistake-card" id="mistake-card-${idx}">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">${m.part || 'Part 5'}</span>
+              <span style="font-size: 11px; color: var(--santa-text-muted);">${m.skill || '文法考點'}</span>
+            </div>
+            <div>
+              ${m.status === 'MASTERED' 
+                ? '<span style="font-size: 11px; color: var(--santa-green); font-weight: 700;">✅ 已攻克掌握</span>' 
+                : `<span style="font-size: 11px; color: var(--santa-coral-soft); font-weight: 700;">⚠️ 答錯 ${m.wrongCount || 1} 次</span>`}
+            </div>
+          </div>
+
+          ${m.passage ? `<div style="background: var(--santa-bg-surface); padding: 8px 10px; border-radius: 6px; font-size: 12px; color: var(--santa-text-secondary); line-height: 1.45; margin-bottom: 6px; border-left: 2px solid var(--santa-blue); white-space: pre-wrap;">${m.passage}</div>` : ''}
+
+          <div style="font-size: 13.5px; font-weight: 700; color: #ffffff; line-height: 1.4; margin-bottom: 8px;">${m.question}</div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+            ${(m.options || []).map(opt => {
+              let style = 'background: var(--santa-bg-surface); border: 1px solid var(--santa-border); color: #cbd5e1;';
+              if (opt.key === m.correct) style = 'background: rgba(16, 185, 129, 0.18); border-color: var(--santa-green); color: #6ee7b7; font-weight: 700;';
+              else if (opt.key === m.myChoice) style = 'background: rgba(255, 59, 92, 0.18); border-color: var(--santa-coral); color: #fca5a5;';
+              return `<div style="padding: 6px 10px; border-radius: 6px; font-size: 12px; ${style}"><b>(${opt.key})</b> ${opt.text} ${opt.key === m.myChoice ? '<span style="font-size: 10px; color: var(--santa-coral-soft);">(您選擇)</span>' : ''}</div>`;
+            }).join('')}
+          </div>
+
+          <div style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid var(--santa-green); padding: 6px 10px; border-radius: 4px; font-size: 11.5px; color: #9da5b4; line-height: 1.4; margin-bottom: 8px;">
+            <b style="color: var(--santa-green);">💡 解析說明:</b> ${m.explanation}
+          </div>
+
+          <div style="display: flex; gap: 6px; justify-content: flex-end;">
+            <button class="santa-btn santa-btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="retakeMistakeQuestion(${idx})">🔄 立即重練此題</button>
+            <button class="santa-btn santa-btn-outline" style="font-size: 11px; padding: 4px 8px; color: #9da5b4;" onclick="deleteMistakeQuestion('${m.id || m.question}')">🗑️ 移除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterMistakes(cat, btn) {
+      currentMistakeFilter = cat;
+      document.querySelectorAll('.mistake-cat-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderMistakesView();
+    }
+
+    function retakeMistakeQuestion(idx) {
+      const list = window.SantaDB.getMistakes();
+      const m = list[idx];
+      if (!m) return;
+      currentQuestionData = m;
+      switchView('exam');
+      renderQuestionData(m);
+    }
+
+    function deleteMistakeQuestion(idOrQuestion) {
+      if (window.SantaDB) {
+        const list = window.SantaDB.getMistakes().filter(m => m.id !== idOrQuestion && m.question !== idOrQuestion);
+        window.SantaDB.saveMistakes(list);
+        renderMistakesView();
+        renderCourseDashboard();
+        if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+      }
+    }
+
+    function clearMasteredMistakes() {
+      if (window.SantaDB) {
+        const list = window.SantaDB.getMistakes().filter(m => m.status !== 'MASTERED');
+        window.SantaDB.saveMistakes(list);
+        renderMistakesView();
+        renderCourseDashboard();
+        if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+      }
+    }
+
+    // Keyboard Shortcuts for Desktop PC
+    window.addEventListener('keydown', (e) => {
+      if (currentView !== 'exam' || document.activeElement.tagName === 'INPUT') return;
+      const k = e.key.toUpperCase();
+      const options = document.querySelectorAll('.santa-option-btn');
+
+      if (['A', '1'].includes(k) && options[0] && !options[0].disabled) options[0].click();
+      if (['B', '2'].includes(k) && options[1] && !options[1].disabled) options[1].click();
+      if (['C', '3'].includes(k) && options[2] && !options[2].disabled) options[2].click();
+      if (['D', '4'].includes(k) && options[3] && !options[3].disabled) options[3].click();
+      if (e.code === 'Space' && options[0] && options[0].disabled) {
+        e.preventDefault();
+        generateNewAiQuestion();
+      }
+    });
+
+    // ==========================================
+    // TOEIC Speaking 11-Question Simulator Engine
+    // ==========================================
+    const SPEAKING_BANK = [
+      // Part 1: Read a text aloud (Q1-Q2)
+      {
+        id: 'spk-1',
+        part: 'part1',
+        partLabel: 'Part 1: Read a text aloud',
+        title: 'Question 1: Read a text aloud (綠色博覽會公告)',
+        prepTime: 45,
+        speakTime: 45,
+        directions: 'Directions: In this part, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read aloud.',
+        passage: '"Welcome to the annual Green City Expo. Today, you will discover the latest innovations in solar energy, electric transportation, and sustainable living. Please remember to visit the interactive showcase on the second floor before the keynote session begins at two o\'clock."',
+        modelAnswer: '"Welcome to the annual Green City Expo. Today, you will discover the latest innovations in solar energy, electric transportation, and sustainable living. Please remember to visit the interactive showcase on the second floor before the keynote session begins at two o\'clock."'
+      },
+      {
+        id: 'spk-2',
+        part: 'part1',
+        partLabel: 'Part 1: Read a text aloud',
+        title: 'Question 2: Read a text aloud (機場航班廣播)',
+        prepTime: 45,
+        speakTime: 45,
+        directions: 'Directions: In this part, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read aloud.',
+        passage: '"Attention passengers on Flight 814 to Vancouver. Due to adverse weather conditions at the destination airport, our departure has been rescheduled for 4:30 PM. Complimentary refreshments are now available at Gate 12. We apologize for any inconvenience."',
+        modelAnswer: '"Attention passengers on Flight 814 to Vancouver. Due to adverse weather conditions at the destination airport, our departure has been rescheduled for 4:30 PM. Complimentary refreshments are now available at Gate 12. We apologize for any inconvenience."'
+      },
+
+      // Part 2: Describe a picture (Q3-Q4)
+      {
+        id: 'spk-3',
+        part: 'part2',
+        partLabel: 'Part 2: Describe a picture',
+        title: 'Question 3: Describe a picture (辦公室跨部門會議)',
+        prepTime: 45,
+        speakTime: 30,
+        directions: 'Directions: In this part, describe the scenario and actions in the given office meeting situation in as much detail as possible in 30 seconds.',
+        passage: '【情境題】：In this scene, a group of five business professionals are seated around a wooden conference table in a modern office. A woman in a dark blazer is standing and pointing at a sales chart displayed on a large digital screen. The other colleagues are holding pens, taking notes on laptops, and listening attentively.',
+        modelAnswer: 'This picture shows a business meeting in a modern conference room. In the foreground, four colleagues are sitting around a table taking notes. In the center, a professional woman is standing and presenting data on a large digital screen. The overall atmosphere looks productive and focused.'
+      },
+      {
+        id: 'spk-4',
+        part: 'part2',
+        partLabel: 'Part 2: Describe a picture',
+        title: 'Question 4: Describe a picture (戶外農夫市集購物)',
+        prepTime: 45,
+        speakTime: 30,
+        directions: 'Directions: Describe the outdoor market scene with vendor stalls, shoppers, and weather atmosphere in 30 seconds.',
+        passage: '【情境題】：This picture captures a lively outdoor farmers market on a sunny morning. Under white striped canopies, wooden crates are filled with fresh apples, oranges, and organic vegetables. Customers carrying reusable canvas bags are browsing produce and talking with vendors.',
+        modelAnswer: 'This photo was taken at an outdoor farmers market. In the middle of the frame, several shoppers are browsing fresh fruits and vegetables displayed under white tents. On the right, a vendor is handing a bag of produce to a customer. It seems like a bright and pleasant weekend morning.'
+      },
+
+      // Part 3: Respond to questions (Q5-Q7)
+      {
+        id: 'spk-5',
+        part: 'part3',
+        partLabel: 'Part 3: Respond to questions',
+        title: 'Question 5: Respond to questions (線上購物習慣)',
+        prepTime: 0,
+        speakTime: 15,
+        directions: 'Directions: Imagine you are participating in a telephone consumer research interview about online shopping. Answer Question 5 immediately.',
+        passage: 'Q5: How often do you purchase items online, and what was the most recent product you bought?',
+        modelAnswer: 'I usually buy items online about twice a week, mostly because of the convenient home delivery. The most recent product I bought was a wireless keyboard for my home office.'
+      },
+      {
+        id: 'spk-6',
+        part: 'part3',
+        partLabel: 'Part 3: Respond to questions',
+        title: 'Question 6: Respond to questions (促銷優惠偏好)',
+        prepTime: 0,
+        speakTime: 15,
+        directions: 'Directions: Answer Question 6 in 15 seconds.',
+        passage: 'Q6: Do you prefer shopping on websites that offer free shipping or websites that give discount coupons? Why?',
+        modelAnswer: 'I definitely prefer websites that offer free shipping, because shipping fees can add up quickly and free delivery makes the overall purchase much more predictable and cost-effective.'
+      },
+      {
+        id: 'spk-7',
+        part: 'part3',
+        partLabel: 'Part 3: Respond to questions',
+        title: 'Question 7: Respond to questions (實體店面 vs 網購比較)',
+        prepTime: 30,
+        speakTime: 30,
+        directions: 'Directions: Answer Question 7 with reasons and examples in 30 seconds.',
+        passage: 'Q7: What are the main advantages of shopping at a physical brick-and-mortar store compared to an online shopping website?',
+        modelAnswer: 'In my opinion, the biggest advantage of physical stores is the ability to inspect and try out products immediately before buying. For example, when purchasing clothing or shoes, you can verify the fit and fabric quality firsthand, avoiding the hassle of returns.'
+      },
+
+      // Part 4: Respond to questions using information provided (Q8-Q10)
+      {
+        id: 'spk-8',
+        part: 'part4',
+        partLabel: 'Part 4: Information Response',
+        title: 'Question 8: Respond to questions using information (研討會行程表)',
+        prepTime: 45,
+        speakTime: 15,
+        directions: 'Directions: Refer to the conference schedule below and answer Question 8.',
+        passage: '【Tech Innovations Summit 2026】\n• 09:00 AM - Registration & Welcome Coffee\n• 09:30 AM - Opening Keynote: "AI in Enterprise" by Dr. Elena Rostova (Main Hall)\n• 12:00 PM - Buffet Lunch (Dining Pavilion)\n• 02:00 PM - Workshop A: Cloud Security (Room 204)\n• 02:00 PM - Workshop B: Data Engineering (Room 208)\n\nQ8: When does the opening keynote begin, and who will deliver it?',
+        modelAnswer: 'The opening keynote begins at 9:30 AM in the Main Hall, and it will be presented by Dr. Elena Rostova on the topic of AI in Enterprise.'
+      },
+      {
+        id: 'spk-9',
+        part: 'part4',
+        partLabel: 'Part 4: Information Response',
+        title: 'Question 9: Respond to questions using information (午餐時間確認)',
+        prepTime: 0,
+        speakTime: 15,
+        directions: 'Directions: Answer Question 9 based on the conference schedule.',
+        passage: 'Q9: I heard that lunch is scheduled for 1:00 PM in Room 204. Is that correct?',
+        modelAnswer: 'No, actually that information is incorrect. The buffet lunch will be served at 12:00 PM in the Dining Pavilion, not in Room 204.'
+      },
+      {
+        id: 'spk-10',
+        part: 'part4',
+        partLabel: 'Part 4: Information Response',
+        title: 'Question 10: Respond to questions using information (下午工作坊詳情)',
+        prepTime: 0,
+        speakTime: 30,
+        directions: 'Directions: Answer Question 10 in 30 seconds.',
+        passage: 'Q10: Could you please provide me with full details of all the workshop sessions scheduled for the afternoon?',
+        modelAnswer: 'Certainly! There are two workshops scheduled at 2:00 PM. First, Workshop A focuses on Cloud Security and will take place in Room 204. Second, Workshop B covers Data Engineering, held simultaneously in Room 208.'
+      },
+
+      // Part 5: Express an opinion (Q11)
+      {
+        id: 'spk-11',
+        part: 'part5',
+        partLabel: 'Part 5: Express an opinion',
+        title: 'Question 11: Express an opinion (遠距工作 vs 實體辦公)',
+        prepTime: 45,
+        speakTime: 60,
+        directions: 'Directions: In this part, you will give your opinion about a topic. You have 45 seconds to prepare and 60 seconds to speak.',
+        passage: 'Q11: Some companies require all employees to work in the office five days a week, while others allow flexible remote work from home. Which policy do you think is more beneficial for company productivity? Give reasons and examples.',
+        modelAnswer: 'I strongly believe that a flexible remote work policy is more beneficial for overall company productivity. First of all, eliminating long daily commutes saves hours of travel fatigue, allowing employees to start their workday refreshed and focused. Secondly, remote work offers flexibility to balance professional duties with personal responsibilities, leading to higher job satisfaction and lower turnover rates. In conclusion, flexibility empowers employees to work in their most productive environments.'
+      }
+    ];
+
+    let currentSpeakingIndex = 0;
+    let speakingFilter = 'all';
+    let prepTimerInterval = null;
+
+    function renderCurrentSpeakingQuestion() {
+      const q = SPEAKING_BANK[currentSpeakingIndex];
+      if (!q) return;
+
+      document.getElementById('speaking-part-badge').innerText = q.partLabel || 'Part 1';
+      document.getElementById('speaking-q-index-text').innerText = `第 ${currentSpeakingIndex + 1} / ${SPEAKING_BANK.length} 題`;
+      document.getElementById('spk-title').innerText = q.title;
+      document.getElementById('spk-timer-info').innerText = `準備: ${q.prepTime}秒 | 作答: ${q.speakTime}秒`;
+      document.getElementById('spk-directions').innerText = q.directions;
+      document.getElementById('spk-passage').innerText = q.passage;
+
+      const prepBtn = document.getElementById('spk-prep-timer-btn');
+      if (prepBtn) {
+        prepBtn.innerText = `⏱️ 準備倒數 (${q.prepTime}s)`;
+        prepBtn.disabled = (q.prepTime === 0);
+      }
+
+      document.getElementById('spk-model-answer-box').style.display = 'none';
+      document.getElementById('spk-model-answer-text').innerText = q.modelAnswer || q.passage;
+      document.getElementById('speaking-result-box').style.display = 'none';
+      document.getElementById('speaking-status-text').innerText = '點擊「開始作答錄音」按鈕後請朗讀上方文字或作答';
+
+      const player = document.getElementById('speaking-audio-player');
+      if (player) player.style.display = 'none';
+    }
+
+    function navigateSpeakingQuestion(offset) {
+      if (prepTimerInterval) clearInterval(prepTimerInterval);
+      const newIdx = currentSpeakingIndex + offset;
+      if (newIdx >= 0 && newIdx < SPEAKING_BANK.length) {
+        currentSpeakingIndex = newIdx;
+        renderCurrentSpeakingQuestion();
+      }
+    }
+
+    function filterSpeakingPart(partKey, btnEl) {
+      speakingFilter = partKey;
+      document.querySelectorAll('.spk-cat-btn').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      if (partKey === 'all') {
+        currentSpeakingIndex = 0;
+      } else {
+        const found = SPEAKING_BANK.findIndex(q => q.part === partKey);
+        if (found !== -1) currentSpeakingIndex = found;
+      }
+      renderCurrentSpeakingQuestion();
+    }
+
+    function startPrepCountdown() {
+      const q = SPEAKING_BANK[currentSpeakingIndex];
+      if (!q || q.prepTime === 0) return;
+
+      const btn = document.getElementById('spk-prep-timer-btn');
+      let remaining = q.prepTime;
+      btn.disabled = true;
+
+      if (prepTimerInterval) clearInterval(prepTimerInterval);
+      prepTimerInterval = setInterval(() => {
+        remaining--;
+        btn.innerText = `⏳ 準備中 (${remaining}s)...`;
+        if (remaining <= 0) {
+          clearInterval(prepTimerInterval);
+          btn.innerText = `⏰ 準備時間到！請開始作答`;
+          btn.disabled = false;
+          // Auto trigger mic if not started
+          const micBtn = document.getElementById('speaking-mic-btn');
+          if (speakingRecorder?.state !== 'recording') {
+            micBtn.click();
+          }
+        }
+      }, 1000);
+    }
+
+    function toggleModelAnswer() {
+      const box = document.getElementById('spk-model-answer-box');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function speakModelAnswer() {
+      const q = SPEAKING_BANK[currentSpeakingIndex];
+      if (q && q.modelAnswer) {
+        speakWord(q.modelAnswer);
+      }
+    }
+
+    async function generateAiSpeakingQuestion() {
+      const btn = document.getElementById('ai-gen-speaking-btn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⚡ AI 出題中...';
+      btn.disabled = true;
+
+      const q = SPEAKING_BANK[currentSpeakingIndex] || SPEAKING_BANK[0];
+      const prompt = `You are a certified ETS TOEIC Speaking examiner.
+Generate 1 brand new, realistic TOEIC Speaking exam question for: ${q.partLabel} (Part: ${q.part}).
+Output JSON ONLY with this schema:
+{
+  "part": "${q.part}",
+  "partLabel": "${q.partLabel}",
+  "title": "<Question Title in Traditional Chinese / English>",
+  "prepTime": ${q.prepTime},
+  "speakTime": ${q.speakTime},
+  "directions": "<Directions in English>",
+  "passage": "<Passage or Prompt in English>",
+  "modelAnswer": "<High-scoring model answer in English>"
+}`;
+
+      try {
+        if (window.SantaAIService) {
+          let raw = '';
+          const s = window.SantaAIService.getSettings();
+          if (s.provider === 'gemini' && s.geminiApiKey) {
+            raw = await window.SantaAIService.chatWithLumi(prompt);
+          } else if (window.SantaAIService.hasConfiguredKey()) {
+            raw = await window.SantaAIService.chatWithLumi(prompt);
+          }
+
+          if (raw) {
+            const clean = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+            const startIdx = clean.indexOf('{');
+            const endIdx = clean.lastIndexOf('}');
+            if (startIdx !== -1 && endIdx !== -1) {
+              const newQ = JSON.parse(clean.substring(startIdx, endIdx + 1));
+              newQ.id = 'spk-ai-' + Date.now();
+              SPEAKING_BANK.splice(currentSpeakingIndex + 1, 0, newQ);
+              currentSpeakingIndex++;
+              alert('🎉 AI 成功生成了全新擬真口說試題！');
+              renderCurrentSpeakingQuestion();
+            }
+          }
+        }
+      } catch (err) {
+        alert('AI 生成失敗: ' + err.message);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // ==========================================
+    // AI Speaking Recording & Real-time Evaluation
+    // ==========================================
+    let speakingRecorder = null;
+    let speakingChunks = [];
+
+    async function toggleSpeakingRecord() {
+      const micBtn = document.getElementById('speaking-mic-btn');
+      const statusText = document.getElementById('speaking-status-text');
+      const player = document.getElementById('speaking-audio-player');
+      const resultBox = document.getElementById('speaking-result-box');
+      const q = SPEAKING_BANK[currentSpeakingIndex];
+
+      if (speakingRecorder && speakingRecorder.state === 'recording') {
+        speakingRecorder.stop();
+        micBtn.innerHTML = '🔴 開始作答錄音';
+        micBtn.style.background = 'var(--santa-coral)';
+        statusText.innerText = '🤖 AI 正在透過多模態語音模型深度分析發音、流暢度與文法...';
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        let mimeType = 'audio/webm';
+        if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+          mimeType = 'audio/webm;codecs=opus';
+        } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        } else if (MediaRecorder.isTypeSupported('audio/wav')) {
+          mimeType = 'audio/wav';
+        }
+
+        speakingRecorder = new MediaRecorder(stream, { mimeType });
+        speakingChunks = [];
+
+        speakingRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) speakingChunks.push(e.data);
+        };
+
+        speakingRecorder.onstop = async () => {
+          // Stop all mic tracks
+          stream.getTracks().forEach(t => t.stop());
+
+          const audioBlob = new Blob(speakingChunks, { type: mimeType });
+          player.src = URL.createObjectURL(audioBlob);
+          player.style.display = 'block';
+
+          if (window.SantaAIService) {
+            try {
+              const referenceText = q ? (q.modelAnswer || q.passage) : "";
+              const res = await window.SantaAIService.transcribeAndEvaluateAudio(audioBlob, referenceText);
+              
+              resultBox.style.display = 'block';
+              document.getElementById('speaking-transcription').innerHTML = `<b>實際語音轉錄:</b> "${res.transcription}"`;
+              document.getElementById('speaking-scores').innerHTML = `
+                <div>🏆 <b>發音</b>: <span style="color: ${res.evaluation.pronunciation > 60 ? 'var(--santa-green)' : 'var(--santa-coral)'}; font-weight: 700;">${res.evaluation.pronunciation}</span> | ⚡ <b>流暢度</b>: <span style="color: ${res.evaluation.fluency > 60 ? 'var(--santa-blue-soft)' : 'var(--santa-coral)'}; font-weight: 700;">${res.evaluation.fluency}</span> | ✍️ <b>語法</b>: <span style="color: ${res.evaluation.grammar > 60 ? 'var(--santa-gold)' : 'var(--santa-coral)'}; font-weight: 700;">${res.evaluation.grammar}</span></div>
+                <div style="margin-top: 4px; color: var(--santa-text-secondary); line-height: 1.45;">💡 <b>評語解析</b>: ${res.explanation}</div>
+              `;
+              statusText.innerText = res.evaluation.pronunciation > 0 ? '✅ 評測完成！' : '⚠️ 未偵測到朗讀語音';
+              if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+            } catch (err) {
+              statusText.innerText = '❌ 評估失敗: ' + err.message;
+            }
+          }
+        };
+
+        speakingRecorder.start();
+        micBtn.innerHTML = '⏹️ 結束作答並評分';
+        micBtn.style.background = '#475569';
+        statusText.innerText = '🎙️ 錄音作答進行中... 請朗讀或回答';
+      } catch (err) {
+        statusText.innerText = '❌ 無法開啟麥克風: ' + err.message;
+      }
+    }
+
+    // ==========================================
+    // Vocabulary Wordbook & AI Dynamic Expansion
+    // ==========================================
+    let MASTER_VOCABULARY = [
+      // 1. 商務合約 (biz)
+      { cat: 'biz', word: 'substantial', phonetic: '/səbˈstæn.ʃəl/', pos: 'adj.', meaning: '大量的；實質的；重要的', example: 'The company achieved a substantial increase in revenue.' },
+      { cat: 'biz', word: 'preliminary', phonetic: '/prɪˈlɪm.ɪ.nər.i/', pos: 'adj.', meaning: '初步的；預備的', example: 'The preliminary findings will be presented at the meeting.' },
+      { cat: 'biz', word: 'collaborate', phonetic: '/kəˈlæb.ə.reɪt/', pos: 'v.', meaning: '合作；協同工作', example: 'Teams from design and engineering collaborated closely.' },
+      { cat: 'biz', word: 'implement', phonetic: '/ˈɪm.plɪ.ment/', pos: 'v.', meaning: '實施；貫徹；執行', example: 'The management decided to implement new safety protocols.' },
+      { cat: 'biz', word: 'compliance', phonetic: '/kəmˈplaɪ.əns/', pos: 'n.', meaning: '遵從；合規', example: 'Strict compliance with environmental standards is required.' },
+      { cat: 'biz', word: 'stipulate', phonetic: '/ˈstɪp.jə.leɪt/', pos: 'v.', meaning: '明文規定；約定', example: 'The contract stipulates that delivery must occur within 30 days.' },
+      { cat: 'biz', word: 'confidential', phonetic: '/ˌkɒn.fɪˈden.ʃəl/', pos: 'adj.', meaning: '保密的；機密的', example: 'All client information must remain strictly confidential.' },
+      { cat: 'biz', word: 'obligation', phonetic: '/ˌɒb.lɪˈɡeɪ.ʃən/', pos: 'n.', meaning: '義務；職責', example: 'Both parties are legally bound to fulfill their obligations.' },
+      { cat: 'biz', word: 'terminate', phonetic: '/ˈtɜː.mɪ.neɪt/', pos: 'v.', meaning: '終止；解雇', example: 'The board voted to terminate the agreement due to breach of terms.' },
+      { cat: 'biz', word: 'amendment', phonetic: '/əˈmend.mənt/', pos: 'n.', meaning: '修訂；修正案', example: 'The legal counsel submitted an amendment to the clause.' },
+
+      // 2. 財務報銷 (finance)
+      { cat: 'finance', word: 'reimburse', phonetic: '/ˌriː.ɪmˈbɜːs/', pos: 'v.', meaning: '償還；報銷', example: 'Travel expenses will be reimbursed within two business weeks.' },
+      { cat: 'finance', word: 'expenditure', phonetic: '/ɪkˈspen.dɪ.tʃər/', pos: 'n.', meaning: '支出；開銷', example: 'Capital expenditure on tech infrastructure doubled this fiscal year.' },
+      { cat: 'finance', word: 'audit', phonetic: '/ˈɔː.dɪt/', pos: 'n. / v.', meaning: '審計；查帳', example: 'An external accounting firm will conduct the annual financial audit.' },
+      { cat: 'finance', word: 'fiscal', phonetic: '/ˈfɪs.kəl/', pos: 'adj.', meaning: '財政的；會計年度的', example: 'Our fiscal year concludes on December 31.' },
+      { cat: 'finance', word: 'revenue', phonetic: '/ˈrev.ən.juː/', pos: 'n.', meaning: '收益；營業收入', example: 'Quarterly revenue surpassed market expectations by 15%.' },
+      { cat: 'finance', word: 'deficit', phonetic: '/ˈdef.ɪ.sɪt/', pos: 'n.', meaning: '赤字；逆差', example: 'The division succeeded in reducing its operational budget deficit.' },
+      { cat: 'finance', word: 'dividend', phonetic: '/ˈdɪv.ɪ.dend/', pos: 'n.', meaning: '股利；紅利', example: 'Shareholders approved an annual dividend payout of $2.50 per share.' },
+      { cat: 'finance', word: 'lucrative', phonetic: '/ˈluː.krə.tɪv/', pos: 'adj.', meaning: '獲利豐厚的；有利可圖的', example: 'The overseas partnership proved to be an extremely lucrative venture.' },
+      { cat: 'finance', word: 'fluctuate', phonetic: '/ˈflʌk.tʃu.eɪt/', pos: 'v.', meaning: '波動；起伏不定', example: 'Exchange rates fluctuate constantly based on global market conditions.' },
+
+      // 3. 人事招聘 (hr)
+      { cat: 'hr', word: 'remuneration', phonetic: '/rɪˌmjuː.nərˈeɪ.ʃən/', pos: 'n.', meaning: '酬勞；薪酬待遇', example: 'The executive package includes competitive remuneration and stock options.' },
+      { cat: 'hr', word: 'candidate', phonetic: '/ˈkæn.dɪ.dət/', pos: 'n.', meaning: '候選人；應徵者', example: 'The hiring committee shortlisted three exceptional candidates.' },
+      { cat: 'hr', word: 'probation', phonetic: '/prəˈbeɪ.ʃən/', pos: 'n.', meaning: '試用期；審查期', example: 'Newly hired associates must complete a three-month probation period.' },
+      { cat: 'hr', word: 'appraisal', phonetic: '/əˈpreɪ.zəl/', pos: 'n.', meaning: '績效考核；評估', example: 'Annual performance appraisals are scheduled for early December.' },
+      { cat: 'hr', word: 'vacancy', phonetic: '/ˈveɪ.kən.si/', pos: 'n.', meaning: '職缺；空缺', example: 'We currently have an urgent vacancy in the cloud architecture team.' },
+      { cat: 'hr', word: 'incentive', phonetic: '/ɪnˈsen.tɪv/', pos: 'n.', meaning: '激勵措施；獎金', example: 'The company offers attractive sales incentives for exceeding quarterly quotas.' },
+      { cat: 'hr', word: 'eligible', phonetic: '/ˈel.ɪ.dʒə.bəl/', pos: 'adj.', meaning: '具備資格的；合適的', example: 'Full-time employees are eligible for comprehensive medical benefits.' },
+      { cat: 'hr', word: 'competency', phonetic: '/ˈkɒm.pɪ.tən.si/', pos: 'n.', meaning: '專業能力；勝任度', example: 'Fluency in technical English is a core competency for this role.' },
+
+      // 4. 物流採購 (logistics)
+      { cat: 'logistics', word: 'procurement', phonetic: '/prəˈkjʊə.mənt/', pos: 'n.', meaning: '採購；取得', example: 'The procurement department secured high-grade raw materials.' },
+      { cat: 'logistics', word: 'inventory', phonetic: '/ˈɪn.vən.tər.i/', pos: 'n.', meaning: '庫存；存貨清單', example: 'Warehouse staff perform digital inventory checks every Monday.' },
+      { cat: 'logistics', word: 'consignment', phonetic: '/kənˈsaɪn.mənt/', pos: 'n.', meaning: '託運物；寄售', example: 'The international consignment arrived at the harbor intact.' },
+      { cat: 'logistics', word: 'distributor', phonetic: '/dɪˈstrɪb.jə.tər/', pos: 'n.', meaning: '分銷商；經銷商', example: 'We partnered with a regional distributor to expand retail coverage.' },
+      { cat: 'logistics', word: 'surplus', phonetic: '/ˈsɜː.pləs/', pos: 'n. / adj.', meaning: '過剩；剩餘量', example: 'Surplus inventory will be sold at discounted rates during the clearance.' },
+      { cat: 'logistics', word: 'expedite', phonetic: '/ˈek.spə.daɪt/', pos: 'v.', meaning: '加速；催促進度', example: 'Please expedite the shipment to avoid assembly line downtime.' },
+      { cat: 'logistics', word: 'freight', phonetic: '/freɪt/', pos: 'n.', meaning: '貨運；運費', example: 'Air freight rates are significantly higher than maritime transport.' },
+
+      // 5. 市場行銷 (marketing)
+      { cat: 'marketing', word: 'campaign', phonetic: '/kæmˈpeɪn/', pos: 'n.', meaning: '行銷活動；宣傳宣導', example: 'The digital marketing campaign boosted user engagement by 40%.' },
+      { cat: 'marketing', word: 'demographic', phonetic: '/ˌdem.əˈɡræf.ɪk/', pos: 'n. / adj.', meaning: '受眾群體；人口統計資料', example: 'Our core demographic consists of tech-savvy young professionals.' },
+      { cat: 'marketing', word: 'endorsement', phonetic: '/ɪnˈdɔːs.mənt/', pos: 'n.', meaning: '名人代言；背書支持', example: 'Celebrity endorsement substantially elevated the brand\'s market presence.' },
+      { cat: 'marketing', word: 'retain', phonetic: '/rɪˈteɪn/', pos: 'v.', meaning: '留住；維持', example: 'Loyalty reward programs help retail businesses retain valuable customers.' },
+      { cat: 'marketing', word: 'prospective', phonetic: '/prəˈspek.tɪv/', pos: 'adj.', meaning: '潛在的；有前途的', example: 'Sales reps are actively following up with prospective enterprise clients.' },
+      { cat: 'marketing', word: 'niche', phonetic: '/niːʃ/', pos: 'n. / adj.', meaning: '利基市場；特定領域', example: 'The startup identified a highly profitable niche in eco-friendly packaging.' },
+
+      // 6. 差旅會議 (travel)
+      { cat: 'travel', word: 'itinerary', phonetic: '/aɪˈtɪn.ər.ər.i/', pos: 'n.', meaning: '旅行日程；行程表', example: 'The detailed conference itinerary will be emailed to all registered delegates.' },
+      { cat: 'travel', word: 'accommodations', phonetic: '/əˌkɒm.əˈdeɪ.ʃânz/', pos: 'n.', meaning: '住宿；住宿設施', example: 'Hotel accommodations for visiting executives have been arranged.' },
+      { cat: 'travel', word: 'symposium', phonetic: '/sɪmˈpəʊ.zi.əm/', pos: 'n.', meaning: '專題研討會；座談會', example: 'Over 500 scholars attended the International AI Governance Symposium.' },
+      { cat: 'travel', word: 'delegate', phonetic: '/ˈdel.ɪ.ɡət/', pos: 'n.', meaning: '會議代表；受委派者', example: 'Keynote speakers welcomed international delegates at the opening gala.' },
+      { cat: 'travel', word: 'adjourn', phonetic: '/əˈdʒɜːn/', pos: 'v.', meaning: '使休會；延期', example: 'The plenary session was adjourned until 2:30 PM for lunch.' }
+    ];
+
+    // ==========================================
+    // Spaced Repetition (SRS) & Vocabulary Controller
+    // ==========================================
+    let vocaSubMode = 'list';
+    let currentVocaFilter = 'all';
+
+    // Quiz Session State
+    let vocaQuizQueue = [];
+    let vocaQuizTotalInitial = 0;
+    let vocaQuizFirstRoundCorrect = 0;
+    let vocaQuizUpgradedCount = 0;
+    let vocaCurrentQuizWord = null;
+    let vocaRequeueCount = 0;
+
+    // Flashcard Session State
+    let flashcardIndex = 0;
+    let flashcardList = [];
+    let isFlashcardFlipped = false;
+
+    function switchVocaSubMode(mode) {
+      vocaSubMode = mode;
+      document.getElementById('voca-submode-list').style.display = mode === 'list' ? 'block' : 'none';
+      document.getElementById('voca-submode-quiz').style.display = mode === 'quiz' ? 'block' : 'none';
+      document.getElementById('voca-submode-card').style.display = mode === 'card' ? 'block' : 'none';
+
+      document.getElementById('voca-tab-btn-list').classList.toggle('active', mode === 'list');
+      document.getElementById('voca-tab-btn-quiz').classList.toggle('active', mode === 'quiz');
+      document.getElementById('voca-tab-btn-card').classList.toggle('active', mode === 'card');
+
+      if (mode === 'list') renderVocaWordbook();
+      if (mode === 'card') startFlashcardSession();
+    }
+
+    function renderVocaWordbook() {
+      const container = document.getElementById('voca-list-container');
+      const searchVal = (document.getElementById('voca-search-input')?.value || '').toLowerCase().trim();
+      const now = Date.now();
+      const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
+
+      let dueCount = 0;
+      let weakCount = 0;
+      let masteredCount = 0;
+
+      MASTER_VOCABULARY.forEach(w => {
+        const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0 };
+        if (srs.nextReviewDue > 0 && srs.nextReviewDue <= now) dueCount++;
+        if (srs.wrongCount > 0 || srs.masteryLevel === 1) weakCount++;
+        if (srs.masteryLevel >= 3) masteredCount++;
+      });
+
+      // Update counters
+      const countAll = document.getElementById('count-all');
+      const countDue = document.getElementById('count-due');
+      const countWeak = document.getElementById('count-weak');
+      const countMastered = document.getElementById('count-mastered');
+      const dueBadge = document.getElementById('voca-due-badge');
+      const dueBanner = document.getElementById('voca-due-banner');
+      const dueCountNum = document.getElementById('voca-due-count-num');
+
+      if (countAll) countAll.innerText = MASTER_VOCABULARY.length;
+      if (countDue) countDue.innerText = dueCount;
+      if (countWeak) countWeak.innerText = weakCount;
+      if (countMastered) countMastered.innerText = masteredCount;
+
+      if (dueCount > 0) {
+        if (dueBadge) {
+          dueBadge.innerText = `⏰ ${dueCount} 個需複習`;
+          dueBadge.style.display = 'inline-block';
+        }
+        if (dueBanner) {
+          dueBanner.style.display = 'flex';
+          if (dueCountNum) dueCountNum.innerText = dueCount;
+        }
+      } else {
+        if (dueBadge) dueBadge.style.display = 'none';
+        if (dueBanner) dueBanner.style.display = 'none';
+      }
+
+      const filtered = MASTER_VOCABULARY.filter(w => {
+        const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0 };
+        
+        let matchesFilter = true;
+        if (currentVocaFilter === 'due') matchesFilter = (srs.nextReviewDue > 0 && srs.nextReviewDue <= now);
+        else if (currentVocaFilter === 'weak') matchesFilter = (srs.wrongCount > 0 || srs.masteryLevel === 1);
+        else if (currentVocaFilter === 'mastered') matchesFilter = (srs.masteryLevel >= 3);
+        else if (currentVocaFilter !== 'all') matchesFilter = (w.cat === currentVocaFilter);
+
+        const matchesSearch = !searchVal || w.word.toLowerCase().includes(searchVal) || w.meaning.toLowerCase().includes(searchVal) || w.example.toLowerCase().includes(searchVal);
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--santa-text-muted); padding: 32px 16px; font-size: 13px;">無符合條件的單字</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(w => {
+        const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0, lastReviewedAt: 0 };
+        
+        let srsBadge = '<span class="santa-badge" style="background: rgba(255, 255, 255, 0.06); color: #94a3b8;">⚪ 新詞</span>';
+        if (srs.masteryLevel === 1) {
+          srsBadge = `<span class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">🚨 易錯 (錯 ${srs.wrongCount} 次)</span>`;
+        } else if (srs.masteryLevel === 2) {
+          srsBadge = `<span class="santa-badge" style="background: rgba(57, 114, 246, 0.15); color: var(--santa-blue-soft);">🟡 學習中 (1天後)</span>`;
+        } else if (srs.masteryLevel === 3) {
+          srsBadge = `<span class="santa-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.3);">🟢 已掌握 (3天後)</span>`;
+        } else if (srs.masteryLevel >= 4) {
+          srsBadge = `<span class="santa-badge" style="background: rgba(255, 184, 0, 0.15); color: var(--santa-gold); border-color: rgba(255, 184, 0, 0.3);">👑 永久記憶 (7天後)</span>`;
+        }
+
+        return `
+          <div class="santa-voca-card" style="border-left-color: ${srs.masteryLevel >= 3 ? 'var(--santa-green)' : (srs.masteryLevel === 1 ? 'var(--santa-coral)' : 'var(--santa-blue)')};">
+            <div class="voca-header-row">
+              <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+                <span class="voca-word-title">${w.word}</span>
+                <span class="voca-phonetic">${w.phonetic}</span>
+                <span style="font-size: 10px; background: rgba(57, 114, 246, 0.2); color: var(--santa-blue-soft); padding: 1px 5px; border-radius: 4px;">${w.pos}</span>
+                ${srsBadge}
+              </div>
+              <button class="santa-btn santa-btn-outline" style="padding: 2px 6px; font-size: 11px;" onclick="speakWord('${w.word}')">🔊</button>
+            </div>
+            <div class="voca-meaning">${w.meaning}</div>
+            <div class="voca-example">"${w.example}"</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function filterVocaCategory(filterKey, btn) {
+      currentVocaFilter = filterKey;
+      document.querySelectorAll('.voca-cat-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderVocaWordbook();
+    }
+
+    function handleVocaSearch() {
+      renderVocaWordbook();
+    }
+
+    // ==========================================
+    // Spaced Repetition Interactive Quiz Engine
+    // ==========================================
+    function startVocaQuiz(type) {
+      switchVocaSubMode('quiz');
+      const now = Date.now();
+      const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
+
+      let candidateWords = [];
+
+      if (type === 'due') {
+        candidateWords = MASTER_VOCABULARY.filter(w => {
+          const s = progress[w.word.toLowerCase()];
+          return s && s.nextReviewDue > 0 && s.nextReviewDue <= now;
+        });
+        if (candidateWords.length === 0) {
+          alert('🎉 太棒了！今日暫無到達遺忘臨界點的單字，已為您載入易錯與新詞進行測驗。');
+          candidateWords = MASTER_VOCABULARY.slice(0, 10);
+        }
+      } else if (type === 'weak') {
+        candidateWords = MASTER_VOCABULARY.filter(w => {
+          const s = progress[w.word.toLowerCase()];
+          return s && (s.wrongCount > 0 || s.masteryLevel === 1);
+        });
+        if (candidateWords.length === 0) {
+          alert('🎉 目前沒有易錯單字，已為您隨機抽取 10 個核心單字！');
+          candidateWords = [...MASTER_VOCABULARY].sort(() => Math.random() - 0.5).slice(0, 10);
+        }
+      } else if (type === 'active_cat' && currentVocaFilter !== 'all' && currentVocaFilter !== 'due' && currentVocaFilter !== 'weak' && currentVocaFilter !== 'mastered') {
+        candidateWords = MASTER_VOCABULARY.filter(w => w.cat === currentVocaFilter);
+      } else {
+        // Random 10 words
+        candidateWords = [...MASTER_VOCABULARY].sort(() => Math.random() - 0.5).slice(0, 10);
+      }
+
+      vocaQuizQueue = candidateWords.map(w => ({ ...w, isFirstAttempt: true }));
+      vocaQuizTotalInitial = vocaQuizQueue.length;
+      vocaQuizFirstRoundCorrect = 0;
+      vocaQuizUpgradedCount = 0;
+      vocaRequeueCount = 0;
+
+      document.getElementById('voca-quiz-launcher').style.display = 'none';
+      document.getElementById('voca-quiz-active').style.display = 'block';
+      document.getElementById('voca-quiz-summary').style.display = 'none';
+
+      renderNextQuizQuestion();
+    }
+
+    function renderNextQuizQuestion() {
+      if (vocaQuizQueue.length === 0) {
+        finishVocaQuiz();
+        return;
+      }
+
+      vocaCurrentQuizWord = vocaQuizQueue[0];
+      const word = vocaCurrentQuizWord;
+
+      document.getElementById('vq-progress-text').innerText = `${vocaQuizTotalInitial - vocaQuizQueue.length + 1} / ${vocaQuizTotalInitial}`;
+      const requeueBadge = document.getElementById('vq-requeue-badge');
+      const requeueCountEl = document.getElementById('vq-requeue-count');
+      if (vocaRequeueCount > 0) {
+        requeueBadge.style.display = 'inline-block';
+        requeueCountEl.innerText = vocaRequeueCount;
+      } else {
+        requeueBadge.style.display = 'none';
+      }
+
+      document.getElementById('vq-word').innerText = word.word;
+      document.getElementById('vq-phonetic').innerText = word.phonetic;
+      document.getElementById('vq-pos').innerText = word.pos;
+
+      // Cloze Example
+      const clozeText = word.example.replace(new RegExp(word.word, 'gi'), ' [ ________ ] ');
+      document.getElementById('vq-example-cloze').innerText = `"${clozeText}"`;
+
+      // Generate 4 Options (1 correct + 3 random distractors)
+      const distractors = MASTER_VOCABULARY
+        .filter(w => w.word.toLowerCase() !== word.word.toLowerCase())
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(w => w.meaning);
+
+      const allOptions = [word.meaning, ...distractors].sort(() => Math.random() - 0.5);
+
+      const optContainer = document.getElementById('vq-options-container');
+      optContainer.innerHTML = allOptions.map(meaning => `
+        <button class="santa-option-btn" onclick="checkVocaAnswer('${meaning.replace(/'/g, "\\'")}', this)">
+          <span>${meaning}</span>
+        </button>
+      `).join('');
+
+      document.getElementById('vq-feedback-box').style.display = 'none';
+    }
+
+    function checkVocaAnswer(selectedMeaning, btnEl) {
+      if (!vocaCurrentQuizWord) return;
+      const isCorrect = (selectedMeaning === vocaCurrentQuizWord.meaning);
+
+      document.querySelectorAll('#vq-options-container .santa-option-btn').forEach(b => {
+        b.disabled = true;
+        if (b.innerText.trim() === vocaCurrentQuizWord.meaning.trim()) {
+          b.classList.add('correct');
+        }
+      });
+
+      const feedbackBox = document.getElementById('vq-feedback-box');
+      feedbackBox.style.display = 'block';
+
+      if (isCorrect) {
+        if (vocaCurrentQuizWord.isFirstAttempt) {
+          vocaQuizFirstRoundCorrect++;
+        }
+
+        const newSRS = window.SantaDB ? window.SantaDB.updateWordSRS(vocaCurrentQuizWord.word, true) : null;
+        if (newSRS && newSRS.masteryLevel >= 2) vocaQuizUpgradedCount++;
+
+        let nextSchedule = '1 天後';
+        if (newSRS && newSRS.masteryLevel === 3) nextSchedule = '3 天後';
+        if (newSRS && newSRS.masteryLevel >= 4) nextSchedule = '7 天後';
+
+        feedbackBox.style.background = 'rgba(16, 185, 129, 0.12)';
+        feedbackBox.style.border = '1px solid var(--santa-green)';
+        feedbackBox.style.color = '#6ee7b7';
+        feedbackBox.innerHTML = `
+          <div style="font-weight: 700; font-size: 13px;">✅ 答對了！已排定於【${nextSchedule}】再次複習</div>
+          <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 2px;">完整例句: "${vocaCurrentQuizWord.example}"</div>
+          <button class="santa-primary-btn" style="margin-top: 8px; padding: 6px 14px; max-width: 140px; font-size: 12px;" onclick="advanceQuizQueue(true)">下一題 &rarr;</button>
+        `;
+      } else {
+        btnEl.classList.add('wrong');
+        if (window.SantaDB) window.SantaDB.updateWordSRS(vocaCurrentQuizWord.word, false);
+
+        vocaRequeueCount++;
+        // Auto requeue to the end of test queue!
+        vocaCurrentQuizWord.isFirstAttempt = false;
+        vocaQuizQueue.push(vocaCurrentQuizWord);
+
+        feedbackBox.style.background = 'rgba(255, 59, 92, 0.12)';
+        feedbackBox.style.border = '1px solid var(--santa-coral)';
+        feedbackBox.style.color = '#fca5a5';
+        feedbackBox.innerHTML = `
+          <div style="font-weight: 700; font-size: 13px;">❌ 答錯了！正確釋義：${vocaCurrentQuizWord.meaning}</div>
+          <div style="font-size: 11px; color: #f87171; margin-top: 2px;">🚨 此題已自動重新加入本次測驗末端，將反覆練習直到掌握。</div>
+          <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 4px;">例句: "${vocaCurrentQuizWord.example}"</div>
+          <button class="santa-primary-btn" style="margin-top: 8px; padding: 6px 14px; max-width: 160px; font-size: 12px; background: var(--santa-coral);" onclick="advanceQuizQueue(false)">繼續下一題 &rarr;</button>
+        `;
+      }
+    }
+
+    function advanceQuizQueue(isCorrect) {
+      vocaQuizQueue.shift();
+      if (isCorrect && vocaRequeueCount > 0) {
+        vocaRequeueCount = Math.max(0, vocaRequeueCount - 1);
+      }
+      renderNextQuizQuestion();
+    }
+
+    function speakCurrentQuizWord() {
+      if (vocaCurrentQuizWord) speakWord(vocaCurrentQuizWord.word);
+    }
+
+    function exitVocaQuiz() {
+      document.getElementById('voca-quiz-launcher').style.display = 'block';
+      document.getElementById('voca-quiz-active').style.display = 'none';
+      document.getElementById('voca-quiz-summary').style.display = 'none';
+      renderVocaWordbook();
+    }
+
+    function finishVocaQuiz() {
+      document.getElementById('voca-quiz-active').style.display = 'none';
+      document.getElementById('voca-quiz-summary').style.display = 'block';
+
+      const total = vocaQuizTotalInitial || 10;
+      const acc = Math.round((vocaQuizFirstRoundCorrect / total) * 100);
+
+      document.getElementById('vq-res-total').innerText = total;
+      document.getElementById('vq-res-acc').innerText = `${acc}%`;
+      document.getElementById('vq-res-upgraded').innerText = `${vocaQuizUpgradedCount} 個`;
+
+      if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+    }
+
+    // ==========================================
+    // Flashcard Flip Engine
+    // ==========================================
+    function startFlashcardSession() {
+      flashcardList = [...MASTER_VOCABULARY];
+      flashcardIndex = 0;
+      isFlashcardFlipped = false;
+      renderCurrentFlashcard();
+    }
+
+    function renderCurrentFlashcard() {
+      if (flashcardList.length === 0) return;
+      const w = flashcardList[flashcardIndex];
+
+      document.getElementById('vf-index-text').innerText = `${flashcardIndex + 1} / ${flashcardList.length}`;
+      document.getElementById('vf-word').innerText = w.word;
+      document.getElementById('vf-phonetic').innerText = w.phonetic;
+      document.getElementById('vf-pos').innerText = w.pos;
+      document.getElementById('vf-meaning').innerText = w.meaning;
+      document.getElementById('vf-example').innerText = `"${w.example}"`;
+
+      isFlashcardFlipped = false;
+      document.getElementById('vf-card-front').style.display = 'block';
+      document.getElementById('vf-card-back').style.display = 'none';
+    }
+
+    function toggleFlashcardFlip() {
+      isFlashcardFlipped = !isFlashcardFlipped;
+      document.getElementById('vf-card-front').style.display = isFlashcardFlipped ? 'none' : 'block';
+      document.getElementById('vf-card-back').style.display = isFlashcardFlipped ? 'block' : 'none';
+    }
+
+    function handleFlashcardAction(isRemembered) {
+      if (flashcardList.length === 0) return;
+      const w = flashcardList[flashcardIndex];
+
+      if (window.SantaDB) {
+        window.SantaDB.updateWordSRS(w.word, isRemembered);
+      }
+
+      flashcardIndex = (flashcardIndex + 1) % flashcardList.length;
+      renderCurrentFlashcard();
+    }
+
+    async function expandVocabularyWithAI() {
+      const btn = document.getElementById('ai-expand-voca-btn');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '⚡ AI 生成 10 詞中...';
+      btn.disabled = true;
+
+      const prompt = `You are a certified ETS TOEIC vocabulary examiner.
+Generate 10 brand new, highly frequent, essential TOEIC business vocabulary words across diverse categories (biz, finance, hr, logistics, marketing, travel) at difficulty 850+.
+Output ONLY a JSON array with exactly this format (no markdown):
+[
+  { "cat": "biz", "word": "<english word>", "phonetic": "/.../", "pos": "<part of speech>", "meaning": "<Traditional Chinese definition>", "example": "<practical TOEIC business example sentence>" }
+]`;
+
+      try {
+        if (window.SantaAIService) {
+          let raw = '';
+          const s = window.SantaAIService.getSettings();
+          if (s.provider === 'gemini' && s.geminiApiKey) {
+            raw = await window.SantaAIService.chatWithLumi(prompt);
+          } else if (window.SantaAIService.hasConfiguredKey()) {
+            raw = await window.SantaAIService.chatWithLumi(prompt);
+          }
+
+          if (raw) {
+            const clean = raw.replace(/```json/g, '').replace(/```/g, '').trim();
+            const startIdx = clean.indexOf('[');
+            const endIdx = clean.lastIndexOf(']');
+            if (startIdx !== -1 && endIdx !== -1) {
+              const newWords = JSON.parse(clean.substring(startIdx, endIdx + 1));
+              newWords.forEach(nw => {
+                if (!MASTER_VOCABULARY.find(x => x.word.toLowerCase() === nw.word.toLowerCase())) {
+                  MASTER_VOCABULARY.unshift(nw);
+                }
+              });
+              alert(`🎉 成功透過 AI 擴充了 ${newWords.length} 個高頻必考單字！`);
+              renderVocaWordbook();
+              if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+            }
+          }
+        }
+      } catch (err) {
+        alert('AI 擴充失敗: ' + err.message);
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    function speakWord(text) {
+      if ('speechSynthesis' in window) {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    // ==========================================
+    // Lumi AI Tutor Chat
+    // ==========================================
+    async function sendLumiMessage() {
+      const input = document.getElementById('lumi-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatBox = document.getElementById('lumi-chat-box');
+      
+      const userEl = document.createElement('div');
+      userEl.style.cssText = 'background: var(--santa-blue); color: #fff; padding: 8px 12px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 80%; font-size: 13px;';
+      userEl.innerText = text;
+      chatBox.appendChild(userEl);
+      input.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const aiEl = document.createElement('div');
+      aiEl.style.cssText = 'background: var(--santa-bg-card); border: 1px solid var(--santa-border); padding: 8px 12px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 13px; line-height: 1.45; color: var(--santa-text-muted);';
+      aiEl.innerText = 'Lumi 思考中...';
+      chatBox.appendChild(aiEl);
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      if (window.SantaAIService) {
+        try {
+          const reply = await window.SantaAIService.chatWithLumi(text);
+          aiEl.style.color = '#ffffff';
+          aiEl.innerText = reply;
+          if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+        } catch (err) {
+          aiEl.innerText = '❌ 錯誤: ' + err.message;
+        }
+      }
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Hash Route Dispatcher
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = (window.location.hash || '').replace('#', '').trim();
+      if (hash && ['course', 'exam', 'mistakes', 'speaking', 'voca', 'lumi'].includes(hash)) {
+        switchView(hash);
+      } else {
+        switchView('course');
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      const hash = (window.location.hash || '').replace('#', '').trim();
+      if (hash && ['course', 'exam', 'mistakes', 'speaking', 'voca', 'lumi'].includes(hash)) {
+        switchView(hash);
+      }
+    });
+  </script>
+
+  <script id="__NEXT_DATA__" type="application/json">
+    {
+      "props": { "pageProps": {} },
+      "page": "/onboarding/intro",
+      "query": {},
+      "buildId": "jENNU3H58B-tIoLQn3RGy",
+      "nextExport": true,
+      "autoExport": true,
+      "isFallback": false,
+      "scriptLoader": []
+    }
+  </script>
+</body>
+</html>

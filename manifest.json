@@ -1,0 +1,47 @@
+{
+  "name": "Lumi AI 智慧英文家教 (PWA 獨立版)",
+  "short_name": "Lumi AI",
+  "description": "Lumi AI 智慧多益與托福客製學習家教，支援離線題庫、錯題本與 AI 動態出題",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111217",
+  "theme_color": "#111217",
+  "orientation": "any",
+  "lang": "zh-TW",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "./assets/favicon.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/favicon.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "擬真診斷測驗",
+      "short_name": "開始測驗",
+      "url": "./index.html#exam",
+      "icons": [{ "src": "./assets/favicon.webp", "sizes": "192x192" }]
+    },
+    {
+      "name": "必考單字庫",
+      "short_name": "單字本",
+      "url": "./index.html#voca",
+      "icons": [{ "src": "./assets/favicon.webp", "sizes": "192x192" }]
+    },
+    {
+      "name": "錯題本",
+      "short_name": "錯題強化",
+      "url": "./index.html#mistakes",
+      "icons": [{ "src": "./assets/favicon.webp", "sizes": "192x192" }]
+    }
+  ]
+}
