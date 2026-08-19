@@ -93,226 +93,270 @@
     style.textContent = `
       #santa-floating-btn {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: 24px;
+        right: 24px;
         z-index: 999999;
         display: flex;
         align-items: center;
-        gap: 8px;
-        background: #1c1e27;
+        gap: 10px;
+        background: rgba(18, 22, 36, 0.88);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
         color: #ffffff;
-        border: 1px solid #3972f6;
-        border-radius: 30px;
-        padding: 8px 16px;
+        border: 1px solid rgba(0, 240, 255, 0.4);
+        border-radius: 9999px;
+        padding: 9px 18px;
         font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: 12.5px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(57, 114, 246, 0.35);
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.25);
+        transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
       }
       #santa-floating-btn:hover {
-        transform: translateY(-2px);
-        background: #252836;
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 18px rgba(57, 114, 246, 0.5);
+        transform: translateY(-3px) scale(1.02);
+        background: rgba(26, 32, 52, 0.95);
+        border-color: #00F0FF;
+        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75), 0 0 30px rgba(0, 240, 255, 0.45);
       }
       #santa-modal-backdrop {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(10, 11, 15, 0.82);
-        backdrop-filter: blur(10px);
+        background: rgba(6, 8, 14, 0.82);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         z-index: 1000000;
         align-items: center;
         justify-content: center;
         font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
       #santa-modal-container {
-        background: #111217;
+        background: linear-gradient(180deg, #141828 0%, #0c0e18 100%);
         color: #ffffff;
-        border: 1px solid #2c3040;
-        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
         width: 92%;
-        max-width: 640px;
+        max-width: 660px;
         max-height: 88vh;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8);
-        animation: santaFadeIn 0.2s ease-out;
+        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.85), 0 0 40px rgba(139, 92, 246, 0.25);
+        animation: santaFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
       }
       @keyframes santaFadeIn {
-        from { opacity: 0; transform: scale(0.96); }
-        to { opacity: 1; transform: scale(1); }
+        from { opacity: 0; transform: translateY(12px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
       }
       .santa-modal-header {
-        padding: 12px 18px;
-        background: #1c1e27;
-        border-bottom: 1px solid #2c3040;
+        padding: 16px 22px;
+        background: rgba(22, 27, 44, 0.85);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         display: flex;
         align-items: center;
         justify-content: space-between;
       }
       .santa-modal-header h3 {
         margin: 0;
-        font-size: 15px;
-        font-weight: 700;
+        font-size: 16px;
+        font-weight: 800;
         display: flex;
         align-items: center;
-        gap: 6px;
-        color: #ffffff;
+        gap: 8px;
+        background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
       .santa-close-btn {
-        background: none;
-        border: none;
-        color: #9da5b4;
-        font-size: 20px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #94a3b8;
+        font-size: 18px;
         cursor: pointer;
-        padding: 2px 6px;
-        border-radius: 6px;
-        transition: all 0.15s;
+        width: 32px;
+        height: 32px;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
       }
-      .santa-close-btn:hover { color: #ffffff; background: #2c3040; }
+      .santa-close-btn:hover { color: #ffffff; background: rgba(255, 0, 127, 0.25); border-color: #FF007F; }
       
       .santa-modal-tabs {
         display: flex;
-        background: #181920;
-        padding: 8px 14px;
-        gap: 6px;
-        border-bottom: 1px solid #2c3040;
+        background: rgba(11, 13, 22, 0.95);
+        padding: 10px 16px;
+        gap: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         overflow-x: auto;
         flex-wrap: nowrap;
+        scrollbar-width: none;
       }
+      .santa-modal-tabs::-webkit-scrollbar { display: none; }
       .santa-modal-tab {
-        padding: 5px 12px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #9da5b4;
-        background: #222532;
-        border: 1px solid #2c3040;
-        border-radius: 16px;
+        padding: 7px 16px;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: #94a3b8;
+        background: rgba(25, 30, 48, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 9999px;
         cursor: pointer;
         white-space: nowrap;
         flex-shrink: 0;
-        transition: all 0.18s;
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .santa-modal-tab:hover {
-        background: #2a2e3f;
+        background: rgba(38, 45, 70, 0.8);
         color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.15);
       }
       .santa-modal-tab.active {
-        background: #3972f6;
+        background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
         color: #ffffff;
-        border-color: #3972f6;
-        box-shadow: 0 2px 8px rgba(57, 114, 246, 0.35);
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 18px rgba(139, 92, 246, 0.45);
       }
       
       .santa-modal-body {
-        padding: 14px 18px;
+        padding: 18px 22px;
         overflow-y: auto;
         flex: 1;
       }
       .santa-m-form-group {
-        margin-bottom: 12px;
+        margin-bottom: 14px;
       }
       .santa-m-label {
         display: block;
-        font-size: 11px;
-        font-weight: 700;
-        color: #9da5b4;
-        margin-bottom: 4px;
+        font-size: 11.5px;
+        font-weight: 800;
+        color: #94a3b8;
+        margin-bottom: 6px;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
       }
       .santa-m-input, .santa-m-select {
         width: 100%;
-        background: #1c1e27;
-        border: 1px solid #2c3040;
-        border-radius: 8px;
-        padding: 8px 12px;
+        background: rgba(12, 14, 24, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        padding: 10px 14px;
         color: #ffffff;
         font-size: 13px;
         box-sizing: border-box;
+        transition: all 0.2s;
       }
       .santa-m-input:focus, .santa-m-select:focus {
         outline: none;
-        border-color: #3972f6;
-        box-shadow: 0 0 0 2px rgba(57, 114, 246, 0.25);
+        border-color: #00F0FF;
+        box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2), 0 0 16px rgba(0, 240, 255, 0.25);
       }
       .santa-m-btn {
-        background: #3972f6;
-        color: #fff;
+        background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+        color: #ffffff;
         border: none;
-        border-radius: 8px;
-        padding: 8px 14px;
-        font-size: 12.5px;
-        font-weight: 600;
+        border-radius: 9999px;
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 700;
         cursor: pointer;
-        transition: background 0.18s;
+        box-shadow: 0 0 18px rgba(139, 92, 246, 0.35);
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
       }
-      .santa-m-btn:hover { background: #4e82f8; }
-      .santa-m-btn-danger { background: #ff3b5c; }
-      .santa-m-btn-danger:hover { background: #e02848; }
-      .santa-m-btn-outline { background: transparent; border: 1px solid #2c3040; color: #9da5b4; }
-      .santa-m-btn-outline:hover { background: #252836; color: #fff; border-color: #3b4256; }
+      .santa-m-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 26px rgba(139, 92, 246, 0.6);
+        filter: brightness(1.1);
+      }
+      .santa-m-btn-danger {
+        background: linear-gradient(135deg, #FF007F 0%, #FF3B5C 100%);
+        box-shadow: 0 0 18px rgba(255, 0, 127, 0.35);
+      }
+      .santa-m-btn-danger:hover {
+        box-shadow: 0 0 26px rgba(255, 0, 127, 0.6);
+      }
+      .santa-m-btn-outline {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #cbd5e1;
+        box-shadow: none;
+      }
+      .santa-m-btn-outline:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
+      }
       .santa-m-badge {
         display: inline-block;
-        padding: 2px 7px;
-        border-radius: 6px;
-        font-size: 10.5px;
-        font-weight: 600;
-        background: rgba(16, 185, 129, 0.15);
-        color: #34d399;
-        border: 1px solid rgba(16, 185, 129, 0.3);
+        padding: 3px 9px;
+        border-radius: 9999px;
+        font-size: 11px;
+        font-weight: 700;
+        background: rgba(0, 255, 135, 0.15);
+        color: #00FF87;
+        border: 1px solid rgba(0, 255, 135, 0.35);
+        box-shadow: 0 0 10px rgba(0, 255, 135, 0.2);
       }
       .santa-m-card {
-        background: #1c1e27;
-        border: 1px solid #2c3040;
-        border-radius: 10px;
-        padding: 10px 14px;
-        margin-bottom: 10px;
+        background: rgba(20, 24, 38, 0.65);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
       }
       
       /* Provider Grid Cards */
       .santa-provider-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 6px;
-        margin-bottom: 10px;
+        gap: 8px;
+        margin-bottom: 12px;
       }
       .santa-provider-card {
-        background: #1c1e27;
-        border: 1.5px solid #2c3040;
-        border-radius: 8px;
-        padding: 8px 10px;
+        background: rgba(18, 22, 34, 0.7);
+        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 12px 10px;
         cursor: pointer;
         text-align: center;
-        transition: all 0.15s;
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .santa-provider-card:hover {
-        border-color: #3972f6;
-        background: #222532;
+        border-color: #8B5CF6;
+        background: rgba(28, 34, 54, 0.85);
+        box-shadow: 0 0 16px rgba(139, 92, 246, 0.3);
+        transform: translateY(-2px);
       }
       .santa-provider-card.selected {
-        border-color: #3972f6;
-        background: rgba(57, 114, 246, 0.15);
+        border-color: #00F0FF;
+        background: rgba(0, 240, 255, 0.12);
         color: #ffffff;
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
       }
       
       /* Logs UI */
       .santa-log-item {
-        background: #14161f;
-        border-left: 3px solid #3972f6;
-        padding: 6px 10px;
-        border-radius: 4px;
-        margin-bottom: 4px;
-        font-family: monospace;
+        background: rgba(14, 16, 26, 0.85);
+        border-left: 3px solid #8B5CF6;
+        padding: 8px 12px;
+        border-radius: 10px;
+        margin-bottom: 6px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 11.5px;
-        line-height: 1.4;
+        line-height: 1.45;
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
-      .santa-log-error { border-left-color: #ff3b5c; background: rgba(255, 59, 92, 0.08); color: #fca5a5; }
-      .santa-log-warn { border-left-color: #ffb800; background: rgba(255, 184, 0, 0.08); color: #fde047; }
-      .santa-log-api { border-left-color: #38bdf8; background: rgba(56, 189, 248, 0.08); color: #bae6fd; }
+      .santa-log-error { border-left: 3px solid #FF007F; background: rgba(255, 0, 127, 0.08); color: #fca5a5; }
+      .santa-log-warn { border-left: 3px solid #FFE600; background: rgba(255, 230, 0, 0.08); color: #fde047; }
+      .santa-log-api { border-left: 3px solid #00F0FF; background: rgba(0, 240, 255, 0.08); color: #bae6fd; }
     `;
     document.head.appendChild(style);
 

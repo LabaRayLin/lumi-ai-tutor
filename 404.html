@@ -38,28 +38,52 @@
       --mobile-safe-area-left: max(0px, env(safe-area-inset-left, 0));
       --mobile-safe-area-right: max(0px, env(safe-area-inset-right, 0));
 
-      /* Lumi AI Design Tokens */
-      --santa-bg-root: #111217;
-      --santa-bg-surface: #1c1e27;
-      --santa-bg-card: #222532;
-      --santa-bg-hover: #292d3e;
-      --santa-border: #2c3040;
-      --santa-border-focus: #3972f6;
+      /* Dark Tech Base Color Palette */
+      --bg-root: #0B0D14;
+      --bg-surface: rgba(19, 23, 38, 0.72);
+      --bg-card: rgba(26, 31, 50, 0.65);
+      --bg-card-elevated: rgba(34, 40, 64, 0.85);
+      --bg-hover: rgba(42, 50, 80, 0.85);
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-card: rgba(255, 255, 255, 0.1);
+      --border-highlight: rgba(139, 92, 246, 0.5);
 
-      --santa-blue: #3972f6;
-      --santa-blue-hover: #4e82f8;
-      --santa-blue-soft: #4da2ff;
-      --santa-coral: #ff3b5c;
-      --santa-coral-soft: #ff6b84;
-      --santa-gold: #ffb800;
-      --santa-green: #10b981;
+      /* High-Saturation Neon Accent Colors */
+      --neon-purple: #8B5CF6;
+      --neon-purple-deep: #7928CA;
+      --neon-cyan: #00F0FF;
+      --neon-blue: #3B82F6;
+      --neon-green: #00FF87;
+      --neon-yellow: #FFE600;
+      --neon-gold: #F59E0B;
+      --neon-coral: #FF007F;
+      --neon-pink: #FF2E93;
 
-      --santa-text-primary: #ffffff;
-      --santa-text-secondary: #9da5b4;
-      --santa-text-muted: #656d7e;
+      /* Text Hierarchy */
+      --text-primary: #FFFFFF;
+      --text-secondary: #CBD5E1;
+      --text-muted: #7E8B9F;
+      --text-dim: #475569;
+
+      /* Colored Neon Glows */
+      --glow-purple: 0 0 25px rgba(139, 92, 246, 0.45);
+      --glow-cyan: 0 0 25px rgba(0, 240, 255, 0.4);
+      --glow-green: 0 0 25px rgba(0, 255, 135, 0.4);
+      --glow-coral: 0 0 25px rgba(255, 0, 127, 0.45);
+      --glow-yellow: 0 0 25px rgba(255, 230, 0, 0.4);
+      --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.1);
+      --shadow-elevated: 0 24px 50px rgba(0, 0, 0, 0.75), 0 0 25px rgba(139, 92, 246, 0.25);
+
+      /* Border Radii */
+      --radius-pill: 9999px;
+      --radius-xl: 24px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
     }
     
-    /* CRITICAL RESET: Override Next.js body > * { white-space: pre-line } */
+    /* Global Reset & Typography Baseline */
     *, *::before, *::after {
       box-sizing: border-box;
       white-space: normal;
@@ -77,15 +101,21 @@
       overflow-x: hidden !important;
       overflow-y: auto !important;
       scroll-behavior: smooth;
-      background-color: var(--santa-bg-root);
+      background-color: var(--bg-root);
     }
     body {
       width: 100%;
       min-height: 100vh !important;
       height: auto !important;
-      background-color: var(--santa-bg-root);
-      color: var(--santa-text-primary);
-      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background-color: var(--bg-root);
+      background-image: 
+        radial-gradient(circle at 12% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 88% 25%, rgba(0, 240, 255, 0.09) 0%, transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(0, 255, 135, 0.06) 0%, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-primary);
+      font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "PingFang TC", sans-serif;
+      line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden !important;
@@ -102,151 +132,76 @@
       flex-direction: column;
     }
 
-    /* Custom Scrollbars */
+    /* Custom Modern Neon Scrollbar */
     ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: var(--santa-bg-root);
+      background: var(--bg-root);
     }
     ::-webkit-scrollbar-thumb {
-      background: #2b2f3e;
-      border-radius: 3px;
+      background: rgba(139, 92, 246, 0.3);
+      border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #3c4257;
+      background: rgba(0, 240, 255, 0.6);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
     }
 
-    /* Views Display Specificity Control */
+    /* View Transitions & Smooth Animations */
     .santa-view {
       display: none !important;
       flex-direction: column;
       width: 100%;
-      background-color: var(--santa-bg-root);
-      padding-bottom: 40px;
+      padding-bottom: 48px;
     }
     .santa-view.active {
       display: flex !important;
+      animation: santaViewSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes santaViewSlideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 1. Intro View */
-    #view-intro {
-      min-height: 100vh;
-      padding-bottom: 0;
-      background: var(--santa-bg-root);
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-    .santa-intro-hero {
-      flex: 1;
-      min-height: 38vh;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 50% 35%, #1d2130 0%, var(--santa-bg-root) 80%);
-      padding: 12px;
-    }
-    .santa-intro-hero img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center bottom;
-      max-width: 800px;
-      max-height: 420px;
-    }
-    .santa-bottom-card {
-      background-color: var(--santa-bg-surface);
-      border-radius: 24px 24px 0 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      padding: 20px 18px calc(24px + var(--mobile-safe-area-bottom));
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.6);
-    }
-    .santa-title-group {
-      width: 100%;
-      text-align: center;
-      max-width: 600px;
-    }
-    .santa-sub-title {
-      font-size: 13px;
-      color: var(--santa-blue-soft);
-      font-weight: 700;
-      margin-bottom: 4px;
-      letter-spacing: 0.5px;
-    }
-    .santa-main-title {
-      font-size: 21px;
-      font-weight: 800;
-      color: #ffffff;
-      line-height: 1.35;
-      letter-spacing: -0.5px;
-    }
-    .santa-primary-btn {
-      width: 100%;
-      max-width: 480px;
-      background: var(--santa-blue);
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 20px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 4px 16px rgba(57, 114, 246, 0.35);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .santa-primary-btn:active {
-      transform: scale(0.98);
-    }
-    .santa-primary-btn:hover {
-      background: var(--santa-blue-hover);
-      box-shadow: 0 6px 20px rgba(57, 114, 246, 0.5);
-    }
-
-    /* Top Navigation Bar */
+    /* Top Sticky Navigation Bar (Glassmorphic & Pill Buttons) */
     .santa-nav-header {
       position: sticky;
       top: 0;
       z-index: 1000;
-      padding: 8px 14px;
+      padding: 10px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--santa-border);
-      background: rgba(17, 18, 23, 0.95);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(11, 13, 20, 0.78);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+      gap: 12px;
     }
     .santa-nav-title {
-      font-size: 15px;
-      font-weight: 800;
+      font-size: 17px;
+      font-weight: 900;
       color: #ffffff;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
+      letter-spacing: -0.5px;
     }
     .santa-nav-title .brand-accent {
-      color: var(--santa-coral);
+      background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 50%, var(--neon-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 900;
     }
     .santa-nav-tabs {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
@@ -255,130 +210,240 @@
       display: none;
     }
     .santa-nav-btn {
-      background: var(--santa-bg-surface);
-      color: var(--santa-text-secondary);
-      border: 1px solid var(--santa-border);
-      padding: 5px 11px;
-      border-radius: 16px;
-      font-size: 12px;
-      font-weight: 600;
+      background: rgba(25, 30, 48, 0.6);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 7px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
-      transition: all 0.18s;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .santa-nav-btn:hover {
-      background: var(--santa-bg-hover);
+      background: rgba(38, 45, 72, 0.85);
       color: #ffffff;
-      border-color: #3b4256;
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
     }
     .santa-nav-btn.active {
-      background: var(--santa-blue);
+      background: linear-gradient(135deg, var(--neon-purple) 0%, #6366F1 100%);
       color: #ffffff;
-      border-color: var(--santa-blue);
-      box-shadow: 0 2px 8px rgba(57, 114, 246, 0.35);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: var(--glow-purple);
     }
 
-    /* Layout Containers */
+    /* Layout Containers & Rounded Cards */
     .santa-container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
-      padding: 8px 12px;
+      padding: 12px 16px;
       width: 100%;
     }
     .santa-box {
-      background: var(--santa-bg-surface);
-      border: 1px solid var(--santa-border);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      background: var(--bg-surface);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .santa-select-card {
-      background: var(--santa-bg-card);
-      border: 1.5px solid var(--santa-border);
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 6px;
+    .santa-box-interactive {
       cursor: pointer;
-      transition: all 0.18s;
-      display: flex;
-      justify-content: space-between;
+    }
+    .santa-box-interactive:hover {
+      transform: translateY(-3px) scale(1.015);
+      border-color: var(--neon-purple);
+      box-shadow: var(--shadow-elevated);
+    }
+
+    /* Pill Badges & Buttons */
+    .santa-badge {
+      display: inline-flex;
       align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(0, 240, 255, 0.12);
+      color: var(--neon-cyan);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
     }
-    .santa-select-card:hover {
-      border-color: var(--santa-blue);
-      background: var(--santa-bg-hover);
+    .santa-badge-gold {
+      background: rgba(255, 230, 0, 0.12);
+      color: var(--neon-yellow);
+      border: 1px solid rgba(255, 230, 0, 0.35);
+      box-shadow: 0 0 10px rgba(255, 230, 0, 0.2);
     }
-    .santa-select-card.selected {
-      border-color: var(--santa-blue);
-      background: rgba(57, 114, 246, 0.12);
-      box-shadow: 0 0 12px rgba(57, 114, 246, 0.15);
+    .santa-badge-green {
+      background: rgba(0, 255, 135, 0.12);
+      color: var(--neon-green);
+      border: 1px solid rgba(0, 255, 135, 0.35);
+      box-shadow: 0 0 10px rgba(0, 255, 135, 0.2);
+    }
+    .santa-badge-coral {
+      background: rgba(255, 0, 127, 0.12);
+      color: var(--neon-coral);
+      border: 1px solid rgba(255, 0, 127, 0.35);
+      box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+    }
+
+    /* Primary CTA Button (Pill Neon Glow) */
+    .santa-primary-btn {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-cyan) 100%);
+      color: #0c0e18;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--glow-cyan), 0 4px 15px rgba(139, 92, 246, 0.3);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .santa-primary-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 35px rgba(0, 240, 255, 0.6), 0 6px 22px rgba(139, 92, 246, 0.5);
+      filter: brightness(1.08);
+    }
+    .santa-primary-btn:active {
+      transform: scale(0.98);
+    }
+
+    .santa-btn {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, #6366F1 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 16px rgba(139, 92, 246, 0.3);
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .santa-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(139, 92, 246, 0.55);
+      filter: brightness(1.1);
+    }
+    .santa-btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-secondary);
+      box-shadow: none;
+    }
+    .santa-btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.28);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.12);
+    }
+
+    /* Input & Select */
+    .santa-input {
+      background: rgba(12, 14, 24, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      color: #ffffff;
+      font-size: 12.5px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .santa-input:focus {
+      outline: none;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2), 0 0 16px rgba(0, 240, 255, 0.25);
     }
 
     /* Exam Options Grid */
     .santa-options-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 10px;
       width: 100%;
-      margin-top: 6px;
+      margin-top: 10px;
     }
     .santa-option-btn {
-      background: var(--santa-bg-card);
-      border: 1px solid var(--santa-border);
-      border-radius: 8px;
-      padding: 10px 12px;
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 13px 16px;
       text-align: left;
-      color: var(--santa-text-primary);
-      font-size: 13.5px;
+      color: var(--text-primary);
+      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      min-height: 46px;
-      transition: all 0.15s ease;
+      min-height: 48px;
+      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .santa-option-btn:hover {
-      background: var(--santa-bg-hover);
-      border-color: var(--santa-blue-soft);
+      background: var(--bg-hover);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 18px rgba(0, 240, 255, 0.3);
+      transform: translateY(-2px) scale(1.015);
     }
     .santa-option-btn:active {
-      transform: scale(0.99);
+      transform: scale(0.98);
     }
     .santa-option-btn.correct {
-      background: rgba(16, 185, 129, 0.18) !important;
-      border-color: var(--santa-green) !important;
-      color: #6ee7b7 !important;
-      font-weight: 700;
+      background: rgba(0, 255, 135, 0.16) !important;
+      border-color: var(--neon-green) !important;
+      color: #00FF87 !important;
+      font-weight: 800;
+      box-shadow: var(--glow-green) !important;
     }
     .santa-option-btn.wrong {
-      background: rgba(255, 59, 92, 0.18) !important;
-      border-color: var(--santa-coral) !important;
-      color: #fca5a5 !important;
+      background: rgba(255, 0, 127, 0.16) !important;
+      border-color: var(--neon-coral) !important;
+      color: #FFA3BA !important;
+      font-weight: 800;
+      box-shadow: var(--glow-coral) !important;
     }
 
-    /* Vocabulary & Mistake Grid */
+    /* Vocabulary Cards Grid */
     .santa-voca-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 8px;
+      gap: 10px;
     }
     .santa-voca-card {
-      background: var(--santa-bg-card);
-      border: 1px solid var(--santa-border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      border-left: 3px solid var(--santa-blue);
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      border-left: 4px solid var(--neon-cyan);
       display: flex;
       flex-direction: column;
-      gap: 2px;
-      transition: all 0.15s;
+      gap: 4px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .santa-voca-card:hover {
-      background: var(--santa-bg-hover);
-      border-left-color: var(--santa-coral);
+      background: var(--bg-hover);
+      transform: translateY(-3px) scale(1.015);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.18);
     }
     .voca-header-row {
       display: flex;
@@ -386,107 +451,67 @@
       align-items: center;
     }
     .voca-word-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--santa-blue-soft);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--neon-cyan);
     }
     .voca-phonetic {
-      font-size: 11px;
-      color: var(--santa-text-muted);
+      font-size: 11.5px;
+      color: var(--text-muted);
       margin-left: 6px;
     }
     .voca-meaning {
-      font-size: 12.5px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       color: #ffffff;
     }
     .voca-example {
-      font-size: 11px;
-      color: var(--santa-text-secondary);
+      font-size: 11.5px;
+      color: var(--text-secondary);
       font-style: italic;
-      line-height: 1.3;
-    }
-    .santa-badge {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10.5px;
-      font-weight: 600;
-      background: rgba(57, 114, 246, 0.15);
-      color: var(--santa-blue-soft);
-      border: 1px solid rgba(57, 114, 246, 0.3);
-    }
-    .santa-btn {
-      background: var(--santa-blue);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      padding: 5px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.18s;
-    }
-    .santa-btn:hover { background: var(--santa-blue-hover); }
-    .santa-btn-outline {
-      background: var(--santa-bg-card);
-      border: 1px solid var(--santa-border);
-      color: var(--santa-text-secondary);
-    }
-    .santa-btn-outline:hover {
-      background: var(--santa-bg-hover);
-      color: #fff;
-      border-color: #3b4256;
-    }
-    .santa-input {
-      background: var(--santa-bg-card);
-      border: 1px solid var(--santa-border);
-      border-radius: 6px;
-      padding: 5px 8px;
-      color: #ffffff;
-      font-size: 12px;
-    }
-    .santa-input:focus {
-      outline: none;
-      border-color: var(--santa-blue);
-      box-shadow: 0 0 0 2px rgba(57, 114, 246, 0.25);
+      line-height: 1.45;
     }
 
     /* Mistake Card */
     .santa-mistake-card {
-      background: var(--santa-bg-card);
-      border: 1px solid var(--santa-border);
-      border-radius: 10px;
-      padding: 10px 14px;
-      border-left: 4px solid var(--santa-coral);
-      margin-bottom: 8px;
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      border-left: 4px solid var(--neon-coral);
+      margin-bottom: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .santa-mistake-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 20px rgba(255, 0, 127, 0.2);
     }
 
     /* Responsive Breakpoints */
     @media (max-width: 640px) {
-      .santa-container { padding: 6px 8px; }
-      .santa-main-title { font-size: 18px; }
-      .santa-bottom-card { padding: 16px 14px calc(24px + var(--mobile-safe-area-bottom)); }
-      .santa-options-grid { grid-template-columns: 1fr !important; gap: 6px !important; }
-      .santa-option-btn { padding: 11px 12px; font-size: 13.5px; }
+      .santa-container { padding: 8px 10px; }
+      .santa-options-grid { grid-template-columns: 1fr !important; gap: 8px !important; }
+      .santa-option-btn { padding: 12px 14px; font-size: 13.5px; }
       .santa-voca-grid { grid-template-columns: 1fr !important; }
-      .santa-box { padding: 10px 12px; border-radius: 10px; }
+      .santa-box { padding: 12px 14px; border-radius: 16px; }
       #santa-floating-btn {
         bottom: calc(14px + var(--mobile-safe-area-bottom)) !important;
         right: 12px !important;
-        padding: 6px 12px !important;
-        font-size: 11.5px !important;
+        padding: 7px 14px !important;
+        font-size: 12px !important;
       }
     }
     @media (min-width: 641px) and (max-width: 1024px) {
-      .santa-container { max-width: 780px; padding: 10px 16px; }
-      .santa-options-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .santa-voca-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .santa-container { max-width: 800px; padding: 12px 18px; }
+      .santa-options-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .santa-voca-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
     }
     @media (min-width: 1025px) {
       .santa-container { max-width: 980px; }
-      .santa-options-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .santa-voca-grid { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 10px; }
+      .santa-options-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .santa-voca-grid { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 12px; }
     }
   </style>
 
@@ -501,131 +526,135 @@
 <body>
   <div id="__next">
     
-    <!-- Top Sticky Navigation Bar -->
+    <!-- Top Sticky Navigation Bar (Glassmorphic + Pill Shape) -->
     <header id="santa-nav" class="santa-nav-header" style="display: flex;">
       <div class="santa-nav-title" onclick="switchView('course')">
         <span>✨ Lumi</span> <span class="brand-accent">AI</span>
       </div>
       <div class="santa-nav-tabs">
         <button class="santa-nav-btn active" data-target="course" onclick="switchView('course')">🏠 學習主頁</button>
-        <button class="santa-nav-btn" data-target="exam" onclick="switchView('exam')">📝 擬真診斷 (AI無限題庫)</button>
+        <button class="santa-nav-btn" data-target="exam" onclick="switchView('exam')">📝 擬真診斷 (AI題庫)</button>
         <button class="santa-nav-btn" data-target="mistakes" onclick="switchView('mistakes')">❌ 錯題本 (<span id="nav-mistakes-count">0</span>)</button>
         <button class="santa-nav-btn" data-target="speaking" onclick="switchView('speaking')">🎙️ AI 口說</button>
         <button class="santa-nav-btn" data-target="voca" onclick="switchView('voca')">📖 單字本</button>
         <button class="santa-nav-btn" data-target="lumi" onclick="switchView('lumi')">🤖 Lumi 導師</button>
       </div>
-      <div style="display: flex; gap: 4px; align-items: center;">
-        <span id="nav-sync-badge" class="santa-badge" style="display: none; background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">🟢 已同步</span>
-        <button id="pwa-install-btn" class="santa-btn" style="display: none; background: rgba(57, 114, 246, 0.2); color: var(--santa-blue-soft); border: 1px solid rgba(57, 114, 246, 0.4); font-size: 11px; padding: 4px 8px; white-space: nowrap;">
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <span id="nav-sync-badge" class="santa-badge santa-badge-green" style="display: none;">🟢 已同步</span>
+        <button id="pwa-install-btn" class="santa-btn santa-btn-outline" style="display: none; font-size: 11.5px; padding: 4px 10px; white-space: nowrap;">
           📲 安裝 App
         </button>
       </div>
     </header>
 
     <!-- VIEW 1: Modern Learning Dashboard (Main Home) -->
-    <section id="view-course" class="santa-view active" style="padding-bottom: calc(32px + var(--mobile-safe-area-bottom));">
+    <section id="view-course" class="santa-view active">
       <div class="santa-container">
         
         <!-- User Profile & Target Score Hero Card -->
-        <div class="santa-box" style="background: linear-gradient(135deg, #1c1e27 0%, #151720 100%); border-left: 4px solid var(--santa-blue); padding: 14px 16px; margin-bottom: 10px;">
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+        <div class="santa-box" style="background: linear-gradient(135deg, rgba(26, 32, 54, 0.85) 0%, rgba(15, 18, 30, 0.95) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-left: 5px solid var(--neon-purple); padding: 22px 24px; margin-bottom: 16px; border-radius: var(--radius-xl); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7), var(--glow-purple);">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
             <div>
-              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                <span class="santa-badge" style="background: rgba(255, 184, 0, 0.15); color: var(--santa-gold); border-color: rgba(255, 184, 0, 0.3); font-size: 10.5px;">👑 VIP UNLIMITED PASS (離線完整版)</span>
-                <span style="font-size: 11px; color: var(--santa-text-muted);">🔥 連續學習 3 天</span>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+                <span class="santa-badge santa-badge-gold">👑 VIP UNLIMITED PASS</span>
+                <span style="font-size: 12px; color: var(--text-muted);">🔥 連續學習 <b id="course-streak-days" style="color: var(--neon-yellow); font-weight: 800;">1</b> 天</span>
               </div>
-              <div style="font-size: 18px; font-weight: 800; color: #ffffff;" id="course-profile-name">Lumi 學習者</div>
-              <div style="font-size: 12.5px; color: var(--santa-text-secondary); margin-top: 4px;">
-                衝刺領域: <b style="color: #ffffff;">TOEIC 多益測驗</b> | 目標分數: <b id="course-target-score" style="color: var(--santa-gold);">900 分</b> | AI 預測實力: <b id="course-predicted-score" style="color: var(--santa-blue-soft);">845 分</b>
+              <div style="font-size: 26px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px; line-height: 1.25;" id="course-profile-name">
+                Lumi 學習者
+              </div>
+              <div style="font-size: 13.5px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5;">
+                衝刺領域: <b style="color: #ffffff;">TOEIC 多益測驗</b> &bull; 目標分數: <b id="course-target-score" style="color: var(--neon-yellow); font-weight: 800;">900 分</b> &bull; AI 預測實力: <b id="course-predicted-score" style="color: var(--neon-cyan); font-weight: 800;">845 分</b>
               </div>
             </div>
-            <button class="santa-primary-btn" style="padding: 9px 18px; font-size: 13px; max-width: 180px;" onclick="switchView('exam')">
+            <button class="santa-primary-btn" onclick="switchView('exam')">
               <span>🚀 立即開始刷題</span> <span>&rarr;</span>
             </button>
           </div>
         </div>
 
-        <!-- 5 High-Productivity Quick Launch Action Cards -->
-        <div style="margin-bottom: 12px;">
-          <div style="font-size: 13px; font-weight: 700; color: var(--santa-text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-            <span>⚡ 今日學習快捷入口</span>
-            <span style="font-size: 11px; color: var(--santa-blue-soft);">點擊直達功能</span>
+        <!-- 5 High-Productivity Quick Launch Action Cards (Clean Grid) -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 14px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="display: flex; align-items: center; gap: 6px;">⚡ 今日學習快捷入口</span>
+            <span style="font-size: 11.5px; color: var(--neon-cyan); font-weight: 700;">點擊直達功能</span>
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
             
             <!-- Card 1: AI Infinite Quiz -->
-            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-blue); margin: 0;" onclick="switchView('exam')">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">📝 AI 擬真診斷題庫</span>
-                <span style="font-size: 16px;">⚡</span>
+            <div class="santa-box santa-box-interactive" style="padding: 16px 18px; border-left: 4px solid var(--neon-cyan); margin: 0;" onclick="switchView('exam')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-weight: 800; font-size: 14.5px; color: #ffffff;">📝 擬真診斷題庫</span>
+                <span style="font-size: 18px; filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.6));">⚡</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">Part 1~7 全題型無限生成，即時詳解</div>
-              <div style="font-size: 11px; color: var(--santa-blue-soft); margin-top: 6px; font-weight: 600;">進入刷題 &gt;</div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">Part 1~7 全題型無限生成，即時詳解</div>
+              <div style="font-size: 12px; color: var(--neon-cyan); margin-top: 10px; font-weight: 700;">進入刷題 &rarr;</div>
             </div>
 
             <!-- Card 2: Mistake Notebook -->
-            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-coral); margin: 0;" onclick="switchView('mistakes')">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: 700; font-size: 13.5px; color: var(--santa-coral-soft);">❌ 錯題專屬重練本</span>
-                <span style="font-size: 16px;">🚨</span>
+            <div class="santa-box santa-box-interactive" style="padding: 16px 18px; border-left: 4px solid var(--neon-coral); margin: 0;" onclick="switchView('mistakes')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-weight: 800; font-size: 14.5px; color: var(--neon-coral);">❌ 錯題專屬重練</span>
+                <span style="font-size: 18px; filter: drop-shadow(0 0 6px rgba(255, 0, 127, 0.6));">🚨</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--santa-text-secondary);"><span id="course-mistakes-count" style="font-weight: 800; color: #ffffff;">0</span> 道待攻克錯題，反覆練習</div>
-              <div style="font-size: 11px; color: var(--santa-coral-soft); margin-top: 6px; font-weight: 600;">複習錯題 &gt;</div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;"><span id="course-mistakes-count" style="font-weight: 900; color: #ffffff;">0</span> 道待攻克錯題，反覆重練</div>
+              <div style="font-size: 12px; color: var(--neon-coral); margin-top: 10px; font-weight: 700;">複習錯題 &rarr;</div>
             </div>
 
             <!-- Card 3: AI Speaking -->
-            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid #a855f7; margin: 0;" onclick="switchView('speaking')">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">🎙️ TOEIC 口說實戰</span>
-                <span style="font-size: 16px;">🗣️</span>
+            <div class="santa-box santa-box-interactive" style="padding: 16px 18px; border-left: 4px solid var(--neon-purple); margin: 0;" onclick="switchView('speaking')">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <span style="font-weight: 800; font-size: 14.5px; color: #ffffff;">🎙️ TOEIC 口說實戰</span>
+                <span style="font-size: 18px; filter: drop-shadow(0 0 6px rgba(139, 92, 246, 0.6));">🗣️</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">11 大官方題型與 Gemini 多模態發音診斷</div>
-              <div style="font-size: 11px; color: #c084fc; margin-top: 6px; font-weight: 600;">開始口說 &gt;</div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">11 大官方題型與 Gemini 多模態評測</div>
+              <div style="font-size: 12px; color: var(--neon-purple); margin-top: 10px; font-weight: 700;">開始口說 &rarr;</div>
             </div>
 
             <!-- Card 4: Vocabulary SRS -->
-            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-green); margin: 0;" onclick="switchView('voca')">
+            <div class="santa-box santa-box-interactive" style="padding: 16px 18px; border-left: 4px solid var(--neon-green); margin: 0;" onclick="switchView('voca')">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">📖 單字庫與 SRS 測驗</span>
-                <span style="font-size: 16px;">🧠</span>
+                <span style="font-weight: 800; font-size: 14.5px; color: #ffffff;">📖 單字庫與 SRS</span>
+                <span style="font-size: 18px; filter: drop-shadow(0 0 6px rgba(0, 255, 135, 0.6));">🧠</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">艾賓浩斯遺忘曲線，4選1測驗與翻卡</div>
-              <div style="font-size: 11px; color: #6ee7b7; margin-top: 6px; font-weight: 600;">背單字 &gt;</div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">艾賓浩斯記憶曲線，4選1測驗與翻卡</div>
+              <div style="font-size: 12px; color: var(--neon-green); margin-top: 10px; font-weight: 700;">背單字 &rarr;</div>
             </div>
 
             <!-- Card 5: AI Tutor Lumi -->
-            <div class="santa-box" style="cursor: pointer; padding: 12px 14px; border-left: 3.5px solid var(--santa-gold); margin: 0;" onclick="switchView('lumi')">
+            <div class="santa-box santa-box-interactive" style="padding: 16px 18px; border-left: 4px solid var(--neon-yellow); margin: 0;" onclick="switchView('lumi')">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-weight: 700; font-size: 13.5px; color: #ffffff;">🤖 Lumi AI 專屬家教</span>
-                <span style="font-size: 16px;">💬</span>
+                <span style="font-weight: 800; font-size: 14.5px; color: #ffffff;">🤖 Lumi 專屬家教</span>
+                <span style="font-size: 18px; filter: drop-shadow(0 0 6px rgba(255, 230, 0, 0.6));">💬</span>
               </div>
-              <div style="font-size: 11.5px; color: var(--santa-text-secondary);">全天候即時英語文法解惑與考試技巧指導</div>
-              <div style="font-size: 11px; color: var(--santa-gold); margin-top: 6px; font-weight: 600;">詢問導師 &gt;</div>
+              <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.45;">全天候即時英語文法解惑與考試指導</div>
+              <div style="font-size: 12px; color: var(--neon-yellow); margin-top: 10px; font-weight: 700;">詢問導師 &rarr;</div>
             </div>
 
           </div>
         </div>
 
-        <!-- Learning Overview & Strengths -->
-        <div class="santa-box" style="padding: 12px 14px;">
-          <div style="font-size: 13px; font-weight: 700; color: #ffffff; margin-bottom: 6px;">📊 學習成效與題型掌握度</div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; text-align: center;">
-            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
-              <div style="font-size: 11px; color: var(--santa-text-muted);">Part 5 文法單句</div>
-              <div style="font-size: 15px; font-weight: 800; color: var(--santa-green); margin-top: 2px;">92% 正確率</div>
+        <!-- Learning Overview & Strengths (Card Grid) -->
+        <div class="santa-box" style="padding: 18px 20px;">
+          <div style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>📊 學習成效與題型掌握度</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; text-align: center;">
+            <div style="background: rgba(14, 17, 28, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Part 5 文法單句</div>
+              <div style="font-size: 18px; font-weight: 900; color: var(--neon-green); margin-top: 4px; text-shadow: 0 0 12px rgba(0, 255, 135, 0.4);">92% 正確率</div>
             </div>
-            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
-              <div style="font-size: 11px; color: var(--santa-text-muted);">Part 6 長篇克漏</div>
-              <div style="font-size: 15px; font-weight: 800; color: var(--santa-blue-soft); margin-top: 2px;">85% 正確率</div>
+            <div style="background: rgba(14, 17, 28, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Part 6 長篇克漏</div>
+              <div style="font-size: 18px; font-weight: 900; color: var(--neon-cyan); margin-top: 4px; text-shadow: 0 0 12px rgba(0, 240, 255, 0.4);">85% 正確率</div>
             </div>
-            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
-              <div style="font-size: 11px; color: var(--santa-text-muted);">Part 7 雙篇閱讀</div>
-              <div style="font-size: 15px; font-weight: 800; color: var(--santa-gold); margin-top: 2px;">78% 待加強</div>
+            <div style="background: rgba(14, 17, 28, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">Part 7 雙篇閱讀</div>
+              <div style="font-size: 18px; font-weight: 900; color: var(--neon-yellow); margin-top: 4px; text-shadow: 0 0 12px rgba(255, 230, 0, 0.4);">78% 待加強</div>
             </div>
-            <div style="background: var(--santa-bg-surface); padding: 8px; border-radius: 6px;">
-              <div style="font-size: 11px; color: var(--santa-text-muted);">口說發音平均</div>
-              <div style="font-size: 15px; font-weight: 800; color: #c084fc; margin-top: 2px;">88 分</div>
+            <div style="background: rgba(14, 17, 28, 0.85); padding: 12px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+              <div style="font-size: 11.5px; color: var(--text-muted); font-weight: 600;">口說發音平均</div>
+              <div style="font-size: 18px; font-weight: 900; color: var(--neon-purple); margin-top: 4px; text-shadow: 0 0 12px rgba(139, 92, 246, 0.4);">88 分</div>
             </div>
           </div>
         </div>
@@ -636,12 +665,12 @@
     <!-- VIEW 4: Practice & Diagnostic Exam -->
     <section id="view-exam" class="santa-view">
       <div class="santa-container">
-        <div class="santa-box" style="padding: 10px 14px; margin: 0;">
+        <div class="santa-box" style="padding: 16px 20px; margin: 0;">
           
           <!-- Unified Header & Control Bar -->
-          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; border-bottom: 1px solid var(--santa-border); padding-bottom: 6px; margin-bottom: 6px;">
-            <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-              <span id="exam-part-badge" style="font-size: 13px; font-weight: 700; color: var(--santa-blue-soft);">Part 5</span>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <span id="exam-part-badge" class="santa-badge" style="font-size: 12.5px; padding: 4px 12px;">Part 5</span>
               <select id="exam-part-select" class="santa-input" onchange="handlePartChange()">
                 <option value="part5">Part 5 - 單句文法/詞彙</option>
                 <option value="part6">Part 6 - 篇章克漏字</option>
@@ -656,32 +685,35 @@
               </select>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span id="exam-prefetch-status" style="font-size: 11px; background: rgba(57, 114, 246, 0.15); color: var(--santa-blue-soft); padding: 2px 7px; border-radius: 6px; border: 1px solid rgba(57, 114, 246, 0.3);">⚡ 預載已備: <b>2</b> 題</span>
-              <span style="font-size: 11px; color: var(--santa-text-muted);">
-                已答: <b id="exam-solved-count" style="color: var(--santa-gold);">0</b> 題 | 正確率: <b id="exam-accuracy-rate" style="color: var(--santa-green);">100%</b>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <span id="exam-prefetch-status" class="santa-badge" style="background: rgba(0, 240, 255, 0.12); color: var(--neon-cyan);">⚡ 預載已備: <b>2</b> 題</span>
+              <span style="font-size: 12px; color: var(--text-muted);">
+                已答: <b id="exam-solved-count" style="color: var(--neon-yellow);">0</b> 題 &bull; 正確率: <b id="exam-accuracy-rate" style="color: var(--neon-green);">100%</b>
               </span>
-              <button id="ai-gen-next-btn" class="santa-btn" style="background: linear-gradient(135deg, #3972f6 0%, #ff3b5c 100%);" onclick="generateNewAiQuestion()">
+              <button id="ai-gen-next-btn" class="santa-btn" onclick="generateNewAiQuestion()">
                 ⚡ AI 換題
               </button>
             </div>
           </div>
 
           <!-- Loading Spinner Box -->
-          <div id="exam-loading-spinner" style="display: none; text-align: center; padding: 12px 0;">
-            <div style="font-size: 18px;">⚡</div>
-            <div style="font-size: 12px; color: var(--santa-blue-soft); font-weight: 600; margin-top: 2px;">AI 導師正在即時生成試題...</div>
+          <div id="exam-loading-spinner" style="display: none; text-align: center; padding: 24px 0;">
+            <div style="font-size: 26px; animation: santaSpin 1s linear infinite; display: inline-block;">⚡</div>
+            <div style="font-size: 13px; color: var(--neon-cyan); font-weight: 700; margin-top: 6px;">AI 導師正在即時生成試題...</div>
           </div>
+          <style>
+            @keyframes santaSpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
+          </style>
 
           <!-- Question Content Container -->
           <div id="exam-content-area" style="display: block; margin: 0; padding: 0;">
-            <div id="exam-passage-box" style="display: none; background: var(--santa-bg-card); padding: 8px 10px; border-radius: 6px; font-size: 12.5px; color: var(--santa-text-secondary); line-height: 1.45; border-left: 3px solid var(--santa-blue); white-space: pre-wrap !important; margin: 4px 0;"></div>
-            <div id="exam-question-text" style="font-size: 14px; font-weight: 700; line-height: 1.35; color: #ffffff; margin: 4px 0;"></div>
+            <div id="exam-passage-box" style="display: none; background: rgba(14, 17, 28, 0.85); padding: 14px 18px; border-radius: var(--radius-md); font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; border-left: 4px solid var(--neon-cyan); white-space: pre-wrap !important; margin: 10px 0; border: 1px solid var(--border-subtle);"></div>
+            <div id="exam-question-text" style="font-size: 16px; font-weight: 800; line-height: 1.5; color: #ffffff; margin: 12px 0 8px 0; letter-spacing: -0.3px;"></div>
             <div id="exam-options-container" class="santa-options-grid"></div>
-            <div id="exam-explanation-box" style="display: none; background: var(--santa-bg-card); border-left: 3px solid var(--santa-green); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--santa-border); margin-top: 6px;">
-              <div style="font-weight: 700; color: var(--santa-green); margin-bottom: 2px; font-size: 12.5px;">💡 答案與詳解解析</div>
-              <div id="exam-explanation-text" style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.4;"></div>
-              <button class="santa-primary-btn" style="margin-top: 6px; padding: 6px 12px; max-width: 170px; font-size: 12px;" onclick="generateNewAiQuestion()">✨ AI 繼續生成下一題 &rarr;</button>
+            <div id="exam-explanation-box" style="display: none; background: rgba(14, 18, 28, 0.9); border-left: 4px solid var(--neon-green); padding: 14px 18px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle); margin-top: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+              <div style="font-weight: 800; color: var(--neon-green); margin-bottom: 4px; font-size: 13.5px; display: flex; align-items: center; gap: 6px;">💡 答案與解析詳解</div>
+              <div id="exam-explanation-text" style="font-size: 13px; color: var(--text-secondary); line-height: 1.55;"></div>
+              <button class="santa-primary-btn" style="margin-top: 12px; padding: 8px 18px; font-size: 13px;" onclick="generateNewAiQuestion()">✨ AI 繼續生成下一題 &rarr;</button>
             </div>
           </div>
 
@@ -692,27 +724,27 @@
     <!-- VIEW 4.5: Mistake Notebook (錯題本) -->
     <section id="view-mistakes" class="santa-view">
       <div class="santa-container">
-        <div class="santa-box" style="padding: 10px 14px;">
+        <div class="santa-box" style="padding: 16px 20px;">
           
           <!-- Header & Controls -->
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--santa-border); padding-bottom: 8px;">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
             <div>
-              <h3 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
+              <h3 style="margin: 0; font-size: 17px; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 8px;">
                 <span>❌ 錯題本與弱點強化中心</span>
-                <span id="mistakes-total-badge" class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">0 題錯題</span>
+                <span id="mistakes-total-badge" class="santa-badge santa-badge-coral">0 題錯題</span>
               </h3>
-              <div style="font-size: 11px; color: var(--santa-text-muted); margin-top: 2px;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
                 針對常錯考點進行重練，答對自動標記為已掌握
               </div>
             </div>
 
-            <div style="display: flex; gap: 6px; align-items: center;">
-              <button class="santa-btn santa-btn-outline" style="font-size: 11px;" onclick="clearMasteredMistakes()">🧹 清理已掌握錯題</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="santa-btn santa-btn-outline" style="font-size: 12px;" onclick="clearMasteredMistakes()">🧹 清理已掌握錯題</button>
             </div>
           </div>
 
           <!-- Category Filter Pills -->
-          <div style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 2px;">
+          <div style="display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 4px; scrollbar-width: none;">
             <button class="santa-nav-btn active mistake-cat-btn" data-cat="all" onclick="filterMistakes('all', this)">全部錯題 (<span id="m-count-all">0</span>)</button>
             <button class="santa-nav-btn mistake-cat-btn" data-cat="unsolved" onclick="filterMistakes('unsolved', this)">🚨 待攻克</button>
             <button class="santa-nav-btn mistake-cat-btn" data-cat="mastered" onclick="filterMistakes('mastered', this)">✅ 已掌握</button>
@@ -730,33 +762,33 @@
     <!-- VIEW 5: AI Speaking Practice Simulator (11 Questions + AI Dynamic Generator) -->
     <section id="view-speaking" class="santa-view">
       <div class="santa-container">
-        <div class="santa-box" style="padding: 10px 14px;">
+        <div class="santa-box" style="padding: 16px 20px;">
           
           <!-- Top Control Header -->
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--santa-border); padding-bottom: 8px;">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
             <div>
-              <h3 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
-                <span>🎙️ TOEIC Speaking 擬真口說題庫 (Q1~Q11)</span>
-                <span id="speaking-part-badge" class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">Part 1</span>
+              <h3 style="margin: 0; font-size: 17px; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                <span>🎙️ TOEIC Speaking 擬真口說題庫</span>
+                <span id="speaking-part-badge" class="santa-badge" style="background: rgba(139, 92, 246, 0.15); color: var(--neon-purple); border-color: rgba(139, 92, 246, 0.35);">Part 1</span>
               </h3>
-              <div style="font-size: 11px; color: var(--santa-text-muted); margin-top: 2px;">
-                涵蓋官方 5 大口說題型，支援即時倒數、Gemini 多模態發音評測與 AI 無限定制出題
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                涵蓋官方 5 大題型，支援倒數計時、Gemini 語音評測與 AI 無限定制出題
               </div>
             </div>
 
             <!-- Action Buttons -->
             <div style="display: flex; gap: 6px; align-items: center;">
-              <button class="santa-btn santa-btn-outline" style="font-size: 11px;" onclick="navigateSpeakingQuestion(-1)">⏮️ 上一題</button>
-              <span id="speaking-q-index-text" style="font-size: 12px; font-weight: 700; color: var(--santa-blue-soft);">第 1 / 11 題</span>
-              <button class="santa-btn santa-btn-outline" style="font-size: 11px;" onclick="navigateSpeakingQuestion(1)">下一題 ⏭️</button>
-              <button id="ai-gen-speaking-btn" class="santa-btn" style="background: linear-gradient(135deg, #3972f6 0%, #ff3b5c 100%); font-size: 11px; padding: 4px 8px;" onclick="generateAiSpeakingQuestion()">
+              <button class="santa-btn santa-btn-outline" style="font-size: 11.5px; padding: 5px 12px;" onclick="navigateSpeakingQuestion(-1)">⏮️ 上一題</button>
+              <span id="speaking-q-index-text" style="font-size: 12.5px; font-weight: 800; color: var(--neon-cyan);">第 1 / 11 題</span>
+              <button class="santa-btn santa-btn-outline" style="font-size: 11.5px; padding: 5px 12px;" onclick="navigateSpeakingQuestion(1)">下一題 ⏭️</button>
+              <button id="ai-gen-speaking-btn" class="santa-btn" style="font-size: 11.5px; padding: 5px 12px;" onclick="generateAiSpeakingQuestion()">
                 ✨ AI 出新題
               </button>
             </div>
           </div>
 
           <!-- Part Filter Pills -->
-          <div style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: 8px; padding-bottom: 2px;">
+          <div style="display: flex; gap: 6px; overflow-x: auto; margin-bottom: 14px; padding-bottom: 4px; scrollbar-width: none;">
             <button class="santa-nav-btn active spk-cat-btn" data-part="all" onclick="filterSpeakingPart('all', this)">🌟 全部 11 題</button>
             <button class="santa-nav-btn spk-cat-btn" data-part="part1" onclick="filterSpeakingPart('part1', this)">Q1-2 朗讀短文</button>
             <button class="santa-nav-btn spk-cat-btn" data-part="part2" onclick="filterSpeakingPart('part2', this)">Q3-4 圖片描述</button>
@@ -766,57 +798,57 @@
           </div>
 
           <!-- Question Content Box -->
-          <div class="santa-box" style="padding: 14px; margin-bottom: 8px; border-left: 4px solid var(--santa-coral);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <div id="spk-title" style="font-size: 13.5px; font-weight: 700; color: var(--santa-coral-soft);">
+          <div class="santa-box" style="padding: 18px 20px; margin-bottom: 12px; border-left: 4px solid var(--neon-purple);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div id="spk-title" style="font-size: 15px; font-weight: 800; color: var(--neon-purple);">
                 Question 1: Read a text aloud (朗讀短文)
               </div>
-              <div id="spk-timer-info" style="font-size: 11px; color: var(--santa-text-muted);">
-                準備: 45秒 | 作答: 45秒
+              <div id="spk-timer-info" style="font-size: 12px; color: var(--text-muted); font-weight: 600;">
+                準備: 45秒 &bull; 作答: 45秒
               </div>
             </div>
 
             <!-- Question Directions / Scenario Text -->
-            <div id="spk-directions" style="font-size: 12px; color: var(--santa-text-secondary); margin-bottom: 8px; font-style: italic;">
+            <div id="spk-directions" style="font-size: 12.5px; color: var(--text-secondary); margin-bottom: 10px; font-style: italic;">
               Directions: In this part, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read aloud.
             </div>
 
             <!-- Main Question Passage / Prompt -->
-            <div id="spk-passage" style="background: var(--santa-bg-surface); border-radius: 8px; padding: 12px 14px; font-size: 14px; line-height: 1.5; color: #ffffff; margin-bottom: 10px; border: 1px solid var(--santa-border); white-space: pre-wrap;">
+            <div id="spk-passage" style="background: rgba(14, 17, 28, 0.85); border-radius: var(--radius-md); padding: 14px 18px; font-size: 15px; line-height: 1.6; color: #ffffff; margin-bottom: 14px; border: 1px solid var(--border-subtle); white-space: pre-wrap;">
               "Welcome to the annual Green City Expo. Today, you will discover the latest innovations in solar energy, electric transportation, and sustainable living. Please remember to visit the interactive showcase on the second floor before the keynote session begins at two o'clock."
             </div>
 
             <!-- Audio Recording & Timer Control Area -->
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 12px 0;">
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <button id="spk-prep-timer-btn" class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="startPrepCountdown()">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 14px 0;">
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;">
+                <button id="spk-prep-timer-btn" class="santa-btn santa-btn-outline" style="font-size: 13px; padding: 9px 18px;" onclick="startPrepCountdown()">
                   ⏱️ 準備倒數 (45s)
                 </button>
-                <button id="speaking-mic-btn" class="santa-primary-btn" style="background: var(--santa-coral); max-width: 200px; padding: 8px 16px; font-size: 13.5px;" onclick="toggleSpeakingRecord()">
+                <button id="speaking-mic-btn" class="santa-primary-btn" style="background: linear-gradient(135deg, var(--neon-coral) 0%, var(--neon-pink) 100%); color: #fff; box-shadow: var(--glow-coral); max-width: 220px; padding: 10px 22px; font-size: 14px;" onclick="toggleSpeakingRecord()">
                   🔴 開始作答錄音
                 </button>
-                <button class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="toggleModelAnswer()">
+                <button class="santa-btn santa-btn-outline" style="font-size: 13px; padding: 9px 18px;" onclick="toggleModelAnswer()">
                   🌟 滿分示範答案
                 </button>
               </div>
-              <div id="speaking-status-text" style="font-size: 11px; color: var(--santa-text-muted);">點擊「開始作答錄音」按鈕後請朗讀上方文字或作答</div>
-              <audio id="speaking-audio-player" controls style="display: none; width: 100%; max-width: 400px; margin-top: 4px;"></audio>
+              <div id="speaking-status-text" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">點擊「開始作答錄音」按鈕後請朗讀上方文字或作答</div>
+              <audio id="speaking-audio-player" controls style="display: none; width: 100%; max-width: 440px; margin-top: 8px; border-radius: var(--radius-pill);"></audio>
             </div>
 
             <!-- Model Answer Accordion (Hidden by default) -->
-            <div id="spk-model-answer-box" style="display: none; background: rgba(57, 114, 246, 0.08); border: 1px solid rgba(57, 114, 246, 0.3); border-radius: 8px; padding: 10px 12px; margin-top: 8px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <div style="font-size: 12.5px; font-weight: 700; color: var(--santa-blue-soft);">🌟 ETS 滿分示範回答 (High-Score Sample Answer)</div>
-                <button class="santa-btn santa-btn-outline" style="padding: 2px 6px; font-size: 11px;" onclick="speakModelAnswer()">🔊 播放示範發音</button>
+            <div id="spk-model-answer-box" style="display: none; background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); border-radius: var(--radius-md); padding: 14px 16px; margin-top: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                <div style="font-size: 13.5px; font-weight: 800; color: var(--neon-cyan);">🌟 ETS 滿分示範回答 (High-Score Sample Answer)</div>
+                <button class="santa-btn santa-btn-outline" style="padding: 4px 10px; font-size: 11.5px;" onclick="speakModelAnswer()">🔊 播放示範</button>
               </div>
-              <div id="spk-model-answer-text" style="font-size: 12px; color: #cbd5e1; line-height: 1.45;"></div>
+              <div id="spk-model-answer-text" style="font-size: 13px; color: #cbd5e1; line-height: 1.55;"></div>
             </div>
 
             <!-- Evaluation Result Box -->
-            <div id="speaking-result-box" style="display: none; margin-top: 10px; background: var(--santa-bg-surface); border: 1px solid var(--santa-border); border-radius: 8px; padding: 10px 12px;">
-              <div style="font-size: 13px; font-weight: 700; color: var(--santa-blue-soft); margin-bottom: 4px;">📊 AI 多模態語音診斷評分報告</div>
-              <div id="speaking-transcription" style="font-size: 12px; color: #ffffff; margin-bottom: 6px; padding: 6px 8px; background: var(--santa-bg-card); border-radius: 6px; border-left: 3px solid var(--santa-blue);"></div>
-              <div id="speaking-scores" style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.5;"></div>
+            <div id="speaking-result-box" style="display: none; margin-top: 14px; background: rgba(14, 17, 28, 0.95); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px 18px;">
+              <div style="font-size: 14px; font-weight: 800; color: var(--neon-cyan); margin-bottom: 6px;">📊 AI 多模態語音診斷評分報告</div>
+              <div id="speaking-transcription" style="font-size: 13px; color: #ffffff; margin-bottom: 8px; padding: 8px 12px; background: var(--bg-card); border-radius: var(--radius-sm); border-left: 3px solid var(--neon-cyan);"></div>
+              <div id="speaking-scores" style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;"></div>
             </div>
 
           </div>
@@ -827,27 +859,27 @@
     <!-- VIEW 6: Vocabulary Wordbook, SRS Spaced Repetition & Quiz -->
     <section id="view-voca" class="santa-view">
       <div class="santa-container">
-        <div class="santa-box" style="padding: 10px 14px;">
+        <div class="santa-box" style="padding: 16px 20px;">
           
           <!-- Vocabulary Header & Controls -->
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--santa-border); padding-bottom: 8px;">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
             <div>
-              <h3 style="margin: 0; font-size: 15px; color: #ffffff; display: flex; align-items: center; gap: 6px;">
-                <span>📖 TOEIC 必考高頻核心單字庫</span>
+              <h3 style="margin: 0; font-size: 17px; font-weight: 900; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                <span>📖 TOEIC 必考核心單字庫</span>
                 <span id="voca-total-badge" class="santa-badge">50+ 核心詞彙</span>
-                <span id="voca-due-badge" class="santa-badge" style="background: rgba(255, 184, 0, 0.15); color: var(--santa-gold); border-color: rgba(255, 184, 0, 0.3); display: none;">⏰ 0 個待複習</span>
+                <span id="voca-due-badge" class="santa-badge santa-badge-gold" style="display: none;">⏰ 0 個待複習</span>
               </h3>
-              <div style="font-size: 11px; color: var(--santa-text-muted); margin-top: 2px;">
-                艾賓浩斯間隔記憶 (SRS) 演算法：答錯自動反覆重練，答對自動定期排程複習
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                艾賓浩斯間隔記憶 (SRS) 演算法：答錯自動循環重練，答對依記憶曲線定期排程複習
               </div>
             </div>
 
-            <!-- Top Mode Switch Tabs -->
-            <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap;">
+            <!-- Top Mode Switch Tabs (Pill Shape) -->
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
               <button id="voca-tab-btn-list" class="santa-nav-btn active" onclick="switchVocaSubMode('list')">📖 單字列表</button>
               <button id="voca-tab-btn-quiz" class="santa-nav-btn" onclick="switchVocaSubMode('quiz')">🎯 智能測驗 / 錯題重練</button>
               <button id="voca-tab-btn-card" class="santa-nav-btn" onclick="switchVocaSubMode('card')">🎴 翻轉記憶卡</button>
-              <button id="ai-expand-voca-btn" class="santa-btn" style="background: linear-gradient(135deg, #3972f6 0%, #ff3b5c 100%); font-size: 11px; padding: 4px 8px;" onclick="expandVocabularyWithAI()">
+              <button id="ai-expand-voca-btn" class="santa-btn" style="font-size: 11.5px; padding: 5px 12px;" onclick="expandVocabularyWithAI()">
                 ✨ AI 擴充
               </button>
             </div>
@@ -857,23 +889,23 @@
           <div id="voca-submode-list">
             
             <!-- Quick Review Banner if words are due -->
-            <div id="voca-due-banner" style="display: none; background: linear-gradient(135deg, rgba(255, 184, 0, 0.12) 0%, rgba(57, 114, 246, 0.12) 100%); border: 1px solid rgba(255, 184, 0, 0.3); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; justify-content: space-between; align-items: center;">
-              <div style="font-size: 12px; color: #fef08a;">
-                ⏰ <b>今日複習提醒:</b> 您有 <b id="voca-due-count-num" style="color: #ffffff; font-size: 14px;">0</b> 個單字已到達遺忘臨界點，建議立即複習以鞏固長期記憶！
+            <div id="voca-due-banner" style="display: none; background: linear-gradient(135deg, rgba(255, 230, 0, 0.12) 0%, rgba(139, 92, 246, 0.12) 100%); border: 1px solid rgba(255, 230, 0, 0.35); border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div style="font-size: 13px; color: var(--neon-yellow);">
+                ⏰ <b>今日複習提醒:</b> 您有 <b id="voca-due-count-num" style="color: #ffffff; font-size: 16px;">0</b> 個單字已到達遺忘臨界點，建議立即測驗鞏固長期記憶！
               </div>
-              <button class="santa-btn" style="background: var(--santa-gold); color: #000; font-weight: 700; font-size: 11.5px; padding: 4px 10px; white-space: nowrap;" onclick="startVocaQuiz('due')">
+              <button class="santa-btn" style="background: var(--neon-yellow); color: #0c0e18; font-weight: 800; font-size: 12px; padding: 6px 14px; white-space: nowrap;" onclick="startVocaQuiz('due')">
                 ⚡ 立即開始今日複習測驗
               </button>
             </div>
 
             <!-- Filter Pills (Mastery & Categories) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
-              <div style="display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+              <div style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; flex: 1; scrollbar-width: none;">
                 <button class="santa-nav-btn active voca-cat-btn" data-cat="all" onclick="filterVocaCategory('all', this)">🌟 全部 (<span id="count-all">0</span>)</button>
-                <button class="santa-nav-btn voca-cat-btn" data-cat="due" onclick="filterVocaCategory('due', this)" style="border-color: rgba(255, 184, 0, 0.4); color: var(--santa-gold);">⏰ 需複習 (<span id="count-due">0</span>)</button>
-                <button class="santa-nav-btn voca-cat-btn" data-cat="weak" onclick="filterVocaCategory('weak', this)" style="border-color: rgba(255, 59, 92, 0.4); color: var(--santa-coral-soft);">🚨 易錯待攻克 (<span id="count-weak">0</span>)</button>
-                <button class="santa-nav-btn voca-cat-btn" data-cat="mastered" onclick="filterVocaCategory('mastered', this)" style="color: var(--santa-green);">👑 已掌握 (<span id="count-mastered">0</span>)</button>
-                <span style="color: var(--santa-border); align-self: center;">|</span>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="due" onclick="filterVocaCategory('due', this)" style="border-color: rgba(255, 230, 0, 0.4); color: var(--neon-yellow);">⏰ 需複習 (<span id="count-due">0</span>)</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="weak" onclick="filterVocaCategory('weak', this)" style="border-color: rgba(255, 0, 127, 0.4); color: var(--neon-coral);">🚨 易錯待攻克 (<span id="count-weak">0</span>)</button>
+                <button class="santa-nav-btn voca-cat-btn" data-cat="mastered" onclick="filterVocaCategory('mastered', this)" style="color: var(--neon-green);">👑 已掌握 (<span id="count-mastered">0</span>)</button>
+                <span style="color: var(--border-subtle); align-self: center;">|</span>
                 <button class="santa-nav-btn voca-cat-btn" data-cat="biz" onclick="filterVocaCategory('biz', this)">💼 商務</button>
                 <button class="santa-nav-btn voca-cat-btn" data-cat="finance" onclick="filterVocaCategory('finance', this)">💰 財務</button>
                 <button class="santa-nav-btn voca-cat-btn" data-cat="hr" onclick="filterVocaCategory('hr', this)">👥 人事</button>
@@ -882,7 +914,7 @@
                 <button class="santa-nav-btn voca-cat-btn" data-cat="travel" onclick="filterVocaCategory('travel', this)">✈️ 差旅</button>
               </div>
 
-              <input type="text" id="voca-search-input" class="santa-input" placeholder="🔍 搜尋單字或中文..." oninput="handleVocaSearch()" style="width: 140px; font-size: 11.5px;" />
+              <input type="text" id="voca-search-input" class="santa-input" placeholder="🔍 搜尋單字或中文..." oninput="handleVocaSearch()" style="width: 160px; font-size: 12px;" />
             </div>
 
             <!-- Vocabulary Cards Grid -->
@@ -893,29 +925,29 @@
           <div id="voca-submode-quiz" style="display: none;">
             
             <!-- Quiz Launcher Menu -->
-            <div id="voca-quiz-launcher" style="text-align: center; padding: 20px 12px; max-width: 600px; margin: 0 auto;">
-              <div style="font-size: 32px; margin-bottom: 8px;">🎯</div>
-              <h3 style="font-size: 17px; font-weight: 800; color: #ffffff; margin: 0 0 6px 0;">單字智能速測與錯題循環重練</h3>
-              <p style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.45; margin: 0 0 16px 0;">
-                測驗中答錯的單字會<b>自動重新排入本次測驗佇列</b>，反覆出現直到您完全掌握為止；答對的單字將自動依記憶曲線排定下次複習時間。
+            <div id="voca-quiz-launcher" style="text-align: center; padding: 24px 16px; max-width: 640px; margin: 0 auto;">
+              <div style="font-size: 36px; margin-bottom: 10px;">🎯</div>
+              <h3 style="font-size: 20px; font-weight: 900; color: #ffffff; margin: 0 0 8px 0; letter-spacing: -0.3px;">單字智能速測與錯題循環重練</h3>
+              <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 20px 0;">
+                測驗中答錯的單字會<b>自動重新排入本次測驗佇列</b>，反覆出現直到您完全掌握；答對的單字將自動依記憶曲線排定下次複習時間。
               </p>
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
-                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-gold); text-align: left;" onclick="startVocaQuiz('due')">
-                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-gold);">⏰ 今日到期複習測驗</div>
-                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">只測驗已達遺忘臨界點的單字</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-yellow); text-align: left;" onclick="startVocaQuiz('due')">
+                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-yellow);">⏰ 今日到期複習測驗</div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">只測驗已達遺忘臨界點的單字</div>
                 </div>
-                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-coral); text-align: left;" onclick="startVocaQuiz('weak')">
-                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-coral-soft);">🚨 易錯弱點單字特訓</div>
-                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">專項攻克曾答錯的重點難詞</div>
+                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-coral); text-align: left;" onclick="startVocaQuiz('weak')">
+                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-coral);">🚨 易錯弱點單字特訓</div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">專項攻克曾答錯的重點難詞</div>
                 </div>
-                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-blue); text-align: left;" onclick="startVocaQuiz('all')">
-                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-blue-soft);">🌟 全單字庫綜合速測 (10題)</div>
-                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">隨機抽取核心必考商務詞彙</div>
+                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-cyan); text-align: left;" onclick="startVocaQuiz('all')">
+                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-cyan);">🌟 全單字庫綜合速測 (10題)</div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">隨機抽取核心必考商務詞彙</div>
                 </div>
-                <div class="santa-box" style="cursor: pointer; padding: 12px; border-left: 3px solid var(--santa-green); text-align: left;" onclick="startVocaQuiz('active_cat')">
-                  <div style="font-weight: 700; font-size: 13px; color: var(--santa-green);">💼 當前分類專項測驗</div>
-                  <div style="font-size: 11px; color: var(--santa-text-secondary); margin-top: 2px;">測驗目前選定分類的單字</div>
+                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-green); text-align: left;" onclick="startVocaQuiz('active_cat')">
+                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-green);">💼 當前分類專項測驗</div>
+                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">測驗目前選定分類的單字</div>
                 </div>
               </div>
             </div>
@@ -924,68 +956,68 @@
             <div id="voca-quiz-active" style="display: none; max-width: 680px; margin: 0 auto;">
               
               <!-- Progress & Queue Info -->
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11.5px; color: var(--santa-text-muted);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; color: var(--text-muted);">
                 <div>
-                  進度: <b id="vq-progress-text" style="color: #ffffff; font-size: 13px;">1 / 10</b>
+                  進度: <b id="vq-progress-text" style="color: #ffffff; font-size: 14px; font-weight: 800;">1 / 10</b>
                 </div>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                  <span id="vq-requeue-badge" class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3); display: none;">
+                  <span id="vq-requeue-badge" class="santa-badge santa-badge-coral" style="display: none;">
                     🚨 待重練錯題: <b id="vq-requeue-count">0</b>
                   </span>
-                  <button class="santa-btn santa-btn-outline" style="font-size: 11px; padding: 2px 6px;" onclick="exitVocaQuiz()">結束測驗</button>
+                  <button class="santa-btn santa-btn-outline" style="font-size: 11.5px; padding: 3px 10px;" onclick="exitVocaQuiz()">結束測驗</button>
                 </div>
               </div>
 
               <!-- Question Card -->
-              <div class="santa-box" style="padding: 16px; border-left: 4px solid var(--santa-blue); margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                  <div style="display: flex; align-items: baseline; gap: 8px;">
-                    <span id="vq-word" style="font-size: 22px; font-weight: 800; color: var(--santa-blue-soft);">word</span>
-                    <span id="vq-phonetic" style="font-size: 12px; color: var(--santa-text-muted);">/phonetic/</span>
-                    <span id="vq-pos" style="font-size: 10.5px; background: rgba(57, 114, 246, 0.2); color: var(--santa-blue-soft); padding: 1px 5px; border-radius: 4px;">pos</span>
+              <div class="santa-box" style="padding: 20px; border-left: 4px solid var(--neon-purple); margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <span id="vq-word" style="font-size: 26px; font-weight: 900; background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">word</span>
+                    <span id="vq-phonetic" style="font-size: 13px; color: var(--text-muted);">/phonetic/</span>
+                    <span id="vq-pos" class="santa-badge" style="font-size: 11px;">pos</span>
                   </div>
-                  <button class="santa-btn santa-btn-outline" style="padding: 4px 8px; font-size: 13px;" onclick="speakCurrentQuizWord()">🔊 播放發音</button>
+                  <button class="santa-btn santa-btn-outline" style="padding: 5px 10px; font-size: 12px;" onclick="speakCurrentQuizWord()">🔊 發音</button>
                 </div>
 
                 <!-- Cloze / Example Sentence Prompt -->
-                <div style="background: var(--santa-bg-surface); padding: 8px 10px; border-radius: 6px; font-size: 12.5px; color: var(--santa-text-secondary); line-height: 1.45; margin-bottom: 12px; border: 1px solid var(--santa-border);">
+                <div style="background: rgba(14, 17, 28, 0.85); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13.5px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 14px; border: 1px solid var(--border-subtle);">
                   💡 <b>例句語境:</b> <span id="vq-example-cloze" style="color: #ffffff;">...</span>
                 </div>
 
-                <!-- 4 Choices -->
-                <div id="vq-options-container" class="santa-options-grid" style="grid-template-columns: 1fr 1fr; gap: 8px;"></div>
+                <!-- 4 Choices Grid -->
+                <div id="vq-options-container" class="santa-options-grid" style="grid-template-columns: 1fr 1fr; gap: 10px;"></div>
 
                 <!-- Feedback Box -->
-                <div id="vq-feedback-box" style="display: none; margin-top: 10px; padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.45;"></div>
+                <div id="vq-feedback-box" style="display: none; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.55;"></div>
               </div>
             </div>
 
             <!-- Quiz Result Summary Screen -->
-            <div id="voca-quiz-summary" style="display: none; text-align: center; padding: 24px 16px; max-width: 600px; margin: 0 auto;">
-              <div style="font-size: 36px; margin-bottom: 8px;">🎉</div>
-              <h2 style="font-size: 20px; font-weight: 800; color: #ffffff; margin: 0 0 6px 0;">單字測驗圓滿完成！</h2>
-              <p style="font-size: 12.5px; color: var(--santa-text-secondary); margin: 0 0 16px 0;">
+            <div id="voca-quiz-summary" style="display: none; text-align: center; padding: 28px 18px; max-width: 600px; margin: 0 auto;">
+              <div style="font-size: 42px; margin-bottom: 10px;">🎉</div>
+              <h2 style="font-size: 22px; font-weight: 900; color: #ffffff; margin: 0 0 8px 0; letter-spacing: -0.3px;">單字測驗圓滿完成！</h2>
+              <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 20px 0;">
                 本次測驗的所有錯題皆已反覆重練完畢，記憶間隔時間已更新。
               </p>
 
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;">
-                <div class="santa-box" style="padding: 10px;">
-                  <div style="font-size: 11px; color: var(--santa-text-muted);">總測驗單字</div>
-                  <div id="vq-res-total" style="font-size: 18px; font-weight: 800; color: #ffffff;">10</div>
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+                <div class="santa-box" style="padding: 12px;">
+                  <div style="font-size: 11.5px; color: var(--text-muted);">總測驗單字</div>
+                  <div id="vq-res-total" style="font-size: 20px; font-weight: 900; color: #ffffff;">10</div>
                 </div>
-                <div class="santa-box" style="padding: 10px;">
-                  <div style="font-size: 11px; color: var(--santa-text-muted);">首輪答對率</div>
-                  <div id="vq-res-acc" style="font-size: 18px; font-weight: 800; color: var(--santa-green);">90%</div>
+                <div class="santa-box" style="padding: 12px;">
+                  <div style="font-size: 11.5px; color: var(--text-muted);">首輪答對率</div>
+                  <div id="vq-res-acc" style="font-size: 20px; font-weight: 900; color: var(--neon-green);">90%</div>
                 </div>
-                <div class="santa-box" style="padding: 10px;">
-                  <div style="font-size: 11px; color: var(--santa-text-muted);">晉升熟練</div>
-                  <div id="vq-res-upgraded" style="font-size: 18px; font-weight: 800; color: var(--santa-gold);">8 個</div>
+                <div class="santa-box" style="padding: 12px;">
+                  <div style="font-size: 11.5px; color: var(--text-muted);">晉升熟練</div>
+                  <div id="vq-res-upgraded" style="font-size: 20px; font-weight: 900; color: var(--neon-yellow);">8 個</div>
                 </div>
               </div>
 
-              <div style="display: flex; gap: 8px; justify-content: center;">
-                <button class="santa-primary-btn" style="max-width: 180px; font-size: 13px;" onclick="startVocaQuiz('all')">🔄 再測一輪</button>
-                <button class="santa-btn santa-btn-outline" style="padding: 8px 16px; font-size: 13px;" onclick="switchVocaSubMode('list')">📖 返回單字本</button>
+              <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="santa-primary-btn" onclick="startVocaQuiz('all')">🔄 再測一輪</button>
+                <button class="santa-btn santa-btn-outline" style="padding: 10px 20px; font-size: 13px;" onclick="switchVocaSubMode('list')">📖 返回單字本</button>
               </div>
             </div>
 
@@ -993,35 +1025,35 @@
 
           <!-- ================= SUBMODE 3: FLASHCARD FLIP ================= -->
           <div id="voca-submode-card" style="display: none; max-width: 580px; margin: 0 auto; text-align: center;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; color: var(--santa-text-muted);">
-              <div>卡片: <b id="vf-index-text" style="color: #fff;">1 / 48</b></div>
-              <div style="font-size: 11px;">點擊卡片翻面檢視中文釋義與例句</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; color: var(--text-muted);">
+              <div>卡片: <b id="vf-index-text" style="color: #fff; font-weight: 800;">1 / 48</b></div>
+              <div style="font-size: 11.5px;">點擊卡片翻面檢視中文釋義與例句</div>
             </div>
 
             <!-- Flip Card -->
-            <div id="vf-card-element" class="santa-box" style="min-height: 220px; padding: 24px 18px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border-left: 4px solid var(--santa-blue); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 24px rgba(0,0,0,0.4);" onclick="toggleFlashcardFlip()">
+            <div id="vf-card-element" class="santa-box" style="min-height: 240px; padding: 28px 22px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; border: 1px solid rgba(139, 92, 246, 0.35); border-radius: var(--radius-xl); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 20px 50px rgba(0,0,0,0.7), var(--glow-purple);" onclick="toggleFlashcardFlip()">
               <!-- Front Side -->
               <div id="vf-card-front">
-                <div id="vf-word" style="font-size: 26px; font-weight: 800; color: var(--santa-blue-soft); margin-bottom: 4px;">substantial</div>
-                <div id="vf-phonetic" style="font-size: 13px; color: var(--santa-text-muted); margin-bottom: 10px;">/səbˈstæn.ʃəl/</div>
-                <div id="vf-pos" class="santa-badge" style="font-size: 11px;">adj.</div>
-                <div style="margin-top: 14px; font-size: 11px; color: var(--santa-text-muted);">👆 點擊翻轉查看釋義 &gt;</div>
+                <div id="vf-word" style="font-size: 30px; font-weight: 900; background: linear-gradient(135deg, var(--neon-green) 0%, var(--neon-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;">substantial</div>
+                <div id="vf-phonetic" style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">/səbˈstæn.ʃəl/</div>
+                <div id="vf-pos" class="santa-badge" style="font-size: 11.5px;">adj.</div>
+                <div style="margin-top: 18px; font-size: 12px; color: var(--text-muted);">👆 點擊卡片翻轉查看釋義 &gt;</div>
               </div>
 
               <!-- Back Side -->
               <div id="vf-card-back" style="display: none;">
-                <div id="vf-meaning" style="font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 8px;">大量的；實質的；重要的</div>
-                <div id="vf-example" style="font-size: 12px; color: var(--santa-text-secondary); line-height: 1.45; font-style: italic; background: var(--santa-bg-surface); padding: 8px 12px; border-radius: 6px;">"The company achieved a substantial increase in revenue."</div>
-                <button class="santa-btn santa-btn-outline" style="margin-top: 12px; font-size: 11.5px; padding: 3px 8px;" onclick="event.stopPropagation(); speakWord(document.getElementById('vf-word').innerText)">🔊 朗讀發音</button>
+                <div id="vf-meaning" style="font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 10px;">大量的；實質的；重要的</div>
+                <div id="vf-example" style="font-size: 13px; color: var(--text-secondary); line-height: 1.55; font-style: italic; background: rgba(14, 17, 28, 0.85); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">"The company achieved a substantial increase in revenue."</div>
+                <button class="santa-btn santa-btn-outline" style="margin-top: 14px; font-size: 12px; padding: 4px 12px;" onclick="event.stopPropagation(); speakWord(document.getElementById('vf-word').innerText)">🔊 朗讀發音</button>
               </div>
             </div>
 
-            <!-- Action Rating Buttons -->
-            <div style="display: flex; gap: 8px; justify-content: center; margin-top: 12px;">
-              <button class="santa-btn" style="flex: 1; max-width: 180px; background: rgba(255, 59, 92, 0.2); color: var(--santa-coral-soft); border: 1px solid rgba(255, 59, 92, 0.4); padding: 10px; font-size: 13px; font-weight: 700;" onclick="handleFlashcardAction(false)">
+            <!-- Action Rating Buttons (Pills with colored glow) -->
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 16px;">
+              <button class="santa-btn" style="flex: 1; max-width: 200px; background: rgba(255, 0, 127, 0.18); color: #FFA3BA; border: 1px solid rgba(255, 0, 127, 0.4); padding: 12px; font-size: 13.5px; font-weight: 800; box-shadow: 0 0 16px rgba(255, 0, 127, 0.2);" onclick="handleFlashcardAction(false)">
                 ❌ 不熟 / 忘記了
               </button>
-              <button class="santa-btn" style="flex: 1; max-width: 180px; background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); padding: 10px; font-size: 13px; font-weight: 700;" onclick="handleFlashcardAction(true)">
+              <button class="santa-btn" style="flex: 1; max-width: 200px; background: rgba(0, 255, 135, 0.18); color: #00FF87; border: 1px solid rgba(0, 255, 135, 0.4); padding: 12px; font-size: 13.5px; font-weight: 800; box-shadow: 0 0 16px rgba(0, 255, 135, 0.2);" onclick="handleFlashcardAction(true)">
                 ✅ 記住了 / 熟練
               </button>
             </div>
@@ -1034,24 +1066,24 @@
     <!-- VIEW 7: Lumi AI Tutor Chat -->
     <section id="view-lumi" class="santa-view">
       <div class="santa-container">
-        <div class="santa-box" style="display: flex; flex-direction: column; height: 75vh; padding: 10px;">
-          <div style="display: flex; align-items: center; gap: 6px; border-bottom: 1px solid var(--santa-border); padding-bottom: 4px; margin-bottom: 6px;">
-            <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--santa-coral); display: flex; align-items: center; justify-content: center; font-size: 14px;">🤖</div>
+        <div class="santa-box" style="display: flex; flex-direction: column; height: 75vh; padding: 16px; border-radius: var(--radius-xl);">
+          <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px; margin-bottom: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-cyan) 100%); display: flex; align-items: center; justify-content: center; font-size: 16px; box-shadow: var(--glow-purple);">🤖</div>
             <div>
-              <div style="font-weight: 700; font-size: 12.5px; color: #ffffff;">Lumi (AI 專屬英文導師)</div>
-              <div style="font-size: 9.5px; color: var(--santa-green);">● 線上支援中 (BYOK AI)</div>
+              <div style="font-weight: 800; font-size: 14px; color: #ffffff;">Lumi (AI 專屬英文導師)</div>
+              <div style="font-size: 11px; color: var(--neon-green); font-weight: 700;">● 線上支援中 (BYOK AI)</div>
             </div>
           </div>
 
-          <div id="lumi-chat-box" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px;">
-            <div style="background: var(--santa-bg-card); border: 1px solid var(--santa-border); padding: 6px 10px; border-radius: 8px 8px 8px 0; max-width: 80%; font-size: 12px; line-height: 1.4; color: #ffffff;">
+          <div id="lumi-chat-box" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 4px;">
+            <div style="background: rgba(26, 31, 50, 0.85); border: 1px solid var(--border-subtle); padding: 10px 14px; border-radius: 20px 20px 20px 4px; max-width: 80%; font-size: 13px; line-height: 1.5; color: #ffffff;">
               Hello! 我是 Lumi 導師。歡迎來到 Lumi AI 英文學習空間！今天想練習文法解析、口說技巧，還是解答任何 TOEIC 疑惑呢？
             </div>
           </div>
 
-          <div style="display: flex; gap: 4px; margin-top: 6px;">
-            <input type="text" id="lumi-input" class="santa-input" style="padding: 5px 8px; font-size: 11.5px; width: 100%;" placeholder="輸入您的英文學習問題..." onkeydown="if(event.key==='Enter') sendLumiMessage()" />
-            <button class="santa-btn" style="padding: 5px 10px; font-size: 11.5px;" onclick="sendLumiMessage()">發送</button>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <input type="text" id="lumi-input" class="santa-input" style="padding: 10px 16px; font-size: 13px; width: 100%; border-radius: var(--radius-pill);" placeholder="輸入您的英文學習問題..." onkeydown="if(event.key==='Enter') sendLumiMessage()" />
+            <button class="santa-primary-btn" style="padding: 10px 20px; font-size: 13px; white-space: nowrap;" onclick="sendLumiMessage()">發送</button>
           </div>
         </div>
       </div>
@@ -1156,6 +1188,9 @@
         document.getElementById('course-profile-name').innerText = displayName;
         document.getElementById('course-target-score').innerText = (p.targetScore || 900) + ' 分';
         document.getElementById('course-predicted-score').innerText = (p.predictedScore || 845) + ' 分';
+
+        const streakEl = document.getElementById('course-streak-days');
+        if (streakEl) streakEl.innerText = p.streakDays || 1;
 
         const mistakes = window.SantaDB.getMistakes();
         const unsolved = mistakes.filter(m => m.status !== 'MASTERED').length;
@@ -1304,7 +1339,7 @@
       const optContainer = document.getElementById('exam-options-container');
       optContainer.innerHTML = q.options.map(opt => `
         <button class="santa-option-btn" onclick="checkAnswer('${opt.key}', this)">
-          <b style="color: var(--santa-blue-soft); font-size: 13px;">(${opt.key})</b> <span>${opt.text}</span>
+          <b style="color: var(--neon-cyan); font-size: 14px; font-weight: 800;">(${opt.key})</b> <span>${opt.text}</span>
         </button>
       `).join('');
     }
@@ -1343,10 +1378,10 @@
 
       const expBox = document.getElementById('exam-explanation-box');
       document.getElementById('exam-explanation-text').innerHTML = `
-        <div style="font-weight: 700; margin-bottom: 2px; color: ${isCorrect ? 'var(--santa-green)' : 'var(--santa-coral)'};">
+        <div style="font-weight: 800; margin-bottom: 4px; color: ${isCorrect ? 'var(--neon-green)' : 'var(--neon-coral)'}; font-size: 14px;">
           ${isCorrect ? '✅ 答對了！' : '❌ 答錯了，已自動記錄至「錯題本」。正確答案為 (' + currentQuestionData.correct + ')'}
         </div>
-        <div>${currentQuestionData.explanation}</div>
+        <div style="color: var(--text-secondary); line-height: 1.55;">${currentQuestionData.explanation}</div>
       `;
       expBox.style.display = 'block';
 
@@ -1384,10 +1419,10 @@
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="text-align: center; padding: 32px 16px; color: var(--santa-text-muted);">
-            <div style="font-size: 28px; margin-bottom: 6px;">🎉</div>
-            <div style="font-size: 14px; font-weight: 700; color: #ffffff;">太棒了！目前沒有未解決的錯題</div>
-            <div style="font-size: 12px; margin-top: 2px;">在模擬測驗中答錯的題目會自動保存在這裡進行強化練習。</div>
+          <div style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
+            <div style="font-size: 36px; margin-bottom: 10px;">🎉</div>
+            <div style="font-size: 16px; font-weight: 800; color: #ffffff;">太棒了！目前沒有未解決的錯題</div>
+            <div style="font-size: 13px; margin-top: 4px; color: var(--text-secondary);">在模擬測驗中答錯的題目會自動保存在這裡進行強化練習。</div>
           </div>
         `;
         return;
@@ -1395,38 +1430,38 @@
 
       container.innerHTML = filtered.map((m, idx) => `
         <div class="santa-mistake-card" id="mistake-card-${idx}">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <div style="display: flex; align-items: center; gap: 6px;">
-              <span class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">${m.part || 'Part 5'}</span>
-              <span style="font-size: 11px; color: var(--santa-text-muted);">${m.skill || '文法考點'}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="santa-badge santa-badge-coral">${m.part || 'Part 5'}</span>
+              <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">${m.skill || '文法考點'}</span>
             </div>
             <div>
               ${m.status === 'MASTERED' 
-                ? '<span style="font-size: 11px; color: var(--santa-green); font-weight: 700;">✅ 已攻克掌握</span>' 
-                : `<span style="font-size: 11px; color: var(--santa-coral-soft); font-weight: 700;">⚠️ 答錯 ${m.wrongCount || 1} 次</span>`}
+                ? '<span style="font-size: 12px; color: var(--neon-green); font-weight: 800; text-shadow: 0 0 10px rgba(0, 255, 135, 0.3);">✅ 已攻克掌握</span>' 
+                : `<span style="font-size: 12px; color: var(--neon-coral); font-weight: 800;">⚠️ 答錯 ${m.wrongCount || 1} 次</span>`}
             </div>
           </div>
 
-          ${m.passage ? `<div style="background: var(--santa-bg-surface); padding: 8px 10px; border-radius: 6px; font-size: 12px; color: var(--santa-text-secondary); line-height: 1.45; margin-bottom: 6px; border-left: 2px solid var(--santa-blue); white-space: pre-wrap;">${m.passage}</div>` : ''}
+          ${m.passage ? `<div style="background: rgba(14, 17, 28, 0.85); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 8px; border-left: 3px solid var(--neon-cyan); border: 1px solid var(--border-subtle); white-space: pre-wrap;">${m.passage}</div>` : ''}
 
-          <div style="font-size: 13.5px; font-weight: 700; color: #ffffff; line-height: 1.4; margin-bottom: 8px;">${m.question}</div>
+          <div style="font-size: 14.5px; font-weight: 800; color: #ffffff; line-height: 1.5; margin-bottom: 10px;">${m.question}</div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
             ${(m.options || []).map(opt => {
-              let style = 'background: var(--santa-bg-surface); border: 1px solid var(--santa-border); color: #cbd5e1;';
-              if (opt.key === m.correct) style = 'background: rgba(16, 185, 129, 0.18); border-color: var(--santa-green); color: #6ee7b7; font-weight: 700;';
-              else if (opt.key === m.myChoice) style = 'background: rgba(255, 59, 92, 0.18); border-color: var(--santa-coral); color: #fca5a5;';
-              return `<div style="padding: 6px 10px; border-radius: 6px; font-size: 12px; ${style}"><b>(${opt.key})</b> ${opt.text} ${opt.key === m.myChoice ? '<span style="font-size: 10px; color: var(--santa-coral-soft);">(您選擇)</span>' : ''}</div>`;
+              let style = 'background: rgba(22, 26, 42, 0.7); border: 1px solid var(--border-subtle); color: #cbd5e1;';
+              if (opt.key === m.correct) style = 'background: rgba(0, 255, 135, 0.16); border-color: var(--neon-green); color: #00FF87; font-weight: 800; box-shadow: 0 0 12px rgba(0, 255, 135, 0.25);';
+              else if (opt.key === m.myChoice) style = 'background: rgba(255, 0, 127, 0.16); border-color: var(--neon-coral); color: #FFA3BA; font-weight: 700;';
+              return `<div style="padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; ${style}"><b>(${opt.key})</b> ${opt.text} ${opt.key === m.myChoice ? '<span style="font-size: 11px; color: var(--neon-coral);">(您選擇)</span>' : ''}</div>`;
             }).join('')}
           </div>
 
-          <div style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid var(--santa-green); padding: 6px 10px; border-radius: 4px; font-size: 11.5px; color: #9da5b4; line-height: 1.4; margin-bottom: 8px;">
-            <b style="color: var(--santa-green);">💡 解析說明:</b> ${m.explanation}
+          <div style="background: rgba(0, 255, 135, 0.08); border-left: 4px solid var(--neon-green); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12.5px; color: #cbd5e1; line-height: 1.55; margin-bottom: 10px; border: 1px solid var(--border-subtle);">
+            <b style="color: var(--neon-green);">💡 解析說明:</b> ${m.explanation}
           </div>
 
-          <div style="display: flex; gap: 6px; justify-content: flex-end;">
-            <button class="santa-btn santa-btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="retakeMistakeQuestion(${idx})">🔄 立即重練此題</button>
-            <button class="santa-btn santa-btn-outline" style="font-size: 11px; padding: 4px 8px; color: #9da5b4;" onclick="deleteMistakeQuestion('${m.id || m.question}')">🗑️ 移除</button>
+          <div style="display: flex; gap: 8px; justify-content: flex-end;">
+            <button class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 6px 14px;" onclick="retakeMistakeQuestion(${idx})">🔄 立即重練此題</button>
+            <button class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 6px 14px; color: var(--text-muted);" onclick="deleteMistakeQuestion('${m.id || m.question}')">🗑️ 移除</button>
           </div>
         </div>
       `).join('');
@@ -1779,7 +1814,8 @@ Output JSON ONLY with this schema:
       if (speakingRecorder && speakingRecorder.state === 'recording') {
         speakingRecorder.stop();
         micBtn.innerHTML = '🔴 開始作答錄音';
-        micBtn.style.background = 'var(--santa-coral)';
+        micBtn.style.background = 'linear-gradient(135deg, var(--neon-coral) 0%, var(--neon-pink) 100%)';
+        micBtn.style.boxShadow = 'var(--glow-coral)';
         statusText.innerText = '🤖 AI 正在透過多模態語音模型深度分析發音、流暢度與文法...';
         return;
       }
@@ -1816,10 +1852,14 @@ Output JSON ONLY with this schema:
               const res = await window.SantaAIService.transcribeAndEvaluateAudio(audioBlob, referenceText);
               
               resultBox.style.display = 'block';
-              document.getElementById('speaking-transcription').innerHTML = `<b>實際語音轉錄:</b> "${res.transcription}"`;
+              document.getElementById('speaking-transcription').innerHTML = `<b style="color: var(--neon-cyan);">實際語音轉錄:</b> "${res.transcription}"`;
               document.getElementById('speaking-scores').innerHTML = `
-                <div>🏆 <b>發音</b>: <span style="color: ${res.evaluation.pronunciation > 60 ? 'var(--santa-green)' : 'var(--santa-coral)'}; font-weight: 700;">${res.evaluation.pronunciation}</span> | ⚡ <b>流暢度</b>: <span style="color: ${res.evaluation.fluency > 60 ? 'var(--santa-blue-soft)' : 'var(--santa-coral)'}; font-weight: 700;">${res.evaluation.fluency}</span> | ✍️ <b>語法</b>: <span style="color: ${res.evaluation.grammar > 60 ? 'var(--santa-gold)' : 'var(--santa-coral)'}; font-weight: 700;">${res.evaluation.grammar}</span></div>
-                <div style="margin-top: 4px; color: var(--santa-text-secondary); line-height: 1.45;">💡 <b>評語解析</b>: ${res.explanation}</div>
+                <div style="font-size: 13.5px; font-weight: 700; margin-bottom: 6px; display: flex; gap: 12px; flex-wrap: wrap;">
+                  <span>🏆 <b>發音</b>: <span style="color: ${res.evaluation.pronunciation > 60 ? 'var(--neon-green)' : 'var(--neon-coral)'}; font-weight: 800;">${res.evaluation.pronunciation}</span></span>
+                  <span>⚡ <b>流暢度</b>: <span style="color: ${res.evaluation.fluency > 60 ? 'var(--neon-cyan)' : 'var(--neon-coral)'}; font-weight: 800;">${res.evaluation.fluency}</span></span>
+                  <span>✍️ <b>語法</b>: <span style="color: ${res.evaluation.grammar > 60 ? 'var(--neon-yellow)' : 'var(--neon-coral)'}; font-weight: 800;">${res.evaluation.grammar}</span></span>
+                </div>
+                <div style="color: var(--text-secondary); line-height: 1.55; background: rgba(14, 17, 28, 0.85); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">💡 <b style="color: #ffffff;">評語解析</b>: ${res.explanation}</div>
               `;
               statusText.innerText = res.evaluation.pronunciation > 0 ? '✅ 評測完成！' : '⚠️ 未偵測到朗讀語音';
               if (window.SantaSync) window.SantaSync.scheduleAutoSync();
@@ -1831,7 +1871,8 @@ Output JSON ONLY with this schema:
 
         speakingRecorder.start();
         micBtn.innerHTML = '⏹️ 結束作答並評分';
-        micBtn.style.background = '#475569';
+        micBtn.style.background = 'linear-gradient(135deg, #475569 0%, #334155 100%)';
+        micBtn.style.boxShadow = 'none';
         statusText.innerText = '🎙️ 錄音作答進行中... 請朗讀或回答';
       } catch (err) {
         statusText.innerText = '❌ 無法開啟麥克風: ' + err.message;
@@ -1915,42 +1956,54 @@ Output JSON ONLY with this schema:
     let vocaRequeueCount = 0;
 
     // Flashcard Session State
-    let flashcardIndex = 0;
     let flashcardList = [];
+    let flashcardIndex = 0;
     let isFlashcardFlipped = false;
 
     function switchVocaSubMode(mode) {
       vocaSubMode = mode;
-      document.getElementById('voca-submode-list').style.display = mode === 'list' ? 'block' : 'none';
-      document.getElementById('voca-submode-quiz').style.display = mode === 'quiz' ? 'block' : 'none';
-      document.getElementById('voca-submode-card').style.display = mode === 'card' ? 'block' : 'none';
+      document.querySelectorAll('#view-voca .santa-nav-btn').forEach(b => {
+        if (b.id && b.id.startsWith('voca-tab-btn-')) b.classList.remove('active');
+      });
 
-      document.getElementById('voca-tab-btn-list').classList.toggle('active', mode === 'list');
-      document.getElementById('voca-tab-btn-quiz').classList.toggle('active', mode === 'quiz');
-      document.getElementById('voca-tab-btn-card').classList.toggle('active', mode === 'card');
+      const tabBtn = document.getElementById(`voca-tab-btn-${mode}`);
+      if (tabBtn) tabBtn.classList.add('active');
 
-      if (mode === 'list') renderVocaWordbook();
-      if (mode === 'card') startFlashcardSession();
+      document.getElementById('voca-submode-list').style.display = (mode === 'list') ? 'block' : 'none';
+      document.getElementById('voca-submode-quiz').style.display = (mode === 'quiz') ? 'block' : 'none';
+      document.getElementById('voca-submode-card').style.display = (mode === 'card') ? 'block' : 'none';
+
+      if (mode === 'list') {
+        renderVocaWordbook();
+      } else if (mode === 'quiz') {
+        document.getElementById('voca-quiz-launcher').style.display = 'block';
+        document.getElementById('voca-quiz-active').style.display = 'none';
+        document.getElementById('voca-quiz-summary').style.display = 'none';
+      } else if (mode === 'card') {
+        startFlashcardSession();
+      }
     }
 
     function renderVocaWordbook() {
       const container = document.getElementById('voca-list-container');
       const searchVal = (document.getElementById('voca-search-input')?.value || '').toLowerCase().trim();
-      const now = Date.now();
       const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
+      const now = Date.now();
 
+      // Count stats
       let dueCount = 0;
       let weakCount = 0;
       let masteredCount = 0;
 
       MASTER_VOCABULARY.forEach(w => {
-        const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0 };
-        if (srs.nextReviewDue > 0 && srs.nextReviewDue <= now) dueCount++;
-        if (srs.wrongCount > 0 || srs.masteryLevel === 1) weakCount++;
-        if (srs.masteryLevel >= 3) masteredCount++;
+        const srs = progress[w.word.toLowerCase()];
+        if (srs) {
+          if (srs.nextReviewDue > 0 && srs.nextReviewDue <= now) dueCount++;
+          if (srs.wrongCount > 0 || srs.masteryLevel === 1) weakCount++;
+          if (srs.masteryLevel >= 3) masteredCount++;
+        }
       });
 
-      // Update counters
       const countAll = document.getElementById('count-all');
       const countDue = document.getElementById('count-due');
       const countWeak = document.getElementById('count-weak');
@@ -1967,7 +2020,7 @@ Output JSON ONLY with this schema:
       if (dueCount > 0) {
         if (dueBadge) {
           dueBadge.innerText = `⏰ ${dueCount} 個需複習`;
-          dueBadge.style.display = 'inline-block';
+          dueBadge.style.display = 'inline-flex';
         }
         if (dueBanner) {
           dueBanner.style.display = 'flex';
@@ -1992,34 +2045,39 @@ Output JSON ONLY with this schema:
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--santa-text-muted); padding: 32px 16px; font-size: 13px;">無符合條件的單字</div>`;
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 16px; font-size: 14px;">無符合條件的單字</div>`;
         return;
       }
 
       container.innerHTML = filtered.map(w => {
         const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0, lastReviewedAt: 0 };
         
-        let srsBadge = '<span class="santa-badge" style="background: rgba(255, 255, 255, 0.06); color: #94a3b8;">⚪ 新詞</span>';
+        let srsBadge = '<span class="santa-badge" style="background: rgba(255, 255, 255, 0.06); color: #94a3b8; border-color: rgba(255, 255, 255, 0.12);">⚪ 新詞</span>';
+        let cardBorder = 'var(--neon-cyan)';
         if (srs.masteryLevel === 1) {
-          srsBadge = `<span class="santa-badge" style="background: rgba(255, 59, 92, 0.15); color: var(--santa-coral-soft); border-color: rgba(255, 59, 92, 0.3);">🚨 易錯 (錯 ${srs.wrongCount} 次)</span>`;
+          srsBadge = `<span class="santa-badge santa-badge-coral">🚨 易錯 (錯 ${srs.wrongCount} 次)</span>`;
+          cardBorder = 'var(--neon-coral)';
         } else if (srs.masteryLevel === 2) {
-          srsBadge = `<span class="santa-badge" style="background: rgba(57, 114, 246, 0.15); color: var(--santa-blue-soft);">🟡 學習中 (1天後)</span>`;
+          srsBadge = `<span class="santa-badge santa-badge-gold">🟡 學習中 (1天後)</span>`;
+          cardBorder = 'var(--neon-yellow)';
         } else if (srs.masteryLevel === 3) {
-          srsBadge = `<span class="santa-badge" style="background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border-color: rgba(16, 185, 129, 0.3);">🟢 已掌握 (3天後)</span>`;
+          srsBadge = `<span class="santa-badge santa-badge-green">🟢 已掌握 (3天後)</span>`;
+          cardBorder = 'var(--neon-green)';
         } else if (srs.masteryLevel >= 4) {
-          srsBadge = `<span class="santa-badge" style="background: rgba(255, 184, 0, 0.15); color: var(--santa-gold); border-color: rgba(255, 184, 0, 0.3);">👑 永久記憶 (7天後)</span>`;
+          srsBadge = `<span class="santa-badge santa-badge-gold">👑 永久記憶 (7天後)</span>`;
+          cardBorder = 'var(--neon-yellow)';
         }
 
         return `
-          <div class="santa-voca-card" style="border-left-color: ${srs.masteryLevel >= 3 ? 'var(--santa-green)' : (srs.masteryLevel === 1 ? 'var(--santa-coral)' : 'var(--santa-blue)')};">
+          <div class="santa-voca-card" style="border-left-color: ${cardBorder};">
             <div class="voca-header-row">
-              <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span class="voca-word-title">${w.word}</span>
                 <span class="voca-phonetic">${w.phonetic}</span>
-                <span style="font-size: 10px; background: rgba(57, 114, 246, 0.2); color: var(--santa-blue-soft); padding: 1px 5px; border-radius: 4px;">${w.pos}</span>
+                <span class="santa-badge" style="font-size: 10px; padding: 2px 6px;">${w.pos}</span>
                 ${srsBadge}
               </div>
-              <button class="santa-btn santa-btn-outline" style="padding: 2px 6px; font-size: 11px;" onclick="speakWord('${w.word}')">🔊</button>
+              <button class="santa-btn santa-btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="speakWord('${w.word}')">🔊</button>
             </div>
             <div class="voca-meaning">${w.meaning}</div>
             <div class="voca-example">"${w.example}"</div>
@@ -2100,7 +2158,7 @@ Output JSON ONLY with this schema:
       const requeueBadge = document.getElementById('vq-requeue-badge');
       const requeueCountEl = document.getElementById('vq-requeue-count');
       if (vocaRequeueCount > 0) {
-        requeueBadge.style.display = 'inline-block';
+        requeueBadge.style.display = 'inline-flex';
         requeueCountEl.innerText = vocaRequeueCount;
       } else {
         requeueBadge.style.display = 'none';
@@ -2159,13 +2217,13 @@ Output JSON ONLY with this schema:
         if (newSRS && newSRS.masteryLevel === 3) nextSchedule = '3 天後';
         if (newSRS && newSRS.masteryLevel >= 4) nextSchedule = '7 天後';
 
-        feedbackBox.style.background = 'rgba(16, 185, 129, 0.12)';
-        feedbackBox.style.border = '1px solid var(--santa-green)';
-        feedbackBox.style.color = '#6ee7b7';
+        feedbackBox.style.background = 'rgba(0, 255, 135, 0.14)';
+        feedbackBox.style.border = '1px solid var(--neon-green)';
+        feedbackBox.style.color = '#00FF87';
         feedbackBox.innerHTML = `
-          <div style="font-weight: 700; font-size: 13px;">✅ 答對了！已排定於【${nextSchedule}】再次複習</div>
-          <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 2px;">完整例句: "${vocaCurrentQuizWord.example}"</div>
-          <button class="santa-primary-btn" style="margin-top: 8px; padding: 6px 14px; max-width: 140px; font-size: 12px;" onclick="advanceQuizQueue(true)">下一題 &rarr;</button>
+          <div style="font-weight: 800; font-size: 14px;">✅ 答對了！已排定於【${nextSchedule}】再次複習</div>
+          <div style="font-size: 12.5px; color: #cbd5e1; margin-top: 4px;">完整例句: "${vocaCurrentQuizWord.example}"</div>
+          <button class="santa-primary-btn" style="margin-top: 10px; padding: 8px 18px; font-size: 12.5px;" onclick="advanceQuizQueue(true)">下一題 &rarr;</button>
         `;
       } else {
         btnEl.classList.add('wrong');
@@ -2176,14 +2234,14 @@ Output JSON ONLY with this schema:
         vocaCurrentQuizWord.isFirstAttempt = false;
         vocaQuizQueue.push(vocaCurrentQuizWord);
 
-        feedbackBox.style.background = 'rgba(255, 59, 92, 0.12)';
-        feedbackBox.style.border = '1px solid var(--santa-coral)';
-        feedbackBox.style.color = '#fca5a5';
+        feedbackBox.style.background = 'rgba(255, 0, 127, 0.14)';
+        feedbackBox.style.border = '1px solid var(--neon-coral)';
+        feedbackBox.style.color = '#FFA3BA';
         feedbackBox.innerHTML = `
-          <div style="font-weight: 700; font-size: 13px;">❌ 答錯了！正確釋義：${vocaCurrentQuizWord.meaning}</div>
-          <div style="font-size: 11px; color: #f87171; margin-top: 2px;">🚨 此題已自動重新加入本次測驗末端，將反覆練習直到掌握。</div>
-          <div style="font-size: 11.5px; color: #cbd5e1; margin-top: 4px;">例句: "${vocaCurrentQuizWord.example}"</div>
-          <button class="santa-primary-btn" style="margin-top: 8px; padding: 6px 14px; max-width: 160px; font-size: 12px; background: var(--santa-coral);" onclick="advanceQuizQueue(false)">繼續下一題 &rarr;</button>
+          <div style="font-weight: 800; font-size: 14px;">❌ 答錯了！正確釋義：${vocaCurrentQuizWord.meaning}</div>
+          <div style="font-size: 12px; color: var(--neon-coral); margin-top: 4px; font-weight: 700;">🚨 此題已自動重新加入本次測驗末端，將反覆練習直到掌握。</div>
+          <div style="font-size: 12.5px; color: #cbd5e1; margin-top: 4px;">例句: "${vocaCurrentQuizWord.example}"</div>
+          <button class="santa-primary-btn" style="margin-top: 10px; padding: 8px 18px; font-size: 12.5px; background: linear-gradient(135deg, var(--neon-coral) 0%, var(--neon-pink) 100%);" onclick="advanceQuizQueue(false)">繼續下一題 &rarr;</button>
         `;
       }
     }
@@ -2332,14 +2390,14 @@ Output ONLY a JSON array with exactly this format (no markdown):
       const chatBox = document.getElementById('lumi-chat-box');
       
       const userEl = document.createElement('div');
-      userEl.style.cssText = 'background: var(--santa-blue); color: #fff; padding: 8px 12px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 80%; font-size: 13px;';
+      userEl.style.cssText = 'background: linear-gradient(135deg, var(--neon-purple) 0%, #6366F1 100%); color: #ffffff; padding: 12px 18px; border-radius: 20px 20px 4px 20px; align-self: flex-end; max-width: 80%; font-size: 13.5px; box-shadow: var(--glow-purple); font-weight: 500;';
       userEl.innerText = text;
       chatBox.appendChild(userEl);
       input.value = '';
       chatBox.scrollTop = chatBox.scrollHeight;
 
       const aiEl = document.createElement('div');
-      aiEl.style.cssText = 'background: var(--santa-bg-card); border: 1px solid var(--santa-border); padding: 8px 12px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 13px; line-height: 1.45; color: var(--santa-text-muted);';
+      aiEl.style.cssText = 'background: rgba(26, 31, 50, 0.85); border: 1px solid var(--border-subtle); padding: 12px 18px; border-radius: 20px 20px 20px 4px; max-width: 80%; font-size: 13.5px; line-height: 1.55; color: var(--text-muted);';
       aiEl.innerText = 'Lumi 思考中...';
       chatBox.appendChild(aiEl);
       chatBox.scrollTop = chatBox.scrollHeight;

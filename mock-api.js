@@ -50,8 +50,9 @@
     listeningScore: 435,
     readingScore: 410,
     targetExamDate: '2026-12-31T00:00:00Z',
-    streakDays: 7,
-    learningTimeMinutes: 180,
+    streakDays: 1,
+    lastActiveDate: new Date().toISOString().split('T')[0],
+    learningTimeMinutes: 30,
     onboardingStatus: 'PENDING',
     diagnosisStatus: 'AVAILABLE',
     permitType: 'VIP_PASS',
@@ -59,15 +60,42 @@
     createdAt: '2026-01-01T00:00:00Z'
   };
 
+  function updateStreak(profile) {
+    const today = new Date().toISOString().split('T')[0];
+    if (!profile.lastActiveDate) {
+      profile.lastActiveDate = today;
+      profile.streakDays = 1;
+      return profile;
+    }
+
+    if (profile.lastActiveDate === today) {
+      if (!profile.streakDays || profile.streakDays < 1) profile.streakDays = 1;
+      return profile;
+    }
+
+    const lastDate = new Date(profile.lastActiveDate);
+    const currentDate = new Date(today);
+    const diffDays = Math.floor((currentDate - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      profile.streakDays = (profile.streakDays || 0) + 1;
+    } else if (diffDays > 1) {
+      profile.streakDays = 1;
+    }
+    profile.lastActiveDate = today;
+    return profile;
+  }
+
   function getLocalProfile() {
     try {
       const saved = localStorage.getItem('santa_offline_profile');
       if (saved) {
-        const p = JSON.parse(saved);
+        let p = JSON.parse(saved);
         if (!p.name || p.name.includes('Santa') || p.name === 'Santa Offline Learner') {
           p.name = 'Lumi 學習者';
-          localStorage.setItem('santa_offline_profile', JSON.stringify(p));
         }
+        p = updateStreak(p);
+        localStorage.setItem('santa_offline_profile', JSON.stringify(p));
         // If user is currently on /onboarding/intro, ensure registrationType is ANONYMOUS
         if (window.location.pathname.includes('/onboarding/intro') || !p.registrationType) {
           p.registrationType = 'ANONYMOUS';
@@ -75,8 +103,9 @@
         return p;
       }
     } catch (e) { }
-    localStorage.setItem('santa_offline_profile', JSON.stringify(DEFAULT_PROFILE));
-    return DEFAULT_PROFILE;
+    const defaultWithStreak = updateStreak({ ...DEFAULT_PROFILE });
+    localStorage.setItem('santa_offline_profile', JSON.stringify(defaultWithStreak));
+    return defaultWithStreak;
   }
 
   function saveLocalProfile(data) {
