@@ -1,1 +1,0 @@
-self.__SSG_MANIFEST=new Set(["\u002Ftoeic-speaking\u002Ftest\u002Fshell"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

@@ -3,7 +3,7 @@
  * Fully compatible with Localhost, Custom Domains, and GitHub Pages subpaths.
  */
 
-const CACHE_NAME = 'santa-ai-pwa-v1.3';
+const CACHE_NAME = 'santa-ai-pwa-v4.0';
 
 // Relative assets to cache based on registration base path
 const RELATIVE_ASSETS = [
@@ -14,6 +14,9 @@ const RELATIVE_ASSETS = [
   './mock-api.js',
   './ai-service.js',
   './e2ee-sync.js',
+  './vocabulary-data.js',
+  './questions-data.js',
+  './speaking-data.js',
   './settings-modal.js',
   './assets/favicon.webp',
   './assets/img_onboarding_kv.bb65f35e.webp',

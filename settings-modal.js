@@ -99,42 +99,42 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        background: rgba(18, 22, 36, 0.88);
+        background: #FFFFFF;
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
-        color: #ffffff;
-        border: 1px solid rgba(0, 240, 255, 0.4);
+        color: #1E293B;
+        border: 1px solid #E2DDD4;
         border-radius: 9999px;
         padding: 9px 18px;
         font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.25);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
         transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
       }
       #santa-floating-btn:hover {
-        transform: translateY(-3px) scale(1.02);
-        background: rgba(26, 32, 52, 0.95);
-        border-color: #00F0FF;
-        box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75), 0 0 30px rgba(0, 240, 255, 0.45);
+        transform: translateY(-2px) scale(1.02);
+        background: #FAF8F5;
+        border-color: #4F46E5;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
       }
       #santa-modal-backdrop {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(6, 8, 14, 0.82);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        background: rgba(30, 41, 59, 0.45);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         z-index: 1000000;
         align-items: center;
         justify-content: center;
         font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       }
       #santa-modal-container {
-        background: linear-gradient(180deg, #141828 0%, #0c0e18 100%);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #FFFFFF;
+        color: #1E293B;
+        border: 1px solid #E8E4DC;
         border-radius: 24px;
         width: 92%;
         max-width: 660px;
@@ -142,7 +142,7 @@
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 32px 64px rgba(0, 0, 0, 0.85), 0 0 40px rgba(139, 92, 246, 0.25);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
         animation: santaFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
       }
       @keyframes santaFadeIn {
@@ -151,8 +151,8 @@
       }
       .santa-modal-header {
         padding: 16px 22px;
-        background: rgba(22, 27, 44, 0.85);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        background: #FAF8F5;
+        border-bottom: 1px solid #E8E4DC;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -164,14 +164,12 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #1E293B;
       }
       .santa-close-btn {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #94a3b8;
+        background: #F0ECE4;
+        border: 1px solid #E2DDD4;
+        color: #64748B;
         font-size: 18px;
         cursor: pointer;
         width: 32px;
@@ -182,14 +180,14 @@
         justify-content: center;
         transition: all 0.2s;
       }
-      .santa-close-btn:hover { color: #ffffff; background: rgba(255, 0, 127, 0.25); border-color: #FF007F; }
+      .santa-close-btn:hover { color: #E11D48; background: #FFF1F2; border-color: #FECDD3; }
       
       .santa-modal-tabs {
         display: flex;
-        background: rgba(11, 13, 22, 0.95);
+        background: #FAF8F5;
         padding: 10px 16px;
         gap: 8px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid #E8E4DC;
         overflow-x: auto;
         flex-wrap: nowrap;
         scrollbar-width: none;
@@ -199,9 +197,9 @@
         padding: 7px 16px;
         font-size: 12.5px;
         font-weight: 700;
-        color: #94a3b8;
-        background: rgba(25, 30, 48, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: #64748B;
+        background: #F0ECE4;
+        border: 1px solid #E2DDD4;
         border-radius: 9999px;
         cursor: pointer;
         white-space: nowrap;
@@ -209,15 +207,15 @@
         transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .santa-modal-tab:hover {
-        background: rgba(38, 45, 70, 0.8);
-        color: #ffffff;
-        border-color: rgba(255, 255, 255, 0.15);
+        background: #E5E0D5;
+        color: #1E293B;
+        border-color: #D8D2C5;
       }
       .santa-modal-tab.active {
-        background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
-        color: #ffffff;
-        border-color: rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 18px rgba(139, 92, 246, 0.45);
+        background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+        color: #FFFFFF;
+        border-color: #4338CA;
+        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.25);
       }
       
       .santa-modal-body {
@@ -232,29 +230,29 @@
         display: block;
         font-size: 11.5px;
         font-weight: 800;
-        color: #94a3b8;
+        color: #64748B;
         margin-bottom: 6px;
         text-transform: uppercase;
         letter-spacing: 0.8px;
       }
       .santa-m-input, .santa-m-select {
         width: 100%;
-        background: rgba(12, 14, 24, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #FBF9F5;
+        border: 1px solid #E2DDD4;
         border-radius: 14px;
         padding: 10px 14px;
-        color: #ffffff;
+        color: #1E293B;
         font-size: 13px;
         box-sizing: border-box;
         transition: all 0.2s;
       }
       .santa-m-input:focus, .santa-m-select:focus {
         outline: none;
-        border-color: #00F0FF;
-        box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2), 0 0 16px rgba(0, 240, 255, 0.25);
+        border-color: #4F46E5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
       }
       .santa-m-btn {
-        background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
+        background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
         color: #ffffff;
         border: none;
         border-radius: 9999px;
@@ -262,7 +260,7 @@
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
-        box-shadow: 0 0 18px rgba(139, 92, 246, 0.35);
+        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
         transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         display: inline-flex;
         align-items: center;
@@ -271,27 +269,27 @@
       }
       .santa-m-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 0 26px rgba(139, 92, 246, 0.6);
-        filter: brightness(1.1);
+        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        filter: brightness(1.05);
       }
       .santa-m-btn-danger {
-        background: linear-gradient(135deg, #FF007F 0%, #FF3B5C 100%);
-        box-shadow: 0 0 18px rgba(255, 0, 127, 0.35);
+        background: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
+        box-shadow: 0 2px 10px rgba(225, 29, 72, 0.2);
       }
       .santa-m-btn-danger:hover {
-        box-shadow: 0 0 26px rgba(255, 0, 127, 0.6);
+        box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
       }
       .santa-m-btn-outline {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        color: #cbd5e1;
-        box-shadow: none;
+        background: #FFFFFF;
+        border: 1px solid #E2DDD4;
+        color: #475569;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
       }
       .santa-m-btn-outline:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #ffffff;
-        border-color: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 0 16px rgba(255, 255, 255, 0.1);
+        background: #F5F2EB;
+        color: #1E293B;
+        border-color: #CBD5E1;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       }
       .santa-m-badge {
         display: inline-block;
@@ -299,15 +297,13 @@
         border-radius: 9999px;
         font-size: 11px;
         font-weight: 700;
-        background: rgba(0, 255, 135, 0.15);
-        color: #00FF87;
-        border: 1px solid rgba(0, 255, 135, 0.35);
-        box-shadow: 0 0 10px rgba(0, 255, 135, 0.2);
+        background: rgba(22, 163, 74, 0.1);
+        color: #16A34A;
+        border: 1px solid rgba(22, 163, 74, 0.25);
       }
       .santa-m-card {
-        background: rgba(20, 24, 38, 0.65);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: #F8F6F0;
+        border: 1px solid #E8E4DC;
         border-radius: 18px;
         padding: 14px 16px;
         margin-bottom: 12px;
@@ -321,51 +317,51 @@
         margin-bottom: 12px;
       }
       .santa-provider-card {
-        background: rgba(18, 22, 34, 0.7);
-        border: 1.5px solid rgba(255, 255, 255, 0.08);
+        background: #F8F6F0;
+        border: 1.5px solid #E2DDD4;
         border-radius: 16px;
         padding: 12px 10px;
         cursor: pointer;
         text-align: center;
+        color: #1E293B;
         transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .santa-provider-card:hover {
-        border-color: #8B5CF6;
-        background: rgba(28, 34, 54, 0.85);
-        box-shadow: 0 0 16px rgba(139, 92, 246, 0.3);
+        border-color: #4F46E5;
+        background: #F2EFE9;
         transform: translateY(-2px);
       }
       .santa-provider-card.selected {
-        border-color: #00F0FF;
-        background: rgba(0, 240, 255, 0.12);
-        color: #ffffff;
-        box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        border-color: #4F46E5;
+        background: #EFF6FF;
+        color: #1E40AF;
+        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.15);
       }
       
       /* Logs UI */
       .santa-log-item {
-        background: rgba(14, 16, 26, 0.85);
-        border-left: 3px solid #8B5CF6;
+        background: #F8F6F0;
+        border-left: 3px solid #4F46E5;
         padding: 8px 12px;
         border-radius: 10px;
         margin-bottom: 6px;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 11.5px;
         line-height: 1.45;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid #E8E4DC;
+        color: #334155;
       }
-      .santa-log-error { border-left: 3px solid #FF007F; background: rgba(255, 0, 127, 0.08); color: #fca5a5; }
-      .santa-log-warn { border-left: 3px solid #FFE600; background: rgba(255, 230, 0, 0.08); color: #fde047; }
-      .santa-log-api { border-left: 3px solid #00F0FF; background: rgba(0, 240, 255, 0.08); color: #bae6fd; }
+      .santa-log-error { border-left: 3px solid #E11D48; background: #FFF1F2; color: #9F1239; }
+      .santa-log-warn { border-left: 3px solid #D97706; background: #FEF3C7; color: #92400E; }
+      .santa-log-api { border-left: 3px solid #0284C7; background: #EFF6FF; color: #075985; }
     `;
     document.head.appendChild(style);
 
     // Create Floating Trigger
     const btn = document.createElement('div');
     btn.id = 'santa-floating-btn';
-    btn.innerHTML = `⚙️ <span>Lumi AI Control</span> <span class="santa-m-badge">Offline</span>`;
+    btn.innerHTML = `⚙️ <span>Lumi 控制中心</span>`;
     document.body.appendChild(btn);
-    setTimeout(updateFloatingBadge, 100);
 
     // Create Modal
     const backdrop = document.createElement('div');
@@ -373,98 +369,22 @@
     backdrop.innerHTML = `
       <div id="santa-modal-container">
         <div class="santa-modal-header">
-          <h3>✨ Lumi AI 控制中心 (Settings & Sync)</h3>
+          <h3>✨ Lumi 系統控制中心 (Settings & Sync)</h3>
           <button class="santa-close-btn" id="santa-modal-close">&times;</button>
         </div>
         
         <div class="santa-modal-tabs">
-          <div class="santa-modal-tab active" data-tab="ai">🤖 AI 金鑰設定</div>
-          <div class="santa-modal-tab" data-tab="sync">☁️ 雲端同步 (E2EE)</div>
-          <div class="santa-modal-tab" data-tab="audio">🎙️ 語音測試</div>
-          <div class="santa-modal-tab" data-tab="profile">📊 學習紀錄</div>
+          <div class="santa-modal-tab active" data-tab="sync">☁️ 雲端同步 (E2EE)</div>
+          <div class="santa-modal-tab" data-tab="profile">📊 學習紀錄與目標</div>
+          <div class="santa-modal-tab" data-tab="audio">🎙️ 語音朗讀測試</div>
           <div class="santa-modal-tab" data-tab="logs">📋 系統日誌</div>
-          <div class="santa-modal-tab" data-tab="privacy">🛡️ 隱私端點</div>
+          <div class="santa-modal-tab" data-tab="privacy">🛡️ 隱私與端點</div>
         </div>
 
         <div class="santa-modal-body">
-          
-          <!-- TAB 1: AI Settings -->
-          <div id="santa-tab-ai" class="santa-modal-tab-content">
-            <div class="santa-m-card" style="border-left: 3px solid #3972f6; margin-bottom: 8px;">
-              <div style="font-weight: 700; font-size: 12.5px; margin-bottom: 2px; color: #4da2ff;">⚡ 自備 AI 金鑰（BYOK 模式）</div>
-              <div style="font-size: 11.5px; color: #9da5b4; line-height: 1.4;">
-                金鑰僅儲存於本地瀏覽器（localStorage），直接呼叫 AI 端點，絕無第三方中轉。
-              </div>
-            </div>
-
-            <div class="santa-m-form-group">
-              <label class="santa-m-label">選擇 AI 提供商</label>
-              <div class="santa-provider-grid">
-                <div class="santa-provider-card selected" data-provider="groq" onclick="selectProviderCard('groq')">
-                  <div style="font-weight: 700; font-size: 12.5px;">⚡ Groq</div>
-                  <div style="font-size: 10px; color: #9da5b4;">超高速 Whisper</div>
-                </div>
-                <div class="santa-provider-card" data-provider="gemini" onclick="selectProviderCard('gemini')">
-                  <div style="font-weight: 700; font-size: 12.5px;">✨ Gemini</div>
-                  <div style="font-size: 10px; color: #9da5b4;">3.6 / 3.7 Flash</div>
-                </div>
-                <div class="santa-provider-card" data-provider="openai" onclick="selectProviderCard('openai')">
-                  <div style="font-weight: 700; font-size: 12.5px;">🧠 OpenAI</div>
-                  <div style="font-size: 10px; color: #9da5b4;">GPT-4o / Whisper</div>
-                </div>
-                <div class="santa-provider-card" data-provider="mock" onclick="selectProviderCard('mock')">
-                  <div style="font-weight: 700; font-size: 12.5px;">📴 純離線</div>
-                  <div style="font-size: 10px; color: #9da5b4;">內建題庫引擎</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Groq API Key -->
-            <div id="santa-groq-group" class="santa-m-form-group">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label class="santa-m-label" style="margin: 0;">Groq API Key</label>
-                <a href="https://console.groq.com/keys" target="_blank" style="font-size: 11px; color: #4da2ff; text-decoration: none;">免費取得 Key &rarr;</a>
-              </div>
-              <input type="password" id="santa-groq-key" class="santa-m-input" placeholder="gsk_..." />
-            </div>
-
-            <!-- Gemini API Key -->
-            <div id="santa-gemini-group" class="santa-m-form-group" style="display: none;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label class="santa-m-label" style="margin: 0;">Google Gemini API Key</label>
-                <a href="https://aistudio.google.com/apikey" target="_blank" style="font-size: 11px; color: #4da2ff; text-decoration: none;">免費取得 Key &rarr;</a>
-              </div>
-              <input type="password" id="santa-gemini-key" class="santa-m-input" placeholder="AIzaSy..." />
-              <div style="margin-top: 6px;">
-                <label class="santa-m-label" style="font-size: 11px; margin-bottom: 2px;">指定模型 (🔒 已鎖定極速省錢 Flash 系列，絕不調用昂貴 Pro)</label>
-                <select id="santa-gemini-model" class="santa-m-input" style="font-size: 11.5px; padding: 5px 8px;">
-                  <option value="models/gemini-1.5-flash">🌱 1. Gemini 1.5 Flash (經典低價・每百萬字 ~$0.075)</option>
-                  <option value="models/gemini-3.6-flash-lite">🍃 2. Gemini 3.6 Flash Lite (極致省錢・最輕量)</option>
-                  <option value="models/gemini-3.7-flash">⚡ 3. Gemini 3.7 Flash (推薦・最新次世代優惠價)</option>
-                  <option value="models/gemini-3.6-flash">🚀 4. Gemini 3.6 Flash (標準版)</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- OpenAI API Key -->
-            <div id="santa-openai-group" class="santa-m-form-group" style="display: none;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label class="santa-m-label" style="margin: 0;">OpenAI API Key</label>
-                <a href="https://platform.openai.com/api-keys" target="_blank" style="font-size: 11px; color: #4da2ff; text-decoration: none;">取得 Key &rarr;</a>
-              </div>
-              <input type="password" id="santa-openai-key" class="santa-m-input" placeholder="sk-..." />
-            </div>
-
-            <div style="display: flex; gap: 8px; margin-top: 14px;">
-              <button id="santa-save-settings-btn" class="santa-m-btn" style="flex: 1;">💾 儲存 AI 設定</button>
-              <button id="santa-test-ai-btn" class="santa-m-btn santa-m-btn-outline">⚡ 連線測試</button>
-            </div>
-            
-            <div id="santa-ai-test-result" style="margin-top: 8px; font-size: 12px; line-height: 1.45;"></div>
-          </div>
 
           <!-- TAB: E2EE Cloud Sync -->
-          <div id="santa-tab-sync" class="santa-modal-tab-content" style="display: none;">
+          <div id="santa-tab-sync" class="santa-modal-tab-content" style="display: block;">
             <div class="santa-m-card" style="border-left: 3px solid #10b981; margin-bottom: 8px;">
               <div style="font-weight: 700; font-size: 12.5px; margin-bottom: 2px; color: #6ee7b7;">🔒 零知識端到端加密同步 (E2EE)</div>
               <div style="font-size: 11.5px; color: #9da5b4; line-height: 1.45;">
@@ -576,15 +496,6 @@
               <div id="santa-profile-summary" style="font-size: 12px; line-height: 1.7; color: #cbd5e1;"></div>
             </div>
 
-            <div class="santa-m-form-group">
-              <label class="santa-m-label">目標分數等級快速切換</label>
-              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-                <button class="santa-m-btn santa-m-btn-outline santa-level-btn" data-target="600" data-domain="TOEIC">600分 (入門)</button>
-                <button class="santa-m-btn santa-m-btn-outline santa-level-btn" data-target="750" data-domain="TOEIC">750分 (中級)</button>
-                <button class="santa-m-btn santa-m-btn-outline santa-level-btn" data-target="900" data-domain="TOEIC">900+ (金色)</button>
-              </div>
-            </div>
-
             <div style="margin-top: 16px; border-top: 1px solid #2c3040; padding-top: 12px;">
               <div style="font-weight: 700; font-size: 12px; margin-bottom: 8px; color: #ff6b84;">資料管理</div>
               <div style="display: flex; gap: 8px;">
@@ -663,60 +574,6 @@
         if (targetTab) targetTab.style.display = 'block';
         if (tabName === 'logs') renderLogsToUI();
       });
-    });
-
-    // Provider Selector Click handler
-    window.selectProviderCard = function (provider) {
-      document.querySelectorAll('.santa-provider-card').forEach(c => {
-        c.classList.toggle('selected', c.dataset.provider === provider);
-      });
-      document.getElementById('santa-groq-group').style.display = provider === 'groq' ? 'block' : 'none';
-      document.getElementById('santa-gemini-group').style.display = provider === 'gemini' ? 'block' : 'none';
-      document.getElementById('santa-openai-group').style.display = provider === 'openai' ? 'block' : 'none';
-    };
-
-    // Save Settings
-    document.getElementById('santa-save-settings-btn').addEventListener('click', () => {
-      const selectedProviderCard = document.querySelector('.santa-provider-card.selected');
-      const provider = selectedProviderCard ? selectedProviderCard.dataset.provider : 'gemini';
-
-      if (window.SantaAIService) {
-        window.SantaAIService.saveSettings({
-          provider: provider,
-          groqApiKey: document.getElementById('santa-groq-key').value.trim(),
-          openaiApiKey: document.getElementById('santa-openai-key').value.trim(),
-          geminiApiKey: document.getElementById('santa-gemini-key').value.trim(),
-          geminiChatModel: document.getElementById('santa-gemini-model')?.value || 'models/gemini-2.0-flash'
-        });
-        const resEl = document.getElementById('santa-ai-test-result');
-        resEl.innerHTML = `<span style="color: #34d399; font-weight: 700;">✅ 設定已成功儲存至本機！已鎖定使用極速省錢 Flash 模型。</span>`;
-        updateFloatingBadge();
-      }
-    });
-
-    // Test AI Connection
-    document.getElementById('santa-test-ai-btn').addEventListener('click', async () => {
-      const resEl = document.getElementById('santa-ai-test-result');
-      resEl.innerHTML = `<span style="color: #4da2ff;">⏳ 正在連線測試 AI 導師...</span>`;
-      try {
-        if (window.SantaAIService) {
-          // Save first before testing
-          const selectedProviderCard = document.querySelector('.santa-provider-card.selected');
-          const provider = selectedProviderCard ? selectedProviderCard.dataset.provider : 'gemini';
-          window.SantaAIService.saveSettings({
-            provider: provider,
-            groqApiKey: document.getElementById('santa-groq-key').value.trim(),
-            openaiApiKey: document.getElementById('santa-openai-key').value.trim(),
-            geminiApiKey: document.getElementById('santa-gemini-key').value.trim(),
-            geminiChatModel: document.getElementById('santa-gemini-model')?.value || 'models/gemini-2.0-flash'
-          });
-
-          const reply = await window.SantaAIService.chatWithLumi("Hi Lumi, please introduce yourself in 1 sentence.");
-          resEl.innerHTML = `<span style="color: #34d399; font-weight: 700;">✅ 連線成功！Lumi 回應：</span><br/><div style="color: #ffffff; padding: 4px 8px; background: #1c1e27; border-radius: 6px; margin-top: 4px;">${reply}</div>`;
-        }
-      } catch (err) {
-        resEl.innerHTML = `<span style="color: #ff3b5c; font-weight: 700;">❌ 測試失敗:</span> <span style="color: #fca5a5;">${err.message}</span>`;
-      }
     });
 
     // Sync Mode Switcher
@@ -877,18 +734,6 @@
       }
     });
 
-    // Level Switch Buttons
-    document.querySelectorAll('.santa-level-btn').forEach(b => {
-      b.addEventListener('click', () => {
-        const target = parseInt(b.dataset.target, 10);
-        if (window.SantaDB) {
-          window.SantaDB.saveProfile({ targetScore: target });
-          loadProfileToUI();
-          alert(`已切換目標分數為 ${target} 分！`);
-        }
-      });
-    });
-
     // Export & Reset
     document.getElementById('santa-export-btn').addEventListener('click', () => {
       if (window.SantaDB) {
@@ -935,44 +780,8 @@
     });
   }
 
-  function updateFloatingBadge() {
-    const btn = document.getElementById('santa-floating-btn');
-    if (!btn) return;
-    const badge = btn.querySelector('.santa-m-badge');
-    if (!badge) return;
-
-    if (window.SantaAIService && window.SantaAIService.hasConfiguredKey()) {
-      const s = window.SantaAIService.getSettings();
-      if (s.provider === 'gemini') {
-        badge.innerHTML = '✨ Gemini Online';
-        badge.style.cssText = 'background: rgba(57, 114, 246, 0.2); color: #60a5fa; border: 1px solid rgba(57, 114, 246, 0.4);';
-      } else if (s.provider === 'groq') {
-        badge.innerHTML = '⚡ Groq Online';
-        badge.style.cssText = 'background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);';
-      } else if (s.provider === 'openai') {
-        badge.innerHTML = '🧠 OpenAI Online';
-        badge.style.cssText = 'background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);';
-      } else {
-        badge.innerHTML = '🤖 AI Online';
-        badge.style.cssText = 'background: rgba(57, 114, 246, 0.2); color: #60a5fa; border: 1px solid rgba(57, 114, 246, 0.4);';
-      }
-    } else {
-      badge.innerHTML = '📴 Offline Local';
-      badge.style.cssText = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);';
-    }
-  }
-
   function loadSettingsToUI() {
-    if (!window.SantaAIService) return;
-    const s = window.SantaAIService.getSettings();
-    if (window.selectProviderCard) {
-      window.selectProviderCard(s.provider || 'gemini');
-    }
-    if (document.getElementById('santa-groq-key')) document.getElementById('santa-groq-key').value = s.groqApiKey || '';
-    if (document.getElementById('santa-openai-key')) document.getElementById('santa-openai-key').value = s.openaiApiKey || '';
-    if (document.getElementById('santa-gemini-key')) document.getElementById('santa-gemini-key').value = s.geminiApiKey || '';
-    if (document.getElementById('santa-gemini-model')) document.getElementById('santa-gemini-model').value = s.geminiChatModel || 'models/gemini-2.0-flash';
-    updateFloatingBadge();
+    // UI loaded
   }
 
   function loadProfileToUI() {
@@ -982,10 +791,10 @@
     if (sumEl) {
       sumEl.innerHTML = `
         <div>👤 <b>學習者 ID</b>: ${p.userId || 'santa-offline-user'}</div>
-        <div>🎯 <b>學習科目</b>: ${p.learningDomain || 'TOEIC (多益)'}</div>
-        <div>🏆 <b>目標分數</b>: <span style="color: #ffb800; font-weight: 700;">${p.targetScore || 900} 分</span></div>
-        <div>⚡ <b>預測實力</b>: <span style="color: #4da2ff; font-weight: 700;">${p.predictedScore || 845} 分</span></div>
-        <div>👑 <b>VIP 會員</b>: <span style="color: #34d399; font-weight: 700;">永久暢讀無限制</span></div>
+        <div>🎯 <b>學習領域</b>: ${p.learningDomain || 'TOEIC 多益測驗'}</div>
+        <div>📚 <b>擬真題庫</b>: <span style="color: #38bdf8; font-weight: 700;">2,000 題 (Part 1, 5, 6, 7 各 500 題)</span></div>
+        <div>🎙️ <b>口說題庫</b>: <span style="color: #c084fc; font-weight: 700;">500 題 (Part 1~5 滿分朗讀)</span></div>
+        <div>📖 <b>核心單字</b>: <span style="color: #34d399; font-weight: 700;">4,000 字 (750高頻+900高分)</span></div>
       `;
     }
   }
