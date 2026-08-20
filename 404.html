@@ -538,11 +538,73 @@
       .santa-option-btn { padding: 12px 14px; font-size: 13.5px; }
       .santa-voca-grid { grid-template-columns: 1fr !important; }
       .santa-box { padding: 12px 14px; border-radius: 16px; }
+
+      /* iPhone nav bar: compact logo, full-width scrollable tabs */
+      .santa-nav-header {
+        padding: 8px 10px !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+      }
+      .santa-nav-title {
+        font-size: 14px !important;
+        min-width: auto !important;
+        flex-shrink: 0 !important;
+      }
+      .santa-nav-tabs {
+        flex: 1;
+        min-width: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        padding-right: 4px;
+      }
+      .santa-nav-tabs .santa-nav-btn {
+        padding: 6px 12px !important;
+        font-size: 11.5px !important;
+        scroll-snap-align: start;
+      }
+
+      /* iPhone floating settings button: smaller & avoid content overlap */
       #santa-floating-btn {
         bottom: calc(14px + var(--mobile-safe-area-bottom)) !important;
         right: 12px !important;
-        padding: 7px 14px !important;
-        font-size: 12px !important;
+        padding: 6px 12px !important;
+        font-size: 11px !important;
+        gap: 6px !important;
+        opacity: 0.85;
+        max-width: 140px;
+      }
+      #santa-floating-btn:hover,
+      #santa-floating-btn:active {
+        opacity: 1;
+      }
+
+      /* iPhone: add bottom padding so floating button doesn't overlap content */
+      .santa-view {
+        padding-bottom: calc(70px + var(--mobile-safe-area-bottom)) !important;
+      }
+
+      /* iPhone: floating walkman player bar */
+      #voca-floating-player-bar {
+        bottom: calc(60px + var(--mobile-safe-area-bottom)) !important;
+        padding: 6px 14px !important;
+        gap: 10px !important;
+        font-size: 11px !important;
+      }
+
+      /* iPhone: sync badge in nav bar */
+      #nav-sync-badge {
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap !important;
+      }
+
+      /* iPhone: speaking & vocabulary section headers tighter */
+      .santa-box h3 {
+        font-size: 16px !important;
       }
     }
     @media (min-width: 641px) and (max-width: 1024px) {
@@ -596,10 +658,6 @@
         <div class="santa-box" style="background: linear-gradient(135deg, #FFFFFF 0%, #F5F2EB 100%); border: 1px solid var(--border-card); border-left: 5px solid var(--neon-purple); padding: 22px 24px; margin-bottom: 16px; border-radius: var(--radius-xl); box-shadow: var(--shadow-card);">
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;">
             <div>
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
-                <span class="santa-badge santa-badge-gold">👑 VIP UNLIMITED PASS</span>
-                <span style="font-size: 12px; color: var(--text-muted);">🔥 連續學習 <b id="course-streak-days" style="color: #B45309; font-weight: 800;">1</b> 天</span>
-              </div>
               <div style="font-size: 26px; font-weight: 900; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1.25;" id="course-profile-name">
                 Lumi 學習者
               </div>
@@ -637,7 +695,7 @@
           <div class="santa-box" style="padding: 16px 18px; margin: 0; background: #FFFFFF; border-left: 4px solid #16A34A; cursor: pointer;" onclick="switchView('voca')">
             <div style="font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">📖 核心單字庫</div>
             <div style="font-size: 24px; font-weight: 900; color: #16A34A; letter-spacing: -0.5px;">4,000 <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">字</span></div>
-            <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">750高頻片語 + 900金證</div>
+            <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">750高頻片語 + 900高分</div>
           </div>
 
         </div>
@@ -847,7 +905,7 @@
             <div>
               <h3 style="margin: 0; font-size: 17px; font-weight: 900; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
                 <span>📖 TOEIC 必考核心單字庫</span>
-                <span id="voca-total-badge" class="santa-badge santa-badge-cyan" style="font-weight: 800; font-size: 11.5px; padding: 2px 8px;">4,000 核心詞彙 (750高頻+900金證)</span>
+                <span id="voca-total-badge" class="santa-badge santa-badge-cyan" style="font-weight: 800; font-size: 11.5px; padding: 2px 8px;">4,000 核心詞彙 (750高頻+900高分)</span>
                 <span id="voca-due-badge" class="santa-badge santa-badge-gold" style="display: none;">⏰ 0 個待複習</span>
               </h3>
               <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
@@ -881,7 +939,7 @@
             <div style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px 2px; margin-bottom: 12px; scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
               <button class="santa-nav-btn active voca-cat-btn" data-cat="all" onclick="filterVocaCategory('all', this)" style="white-space: nowrap;">🌟 全部 (<span id="count-all">0</span>)</button>
               <button class="santa-nav-btn voca-cat-btn" data-cat="750" onclick="filterVocaCategory('750', this)" style="border-color: rgba(2, 132, 199, 0.4); color: #0284C7; font-weight: 800; white-space: nowrap;">🎯 750分高頻 (<span id="count-750">2400</span>)</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="900" onclick="filterVocaCategory('900', this)" style="border-color: rgba(147, 51, 234, 0.4); color: #9333EA; font-weight: 800; white-space: nowrap;">👑 900+金證 (<span id="count-900">1600</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="900" onclick="filterVocaCategory('900', this)" style="border-color: rgba(147, 51, 234, 0.4); color: #9333EA; font-weight: 800; white-space: nowrap;">👑 900+高分 (<span id="count-900">1600</span>)</button>
               <button class="santa-nav-btn voca-cat-btn" data-cat="phrase" onclick="filterVocaCategory('phrase', this)" style="border-color: rgba(217, 119, 6, 0.4); color: #D97706; font-weight: 800; white-space: nowrap;">🔗 必考片語 (<span id="count-phrase">0</span>)</button>
               <span style="color: var(--border-subtle); align-self: center; margin: 0 2px;">|</span>
               <button class="santa-nav-btn voca-cat-btn" data-cat="due" onclick="filterVocaCategory('due', this)" style="border-color: rgba(217, 119, 6, 0.4); color: var(--neon-yellow); white-space: nowrap;">⏰ 需複習 (<span id="count-due">0</span>)</button>
@@ -912,8 +970,8 @@
                     <option value="default">✨ 官方高頻推薦序</option>
                     <option value="az">🔤 字母順序 (A &rarr; Z)</option>
                     <option value="za">🔤 字母倒序 (Z &rarr; A)</option>
-                    <option value="level_asc">🎯 750分高頻 &rarr; 900分金證</option>
-                    <option value="level_desc">👑 900分金證 &rarr; 750分高頻</option>
+                    <option value="level_asc">🎯 750分高頻 &rarr; 900分高分</option>
+                    <option value="level_desc">👑 900分高分 &rarr; 750分高頻</option>
                     <option value="weak">🚨 易錯弱點優先 (錯題最多)</option>
                     <option value="due">⏰ 記憶遺忘複習優先</option>
                     <option value="shuffle">🎲 隨機亂序排列</option>
@@ -1087,7 +1145,7 @@
                 <select id="va-scope-select" class="santa-input" style="padding: 4px 8px; font-size: 11.5px; border-radius: 9999px; width: auto; background: #FFFFFF;" onchange="setAudioScope(this.value)">
                   <option value="all">🌟 播放全部單字庫 (4,000字)</option>
                   <option value="750">🎯 750分高頻衝刺庫 (2,400字)</option>
-                  <option value="900">👑 900+金色證書專區 (1,600字)</option>
+                  <option value="900">👑 900+高分進階專區 (1,600字)</option>
                   <option value="phrase">🔗 必考商務片語專區</option>
                   <option value="due">⏰ 僅需複習單字</option>
                   <option value="weak">🚨 僅易錯弱點單字</option>
@@ -2069,7 +2127,7 @@
       if (countDue) countDue.innerText = dueCount;
       if (countWeak) countWeak.innerText = weakCount;
       if (countMastered) countMastered.innerText = masteredCount;
-      if (totalBadge) totalBadge.innerText = `${MASTER_VOCABULARY.length}+ 核心詞彙 (750高頻+900金證)`;
+      if (totalBadge) totalBadge.innerText = `${MASTER_VOCABULARY.length}+ 核心詞彙 (750高頻+900高分)`;
 
       if (dueCount > 0) {
         if (dueBadge) {
@@ -2153,7 +2211,7 @@
         const isGold = (w.level === '900');
         const isPhrase = (w.pos === 'phrase' || w.cat === 'phrase_750' || (w.word && w.word.includes(' ')));
         const levelBadge = isGold
-          ? '<span class="santa-badge" style="background: #FAF5FF; color: #9333EA; border-color: #E9D5FF; font-size: 10px; padding: 2px 6px; font-weight: 800;">👑 900+金證</span>'
+          ? '<span class="santa-badge" style="background: #FAF5FF; color: #9333EA; border-color: #E9D5FF; font-size: 10px; padding: 2px 6px; font-weight: 800;">👑 900+高分</span>'
           : isPhrase
           ? '<span class="santa-badge" style="background: #FFFBEB; color: #D97706; border-color: #FDE68A; font-size: 10px; padding: 2px 6px; font-weight: 800;">🔗 必考片語</span>'
           : '<span class="santa-badge" style="background: #F0F9FF; color: #0284C7; border-color: #BAE6FD; font-size: 10px; padding: 2px 6px; font-weight: 800;">🎯 750高頻</span>';

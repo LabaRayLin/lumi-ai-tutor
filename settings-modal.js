@@ -794,8 +794,7 @@
         <div>🎯 <b>學習領域</b>: ${p.learningDomain || 'TOEIC 多益測驗'}</div>
         <div>📚 <b>擬真題庫</b>: <span style="color: #38bdf8; font-weight: 700;">2,000 題 (Part 1, 5, 6, 7 各 500 題)</span></div>
         <div>🎙️ <b>口說題庫</b>: <span style="color: #c084fc; font-weight: 700;">500 題 (Part 1~5 滿分朗讀)</span></div>
-        <div>📖 <b>核心單字</b>: <span style="color: #34d399; font-weight: 700;">4,000 字 (750高頻+900金證)</span></div>
-        <div>👑 <b>VIP 會員</b>: <span style="color: #fbbf24; font-weight: 700;">永久暢讀無限制</span></div>
+        <div>📖 <b>核心單字</b>: <span style="color: #34d399; font-weight: 700;">4,000 字 (750高頻+900高分)</span></div>
       `;
     }
   }
