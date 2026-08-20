@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="referrer" content="no-referrer" />
   <title>Lumi AI 智慧英文家教 (PWA 獨立版)</title>
   
   <!-- PWA Manifest & Meta Tags -->
@@ -3050,6 +3051,7 @@
     // iOS Detection & Audio Session Management
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     let audioCtx = null;
+    let ttsEngineCallCount = 0;
 
     function ensureAudioContext() {
       if (!audioCtx) {
