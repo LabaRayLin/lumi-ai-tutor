@@ -115,7 +115,6 @@
     const mistakes = window.SantaDB ? window.SantaDB.getMistakes() : [];
     const vocabularyProgress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
     const settings = window.SantaAIService ? window.SantaAIService.getSettings() : {};
-    const vocabulary = window.MASTER_VOCABULARY || [];
     const speakingHistory = [];
     const lumiHistory = [];
 
@@ -125,11 +124,10 @@
     } catch (e) { }
 
     return {
-      version: '1.4',
+      version: '1.5',
       timestamp: Date.now(),
       profile,
       mistakes,
-      vocabulary,
       vocabularyProgress,
       speakingHistory,
       lumiHistory,
@@ -151,10 +149,6 @@
 
     if (snapshot.vocabularyProgress && window.SantaDB) {
       window.SantaDB.saveVocabularyProgress(snapshot.vocabularyProgress);
-    }
-
-    if (snapshot.vocabulary && Array.isArray(snapshot.vocabulary) && snapshot.vocabulary.length > 0) {
-      window.MASTER_VOCABULARY = snapshot.vocabulary;
     }
 
     if (snapshot.settings && window.SantaAIService) {
@@ -500,9 +494,22 @@
     updateSyncUIStatus
   };
 
-  // Initial Sync Check
+  // Initial Sync Check & Lifecycle Auto-Sync
   window.addEventListener('DOMContentLoaded', () => {
     updateSyncUIStatus();
+    if (getSession()) {
+      pullMemory();
+    }
+  });
+
+  // Auto-pull latest cloud memory when switching back to tab/app (e.g. mobile unlock or tab switch)
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && getSession()) {
+      pullMemory();
+    }
+  });
+
+  window.addEventListener('focus', () => {
     if (getSession()) {
       pullMemory();
     }
