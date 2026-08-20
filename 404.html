@@ -18,6 +18,7 @@
 
   <!-- 1. Offline Core Interceptor, E2EE Sync, Vocabulary Bank, 2000 Questions Bank, 500 Speaking Bank & Settings Control Center -->
   <script src="./mock-api.js"></script>
+  <script src="./ai-service.js"></script>
   <script src="./e2ee-sync.js"></script>
   <script src="./vocabulary-data.js"></script>
   <script src="./questions-data.js"></script>
@@ -603,7 +604,7 @@
                 Lumi 學習者
               </div>
               <div style="font-size: 13.5px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5;">
-                衝刺領域: <b style="color: var(--text-primary);">TOEIC 多益測驗 (金色證書)</b> &bull; 內建試題: <b style="color: #0284C7; font-weight: 800;">2,500+ 題</b> &bull; 核心單字: <b style="color: #16A34A; font-weight: 800;">4,000 字 (750高頻+900金證)</b>
+                衝刺領域: <b style="color: var(--text-primary);">TOEIC 多益測驗</b> &bull; 內建試題: <b style="color: #0284C7; font-weight: 800;">2,500+ 題</b> &bull; 核心單字: <b style="color: #16A34A; font-weight: 800;">4,000 字 (750高頻+900高分)</b>
               </div>
             </div>
             <button class="santa-primary-btn" onclick="switchView('exam')">
@@ -659,11 +660,6 @@
                 <option value="part6">Part 6 - 篇章克漏字 (500 題)</option>
                 <option value="part7">Part 7 - 閱讀理解 (500 題)</option>
                 <option value="random">🌟 全真綜合模擬測驗 (2,000 題隨機)</option>
-              </select>
-              <select id="exam-diff-select" class="santa-input" onchange="handlePartChange()">
-                <option value="900">900+ (金色證書)</option>
-                <option value="750">750 分 (中高級)</option>
-                <option value="600">600 分 (基礎核心)</option>
               </select>
             </div>
 
@@ -1407,21 +1403,41 @@
       generateNewAiQuestion();
     }
 
+    function pickQuestionFromBank(rawPart) {
+      if (!window.MASTER_QUESTION_BANK) return null;
+      let pool = [];
+      if (rawPart === 'part1') pool = window.MASTER_QUESTION_BANK.part1 || [];
+      else if (rawPart === 'part5') pool = window.MASTER_QUESTION_BANK.part5 || [];
+      else if (rawPart === 'part6') pool = window.MASTER_QUESTION_BANK.part6 || [];
+      else if (rawPart === 'part7') pool = window.MASTER_QUESTION_BANK.part7 || [];
+      else {
+        // random or all 2000 questions
+        pool = [
+          ...(window.MASTER_QUESTION_BANK.part1 || []),
+          ...(window.MASTER_QUESTION_BANK.part5 || []),
+          ...(window.MASTER_QUESTION_BANK.part6 || []),
+          ...(window.MASTER_QUESTION_BANK.part7 || [])
+        ];
+      }
+      if (!pool || pool.length === 0) return null;
+      const idx = Math.floor(Math.random() * pool.length);
+      return pool[idx];
+    }
+
     async function generateNewAiQuestion() {
       const partSelect = document.getElementById('exam-part-select');
-      const diffSelect = document.getElementById('exam-diff-select');
-
       const rawPart = partSelect ? partSelect.value : 'part5';
-      const diffVal = diffSelect ? diffSelect.value : '900';
 
-      if (window.SantaAIService) {
-        const q = await window.SantaAIService.generateQuestion({
-          part: rawPart,
-          difficulty: diffVal,
-          domain: selectedDomainVal
-        });
+      let q = pickQuestionFromBank(rawPart);
+      if (!q && window.SantaAIService && typeof window.SantaAIService.generateQuestion === 'function') {
+        q = await window.SantaAIService.generateQuestion({ part: rawPart });
+      }
+
+      if (q) {
         currentQuestionData = q;
         renderQuestionData(q);
+      } else {
+        console.warn('[Lumi Exam] No question found in bank for part:', rawPart);
       }
     }
 
