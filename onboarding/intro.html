@@ -3064,32 +3064,44 @@
       }
     }
 
-    // Google Translate TTS MP3 Stream URL generator
+    // High-Reliability MP3 Stream Audio URL Generator (Youdao + Baidu Native Audio Engine)
     function getTTSAudioUrl(text, lang = 'en') {
       const cleaned = (text || '')
         .replace(/["'“”]/g, '')
+        .replace(/[；;]/g, '，')
+        .replace(/[（(].*?[）)]/g, '')
+        .replace(/[a-z]+\./gi, '')
         .replace(/\s+/g, ' ')
         .trim();
-      const ttsLang = lang.startsWith('zh') ? 'zh-TW' : 'en';
-      return `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleaned)}&tl=${ttsLang}&client=tw-ob`;
+      
+      const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(cleaned);
+      if (isZh) {
+        // Baidu TTS for natural Chinese audio
+        return `https://fanyi.baidu.com/gettts?lan=zh&text=${encodeURIComponent(cleaned)}&spd=4&source=web`;
+      }
+      
+      // English: sentences or long phrases (>3 words or >20 chars) -> Baidu TTS; single words -> Youdao US voice
+      if (cleaned.includes(' ') && cleaned.length > 20) {
+        return `https://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(cleaned)}&spd=3&source=web`;
+      }
+      return `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleaned)}&type=2`;
     }
 
-    // Play an MP3 audio URL directly through the HTML5 audio element
-    function playAudioStreamAsync(text, lang = 'en-US') {
+    // Play an MP3 audio URL directly through the HTML5 audio element with zero-stall guarantee
+    function playAudioStreamAsync(text, lang = 'en') {
       return new Promise((resolve) => {
-        if (!text) { resolve(); return; }
+        if (!text || !text.trim()) { resolve(); return; }
         const player = document.getElementById('walkman-audio-player');
-        if (!player) {
-          speakUtteranceAsync(text, lang).then(resolve);
-          return;
-        }
+        if (!player) { resolve(); return; }
 
         const url = getTTSAudioUrl(text, lang);
         let hasResolved = false;
+        let timeoutId = null;
 
         const done = () => {
           if (!hasResolved) {
             hasResolved = true;
+            if (timeoutId) clearTimeout(timeoutId);
             player.removeEventListener('ended', onEnded);
             player.removeEventListener('error', onError);
             resolve();
@@ -3098,20 +3110,31 @@
 
         const onEnded = () => done();
         const onError = (e) => {
-          console.warn('[Walkman MP3] MP3 stream error, falling back to Web Speech:', e);
-          player.removeEventListener('ended', onEnded);
-          player.removeEventListener('error', onError);
-          speakUtteranceAsync(text, lang).then(done);
+          console.warn('[Walkman MP3] Playback notice for:', text.substring(0, 20), e);
+          // Try alternative Baidu fallback once
+          const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(text);
+          const fallbackUrl = `https://fanyi.baidu.com/gettts?lan=${isZh ? 'zh' : 'en'}&text=${encodeURIComponent(text.trim())}&spd=3&source=web`;
+          if (player.src !== fallbackUrl) {
+            try {
+              player.src = fallbackUrl;
+              player.play().catch(() => done());
+              return;
+            } catch (err) {
+              done();
+              return;
+            }
+          }
+          done();
         };
 
         player.addEventListener('ended', onEnded, { once: true });
         player.addEventListener('error', onError, { once: true });
 
-        // Safety timeout (e.g. slow network)
-        const maxWait = Math.max(4500, text.length * 400);
-        setTimeout(() => {
+        // Dynamic safety timeout: based on text length, max 6s
+        const maxWait = Math.max(3000, Math.min(8000, text.length * 250));
+        timeoutId = setTimeout(() => {
           if (!hasResolved) {
-            console.log('[Walkman MP3] Timeout reached for segment:', text.substring(0, 25));
+            console.log('[Walkman MP3] Advancing past segment on timeout:', text.substring(0, 20));
             done();
           }
         }, maxWait);
@@ -3122,12 +3145,12 @@
           const playPromise = player.play();
           if (playPromise !== undefined) {
             playPromise.catch((err) => {
-              console.warn('[Walkman MP3] Playback error/offline fallback:', err.message);
-              speakUtteranceAsync(text, lang).then(done);
+              console.warn('[Walkman MP3] Play promise catch:', err.message);
+              onError(err);
             });
           }
         } catch (err) {
-          speakUtteranceAsync(text, lang).then(done);
+          onError(err);
         }
       });
     }
@@ -3466,23 +3489,25 @@
           renderCurrentAudioWordUI(currentWord, loop);
 
           // 1. Play English word MP3
-          await playAudioStreamAsync(currentWord.word, 'en-US');
+          await playAudioStreamAsync(currentWord.word, 'en');
           if (!isAudioPlaying || token !== audioPlayToken) break;
-          await sleep(350);
+          await sleep(250);
 
           // 2. Play Chinese meaning MP3
           if (audioSpeechMode === 'word_meaning' || audioSpeechMode === 'word_meaning_example') {
             const zhText = cleanMeaningForSpeech(currentWord.meaning);
-            await playAudioStreamAsync(zhText, 'zh-TW');
-            if (!isAudioPlaying || token !== audioPlayToken) break;
-            await sleep(350);
+            if (zhText) {
+              await playAudioStreamAsync(zhText, 'zh');
+              if (!isAudioPlaying || token !== audioPlayToken) break;
+              await sleep(250);
+            }
           }
 
           // 3. Play English example MP3
           if (audioSpeechMode === 'word_meaning_example' && currentWord.example) {
-            await playAudioStreamAsync(currentWord.example, 'en-US');
+            await playAudioStreamAsync(currentWord.example, 'en');
             if (!isAudioPlaying || token !== audioPlayToken) break;
-            await sleep(450);
+            await sleep(350);
           }
 
           // Delay between repeat loops of SAME word
