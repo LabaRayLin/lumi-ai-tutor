@@ -3048,13 +3048,21 @@
     let screenWakeLock = null;
     let isScreenWakeLockEnabled = false;
 
+<<<<<<< Updated upstream
     // iOS Detection & Audio Session Management
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     let audioCtx = null;
+=======
+    // iOS Detection & Audio Session Management (Inspired by ios-background-audio-main)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    let audioCtx = null;
+    let audioKeepAliveSource = null;
+>>>>>>> Stashed changes
     let ttsEngineCallCount = 0;
 
     function ensureAudioContext() {
       if (!audioCtx) {
+<<<<<<< Updated upstream
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
       if (audioCtx.state === 'suspended') {
@@ -3064,6 +3072,58 @@
       if (navigator.audioSession) {
         try { navigator.audioSession.type = 'playback'; } catch (e) {}
       }
+=======
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioContextClass) {
+          try {
+            audioCtx = new AudioContextClass({ latencyHint: 'playback', sampleRate: 48000 });
+          } catch (e) {
+            audioCtx = new AudioContextClass();
+          }
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+      // Set audio session type for Safari 16.4+ (Bypasses silent switch + enables iOS background playback)
+      if (navigator.audioSession) {
+        try { navigator.audioSession.type = 'playback'; } catch (e) {}
+      }
+
+      // Start continuous silent buffer keep-alive carrier so iOS never freezes JS loop in background
+      startAudioKeepAliveCarrier();
+    }
+
+    function startAudioKeepAliveCarrier() {
+      if (!audioCtx || audioKeepAliveSource) return;
+      try {
+        // Create a 1-second silent AudioBuffer
+        const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate || 48000, audioCtx.sampleRate || 48000);
+        const source = audioCtx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = 0.0001; // Inaudible carrier
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        source.start(0);
+        audioKeepAliveSource = source;
+        console.log('[iOS Background Audio] Keep-alive silent carrier stream engaged.');
+      } catch (err) {
+        console.warn('[iOS Background Audio] Keep-alive notice:', err);
+      }
+    }
+
+    function stopAudioKeepAliveCarrier() {
+      if (audioKeepAliveSource) {
+        try {
+          audioKeepAliveSource.stop();
+          audioKeepAliveSource.disconnect();
+        } catch (e) {}
+        audioKeepAliveSource = null;
+      }
+>>>>>>> Stashed changes
     }
 
     // High-Reliability MP3 Stream Audio URL Generator (Youdao + Baidu Native Audio Engine)
@@ -3557,6 +3617,10 @@
         try { player.pause(); } catch (e) {}
       }
       try { window.speechSynthesis.cancel(); } catch (e) {}
+<<<<<<< Updated upstream
+=======
+      stopAudioKeepAliveCarrier();
+>>>>>>> Stashed changes
       releaseScreenWakeLock();
       updateAudioPlayerControlsUI();
       if ('mediaSession' in navigator) {
