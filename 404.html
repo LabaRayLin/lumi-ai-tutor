@@ -2148,49 +2148,130 @@
       }
     }
 
-    function playModelAudio() {
+    let speakingAudioToken = 0;
+
+    async function playModelAudio() {
       const q = SPEAKING_BANK[currentSpeakingIndex];
       if (!q) return;
       const text = q.modelAnswer || q.passage;
       if (!text) return;
 
-      if (!('speechSynthesis' in window)) {
-        alert('您的瀏覽器不支援語音播放功能');
-        return;
-      }
-
-      try {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.resume();
-      } catch (e) {}
-
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US';
-      u.rate = 0.92;
-
       const playBtn = document.getElementById('spk-play-model-btn');
+      const token = ++speakingAudioToken;
       isModelAudioPlaying = true;
+
+      ensureAudioContext();
+
       if (playBtn) {
         playBtn.innerHTML = '⏸️ 停止示範播放';
         playBtn.style.background = 'linear-gradient(135deg, #D97706 0%, #B45309 100%)';
       }
 
-      const resetBtns = () => {
-        isModelAudioPlaying = false;
-        if (playBtn) {
-          playBtn.innerHTML = '🔊 播放示範滿分答案';
-          playBtn.style.background = 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)';
+      const statusText = document.getElementById('speaking-status-text');
+      if (statusText) statusText.innerText = '🔊 正在播放真人美式發音滿分示範...';
+
+      // Split text into natural sentence chunks
+      const cleanSentences = text
+        .replace(/[\r\n]+/g, ' ')
+        .split(/(?<=[.?!;])\s+/)
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+
+      const sentences = cleanSentences.length > 0 ? cleanSentences : [text.trim()];
+
+      for (let i = 0; i < sentences.length; i++) {
+        if (!isModelAudioPlaying || token !== speakingAudioToken) break;
+        const sentence = sentences[i];
+        
+        await playSpeakingSentenceAsync(sentence);
+        
+        if (!isModelAudioPlaying || token !== speakingAudioToken) break;
+        if (i < sentences.length - 1) {
+          await sleep(240); // Natural human breathing pause between sentences
         }
-      };
+      }
 
-      u.onend = resetBtns;
-      u.onerror = resetBtns;
+      if (token === speakingAudioToken) {
+        stopModelAudioPlay();
+      }
+    }
 
-      window.speechSynthesis.speak(u);
+    function playSpeakingSentenceAsync(text) {
+      return new Promise((resolve) => {
+        if (!text || !text.trim()) { resolve(); return; }
+        const player = document.getElementById('walkman-audio-player') || document.getElementById('speaking-audio-player');
+        if (!player) { resolve(); return; }
+
+        const url = getTTSAudioUrl(text, 'en');
+        let hasResolved = false;
+        let timeoutId = null;
+
+        const done = () => {
+          if (!hasResolved) {
+            hasResolved = true;
+            if (timeoutId) clearTimeout(timeoutId);
+            player.removeEventListener('ended', onEnded);
+            player.removeEventListener('error', onError);
+            resolve();
+          }
+        };
+
+        const onEnded = () => done();
+        const onError = (e) => {
+          console.warn('[Speaking Audio] Stream notice:', e);
+          if ('speechSynthesis' in window) {
+            try {
+              const u = new SpeechSynthesisUtterance(text);
+              u.lang = 'en-US';
+              u.rate = 0.92;
+              u.onend = () => done();
+              u.onerror = () => done();
+              window.speechSynthesis.speak(u);
+              return;
+            } catch (err) {
+              done();
+              return;
+            }
+          }
+          done();
+        };
+
+        player.addEventListener('ended', onEnded, { once: true });
+        player.addEventListener('error', onError, { once: true });
+
+        const maxWait = Math.max(3000, Math.min(15000, text.length * 250));
+        timeoutId = setTimeout(() => {
+          if (!hasResolved) done();
+        }, maxWait);
+
+        try {
+          player.src = url;
+          player.playbackRate = 0.95; // Natural authentic pacing
+          const p = player.play();
+          if (p !== undefined) {
+            p.catch((err) => {
+              console.warn('[Speaking Audio] Play catch:', err);
+              onError(err);
+            });
+          }
+        } catch (err) {
+          onError(err);
+        }
+      });
     }
 
     function stopModelAudioPlay() {
       isModelAudioPlaying = false;
+      speakingAudioToken++;
+
+      const player = document.getElementById('walkman-audio-player');
+      if (player) {
+        try { player.pause(); } catch (e) {}
+      }
+      const spkPlayer = document.getElementById('speaking-audio-player');
+      if (spkPlayer) {
+        try { spkPlayer.pause(); } catch (e) {}
+      }
       try {
         if ('speechSynthesis' in window) {
           window.speechSynthesis.cancel();
@@ -2201,6 +2282,11 @@
       if (playBtn) {
         playBtn.innerHTML = '🔊 播放示範滿分答案';
         playBtn.style.background = 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)';
+      }
+
+      const statusText = document.getElementById('speaking-status-text');
+      if (statusText) {
+        statusText.innerText = '點擊「開始作答錄音」進行擬真練習，或直接點擊「🔊 播放示範滿分答案」聆聽標準示範';
       }
     }
 
@@ -3102,7 +3188,7 @@
       }
     }
 
-    // High-Reliability MP3 Stream Audio URL Generator (Youdao + Baidu Native Audio Engine)
+    // High-Reliability MP3 Stream Audio URL Generator (Google Neural US English + Youdao Authentic Human Voice)
     function getTTSAudioUrl(text, lang = 'en') {
       const cleaned = (text || '')
         .replace(/["'“”]/g, '')
@@ -3118,10 +3204,12 @@
         return `https://fanyi.baidu.com/gettts?lan=zh&text=${encodeURIComponent(cleaned)}&spd=4&source=web`;
       }
       
-      // English: sentences or long phrases (>3 words or >20 chars) -> Baidu TTS; single words -> Youdao US voice
-      if (cleaned.includes(' ') && cleaned.length > 20) {
-        return `https://fanyi.baidu.com/gettts?lan=en&text=${encodeURIComponent(cleaned)}&spd=3&source=web`;
+      // English:
+      // 1. Sentences & speaking answers -> Google Neural US English (Natural human intonation, stress & cadence)
+      if (cleaned.includes(' ') || cleaned.length > 25) {
+        return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(cleaned)}`;
       }
+      // 2. Single core vocabulary words -> Youdao Native American Dictionary Human Voice
       return `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleaned)}&type=2`;
     }
 
