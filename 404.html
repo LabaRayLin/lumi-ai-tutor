@@ -168,26 +168,24 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Top Sticky Navigation Bar (Glassmorphic Beige & Pill Buttons) */
+    /* Top Sticky Navigation Bar (Solid Crisp White & High-Contrast Pill Buttons) */
     .santa-nav-header {
       position: sticky;
       top: 0;
       z-index: 1000;
-      padding: 10px 18px;
+      padding: max(10px, env(safe-area-inset-top)) 16px 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border-subtle);
-      background: rgba(251, 249, 245, 0.92);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.04);
+      border-bottom: 1px solid var(--border-card);
+      background: #FFFFFF;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       gap: 12px;
     }
     .santa-nav-title {
       font-size: 17px;
       font-weight: 900;
-      color: var(--text-primary);
+      color: #0F172A;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -204,38 +202,40 @@
     }
     .santa-nav-tabs {
       display: flex;
-      gap: 6px;
+      gap: 8px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      align-items: center;
+      padding: 2px 0;
     }
     .santa-nav-tabs::-webkit-scrollbar {
       display: none;
     }
     .santa-nav-btn {
-      background: #F0ECE4;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-card);
-      padding: 7px 16px;
+      background: #F1EFE9;
+      color: #334155;
+      border: 1px solid #E2DDD4;
+      padding: 8px 16px;
       border-radius: var(--radius-pill);
-      font-size: 12.5px;
-      font-weight: 700;
+      font-size: 13px;
+      font-weight: 800;
       cursor: pointer;
       white-space: nowrap;
       flex-shrink: 0;
-      transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .santa-nav-btn:hover {
       background: #E5E0D5;
-      color: var(--text-primary);
-      border-color: #D8D2C5;
-      transform: translateY(-2px);
+      color: #0F172A;
+      border-color: #CBD5E1;
+      transform: translateY(-1px);
     }
     .santa-nav-btn.active {
       background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
       color: #FFFFFF;
       border-color: #4338CA;
-      box-shadow: var(--glow-purple);
+      box-shadow: 0 3px 12px rgba(79, 70, 229, 0.3);
     }
 
     /* Layout Containers & Rounded Cards */
@@ -540,14 +540,16 @@
       .santa-voca-grid { grid-template-columns: 1fr !important; }
       .santa-box { padding: 12px 14px; border-radius: 16px; }
 
-      /* iPhone nav bar: compact logo, full-width scrollable tabs */
+      /* iPhone nav bar: crisp, spacious, high-contrast & comfortable tap targets */
       .santa-nav-header {
-        padding: 8px 10px !important;
-        gap: 8px !important;
+        padding: max(10px, env(safe-area-inset-top)) 12px 10px 12px !important;
+        gap: 10px !important;
         flex-wrap: nowrap !important;
+        background: #FFFFFF !important;
       }
       .santa-nav-title {
-        font-size: 14px !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
         min-width: auto !important;
         flex-shrink: 0 !important;
       }
@@ -556,12 +558,16 @@
         min-width: 0;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        scroll-snap-type: x mandatory;
-        padding-right: 4px;
+        gap: 8px !important;
+        padding: 4px 2px !important;
       }
       .santa-nav-tabs .santa-nav-btn {
-        padding: 6px 12px !important;
-        font-size: 11.5px !important;
+        padding: 8px 15px !important;
+        font-size: 13.5px !important;
+        font-weight: 800 !important;
+        min-height: 38px !important;
+        display: inline-flex !important;
+        align-items: center !important;
         scroll-snap-align: start;
       }
 
@@ -591,16 +597,6 @@
         padding: 6px 14px !important;
         gap: 10px !important;
         font-size: 11px !important;
-      }
-
-      /* iPhone: sync badge in nav bar */
-      #nav-sync-badge {
-        font-size: 10px !important;
-        padding: 2px 6px !important;
-        max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap !important;
       }
 
       /* iPhone: speaking & vocabulary section headers tighter */
@@ -809,7 +805,7 @@
 <body>
   <div id="__next">
     
-    <!-- Top Sticky Navigation Bar (Glassmorphic + Pill Shape) -->
+    <!-- Top Sticky Navigation Bar (Solid Crisp White & Pill Buttons) -->
     <header id="santa-nav" class="santa-nav-header" style="display: flex;">
       <div class="santa-nav-title" onclick="switchView('course')">
         <span>✨ Lumi</span> <span class="brand-accent">AI</span>
@@ -820,12 +816,6 @@
         <button class="santa-nav-btn" data-target="mistakes" onclick="switchView('mistakes')">❌ 錯題本 (<span id="nav-mistakes-count">0</span>)</button>
         <button class="santa-nav-btn" data-target="speaking" onclick="switchView('speaking')">🎙️ 口說實戰 (500題)</button>
         <button class="santa-nav-btn" data-target="voca" onclick="switchView('voca')">📖 核心單字庫 (隨身聽)</button>
-      </div>
-      <div style="display: flex; gap: 6px; align-items: center;">
-        <span id="nav-sync-badge" class="santa-badge santa-badge-green" style="display: none;">🟢 已同步</span>
-        <button id="pwa-install-btn" class="santa-btn santa-btn-outline" style="display: none; font-size: 11.5px; padding: 4px 10px; white-space: nowrap;">
-          📲 安裝 App
-        </button>
       </div>
     </header>
 
@@ -1500,6 +1490,9 @@
         <button class="santa-btn santa-btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="navigateAudioWord(1)" title="下一字">⏭️</button>
         <button class="santa-btn santa-btn-outline" style="padding: 4px 8px; font-size: 12px;" onclick="switchVocaSubMode('audio')" title="開啟播放器面板">🎛️</button>
         <button class="santa-btn santa-btn-outline" style="padding: 4px 8px; font-size: 12px; color: #E11D48;" onclick="stopAudioAutoPlay()" title="關閉隨身聽">✖</button>
+      </div>
+    </div>
+
     <!-- Vocabulary PDF Export Modal -->
     <div id="voca-pdf-modal" onclick="if(event.target === this) closeVocaPdfModal()">
       <div class="voca-pdf-modal-content">
