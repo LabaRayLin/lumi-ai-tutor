@@ -1,9 +1,9 @@
 /**
- * Santa AI Tutor - Service Worker (PWA Offline Engine)
+ * Lumi AI Tutor - Service Worker (PWA High-Reliability Offline Engine)
  * Fully compatible with Localhost, Custom Domains, and GitHub Pages subpaths.
  */
 
-const CACHE_NAME = 'santa-ai-pwa-v4.0';
+const CACHE_NAME = 'lumi-ai-pwa-v5.1';
 
 // Relative assets to cache based on registration base path
 const RELATIVE_ASSETS = [
@@ -32,26 +32,27 @@ const RELATIVE_ASSETS = [
 
 // Install Event: Pre-cache core shell assets
 self.addEventListener('install', (event) => {
-  console.log('[Santa PWA Service Worker] Installing and caching core shell for scope:', self.registration.scope);
+  console.log('[Lumi PWA Service Worker] Installing and caching core shell for scope:', self.registration.scope);
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       const urlsToCache = RELATIVE_ASSETS.map(path => new URL(path, self.registration.scope).toString());
       return cache.addAll(urlsToCache).catch((err) => {
-        console.warn('[Santa PWA] Some assets could not be pre-cached immediately:', err);
+        console.warn('[Lumi PWA] Some assets could not be pre-cached immediately:', err);
       });
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
-// Activate Event: Cleanup older caches
+// Activate Event: Immediately delete all older caches and claim clients
 self.addEventListener('activate', (event) => {
-  console.log('[Santa PWA Service Worker] Activating & cleaning old caches...');
+  console.log('[Lumi PWA Service Worker] Activating & cleaning older caches...');
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
-            console.log('[Santa PWA] Deleting old cache:', cache);
+            console.log('[Lumi PWA] Purging outdated cache:', cache);
             return caches.delete(cache);
           }
         })
@@ -60,50 +61,54 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch Event: Cache First for assets, Network First with Fallback
+// Fetch Event: Network-First for HTML/Navigations, Stale-While-Revalidate for Assets
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Bypass external API calls (Gemini / Groq / OpenAI / Ollama / GitHub Gist / JSONBin)
+  // Bypass external API calls (Gemini / Groq / OpenAI / Ollama / GitHub Gist / JSONBin / TTS)
   if (url.origin.includes('googleapis.com') ||
       url.origin.includes('groq.com') ||
       url.origin.includes('openai.com') ||
       url.origin.includes('api.github.com') ||
+      url.origin.includes('youdao.com') ||
+      url.origin.includes('baidu.com') ||
       url.origin.includes('jsonbin.io') ||
       url.port === '11434') {
     return;
   }
 
-  // Cache First for static chunks, images, fonts, styles
+  // 1. Navigation / HTML Document requests: ALWAYS Network-First so users get latest fixes immediately
+  if (event.request.mode === 'navigate' || event.request.destination === 'document') {
+    event.respondWith(
+      fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const copy = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          return caches.match(event.request) ||
+                 caches.match(new URL('./index.html', self.registration.scope).toString()) ||
+                 caches.match(new URL('./404.html', self.registration.scope).toString());
+        })
+    );
+    return;
+  }
+
+  // 2. Static Assets (JS, CSS, Images): Cache First with Background Update
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
+      const fetchPromise = fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const copy = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         }
-
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
         return networkResponse;
-      }).catch(() => {
-        // SPA Fallback for navigation requests
-        if (event.request.mode === 'navigate') {
-          return caches.match(new URL('./index.html', self.registration.scope).toString()) ||
-                 caches.match(new URL('./404.html', self.registration.scope).toString());
-        }
-      });
+      }).catch(() => null);
+
+      return cachedResponse || fetchPromise;
     })
   );
 });
