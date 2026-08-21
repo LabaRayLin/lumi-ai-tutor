@@ -3190,27 +3190,35 @@
 
     // High-Reliability MP3 Stream Audio URL Generator (Google Neural US English + Youdao Authentic Human Voice)
     function getTTSAudioUrl(text, lang = 'en') {
-      const cleaned = (text || '')
+      if (!text || !text.trim()) return '';
+      
+      const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(text);
+      if (isZh) {
+        const cleanedZh = text
+          .replace(/^(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
+          .replace(/\b(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
+          .replace(/["'“”]/g, '')
+          .replace(/[；;]/g, '，')
+          .replace(/[（(].*?[）)]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+        // Baidu TTS for natural Chinese audio
+        return `https://fanyi.baidu.com/gettts?lan=zh&text=${encodeURIComponent(cleanedZh)}&spd=4&source=web`;
+      }
+      
+      // English: Clean only double quotes & surrounding bracket notes, strictly preserving all words, periods and punctuation!
+      const cleanedEn = text
         .replace(/["'“”]/g, '')
-        .replace(/[；;]/g, '，')
         .replace(/[（(].*?[）)]/g, '')
-        .replace(/[a-z]+\./gi, '')
         .replace(/\s+/g, ' ')
         .trim();
-      
-      const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(cleaned);
-      if (isZh) {
-        // Baidu TTS for natural Chinese audio
-        return `https://fanyi.baidu.com/gettts?lan=zh&text=${encodeURIComponent(cleaned)}&spd=4&source=web`;
-      }
-      
-      // English:
+
       // 1. Sentences & speaking answers -> Google Neural US English (Natural human intonation, stress & cadence)
-      if (cleaned.includes(' ') || cleaned.length > 25) {
-        return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(cleaned)}`;
+      if (cleanedEn.includes(' ') || cleanedEn.length > 25) {
+        return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(cleanedEn)}`;
       }
       // 2. Single core vocabulary words -> Youdao Native American Dictionary Human Voice
-      return `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleaned)}&type=2`;
+      return `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanedEn)}&type=2`;
     }
 
     // Play an MP3 audio URL directly through the HTML5 audio element with zero-stall guarantee
@@ -3408,10 +3416,11 @@
 
     function cleanMeaningForSpeech(meaning) {
       return (meaning || '')
+        .replace(/^(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
+        .replace(/\b(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
         .replace(/；/g, '，')
         .replace(/（.*?）/g, '')
         .replace(/\(.*?\)/g, '')
-        .replace(/[a-z]+\./gi, '')
         .trim();
     }
 
