@@ -3048,31 +3048,14 @@
     let screenWakeLock = null;
     let isScreenWakeLockEnabled = false;
 
-<<<<<<< Updated upstream
-    // iOS Detection & Audio Session Management
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    let audioCtx = null;
-=======
     // iOS Detection & Audio Session Management (Inspired by ios-background-audio-main)
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     let audioCtx = null;
     let audioKeepAliveSource = null;
->>>>>>> Stashed changes
     let ttsEngineCallCount = 0;
 
     function ensureAudioContext() {
       if (!audioCtx) {
-<<<<<<< Updated upstream
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(() => {});
-      }
-      // Set audio session type for Safari 16.4+
-      if (navigator.audioSession) {
-        try { navigator.audioSession.type = 'playback'; } catch (e) {}
-      }
-=======
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
         if (AudioContextClass) {
           try {
@@ -3123,7 +3106,6 @@
         } catch (e) {}
         audioKeepAliveSource = null;
       }
->>>>>>> Stashed changes
     }
 
     // High-Reliability MP3 Stream Audio URL Generator (Youdao + Baidu Native Audio Engine)
@@ -3617,10 +3599,7 @@
         try { player.pause(); } catch (e) {}
       }
       try { window.speechSynthesis.cancel(); } catch (e) {}
-<<<<<<< Updated upstream
-=======
       stopAudioKeepAliveCarrier();
->>>>>>> Stashed changes
       releaseScreenWakeLock();
       updateAudioPlayerControlsUI();
       if ('mediaSession' in navigator) {
