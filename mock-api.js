@@ -180,7 +180,7 @@
   }
 
   // ==========================================
-  // Spaced Repetition System (SRS) for Vocabulary
+  // Spaced Repetition System (SRS) for Vocabulary & App Badging API
   // ==========================================
   function getVocabularyProgress() {
     try {
@@ -190,9 +190,44 @@
     return {};
   }
 
+  // App Badging API: Reflects real-time count of vocabulary due for review on PWA home screen icon
+  function updateAppBadgeSRS(providedDueCount) {
+    if (typeof navigator === 'undefined' || !('setAppBadge' in navigator)) return;
+    try {
+      let dueCount = providedDueCount;
+      if (typeof dueCount !== 'number') {
+        const progress = getVocabularyProgress();
+        const now = Date.now();
+        dueCount = 0;
+        Object.values(progress).forEach(srs => {
+          if (srs && srs.nextReviewDue > 0 && srs.nextReviewDue <= now) {
+            dueCount++;
+          }
+        });
+      }
+
+      if (dueCount > 0) {
+        navigator.setAppBadge(dueCount).then(() => {
+          console.log(`[Lumi PWA App Badge] Badge set to ${dueCount} due SRS vocabulary items.`);
+        }).catch(err => {
+          console.log('[Lumi PWA App Badge] setAppBadge notice:', err?.message || err);
+        });
+      } else {
+        if ('clearAppBadge' in navigator) {
+          navigator.clearAppBadge().then(() => {
+            console.log('[Lumi PWA App Badge] Badge cleared (0 due items).');
+          }).catch(() => {});
+        }
+      }
+    } catch (e) {
+      console.warn('[Lumi PWA App Badge] Error setting app badge:', e);
+    }
+  }
+
   function saveVocabularyProgress(progressMap) {
     localStorage.setItem('santa_vocabulary_progress', JSON.stringify(progressMap || {}));
     if (window.SantaSync) window.SantaSync.scheduleAutoSync();
+    updateAppBadgeSRS();
     return progressMap;
   }
 
@@ -234,7 +269,8 @@
     return item;
   }
 
-  // Expose Database APIs for Settings Modal & AI Service
+  // Expose Database APIs for Settings Modal, AI Service & UI
+  window.updateAppBadgeSRS = updateAppBadgeSRS;
   window.SantaDB = {
     getProfile: getLocalProfile,
     saveProfile: saveLocalProfile,
@@ -245,6 +281,7 @@
     getVocabularyProgress: getVocabularyProgress,
     saveVocabularyProgress: saveVocabularyProgress,
     updateWordSRS: updateWordSRS,
+    updateAppBadgeSRS: updateAppBadgeSRS,
     resetDatabase: function () {
       localStorage.clear();
       localStorage.setItem('santa_offline_profile', JSON.stringify(DEFAULT_PROFILE));
@@ -261,6 +298,20 @@
       }, null, 2);
     }
   };
+
+  // Auto-sync App Badge on startup & tab resume
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'complete') {
+      updateAppBadgeSRS();
+    } else {
+      window.addEventListener('load', () => updateAppBadgeSRS());
+    }
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        updateAppBadgeSRS();
+      }
+    });
+  }
 
   // ==========================================
   // 2. High Quality Offline Question Bank

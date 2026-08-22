@@ -1586,17 +1586,78 @@
 
   <script>
     // ==========================================
-    // PWA Service Worker Registration & Install Prompt
+    // PWA Service Worker Registration & Smooth Update Prompt
     // ==========================================
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
+        let isRefreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!isRefreshing) {
+            isRefreshing = true;
+            window.location.reload();
+          }
+        });
+
         navigator.serviceWorker.register('./sw.js').then((reg) => {
           console.log('[Lumi PWA] Service Worker registered with scope:', reg.scope);
+
+          // Check if there is already a waiting worker
+          if (reg.waiting) {
+            showPWAUpdateToast(reg.waiting);
+            return;
+          }
+
+          // Check for incoming updates
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New update installed and waiting for user reload
+                showPWAUpdateToast(newWorker);
+              }
+            });
+          });
+
           try { reg.update(); } catch (e) {}
         }).catch((err) => {
           console.warn('[Lumi PWA] Service Worker registration failed:', err);
         });
       });
+    }
+
+    // Smooth UI Notification Toast for Version Updates
+    function showPWAUpdateToast(waitingWorker) {
+      if (document.getElementById('lumi-pwa-update-toast')) return;
+
+      const toast = document.createElement('div');
+      toast.id = 'lumi-pwa-update-toast';
+      toast.style.cssText = 'position:fixed;bottom:24px;right:20px;z-index:99999;background:rgba(30,27,24,0.95);backdrop-filter:blur(12px);color:#FFFFFF;padding:14px 18px;border-radius:16px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3),0 0 0 1px rgba(255,255,255,0.12);display:flex;align-items:center;gap:14px;max-width:360px;font-family:Pretendard,-apple-system,sans-serif;animation:lumiToastFadeIn 0.3s ease;';
+
+      toast.innerHTML = `
+        <div style="font-size: 22px; line-height: 1;">🎉</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 700; font-size: 13px; color: #FBBF24;">發現新版本！</div>
+          <div style="font-size: 12px; color: #D1D5DB; margin-top: 2px;">Lumi 已準備好更新，點擊立即套用</div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button id="lumi-pwa-update-btn" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: #FFFFFF; font-size: 12px; font-weight: 700; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer;">更新</button>
+          <button id="lumi-pwa-dismiss-btn" style="background: transparent; color: #9CA3AF; font-size: 12px; border: none; padding: 6px 4px; cursor: pointer;">稍後</button>
+        </div>
+      `;
+
+      document.body.appendChild(toast);
+
+      document.getElementById('lumi-pwa-update-btn').onclick = () => {
+        if (waitingWorker) {
+          waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+        }
+        toast.remove();
+      };
+
+      document.getElementById('lumi-pwa-dismiss-btn').onclick = () => {
+        toast.remove();
+      };
     }
 
     let deferredPrompt = null;
@@ -2489,6 +2550,11 @@
       } else {
         if (dueBadge) dueBadge.style.display = 'none';
         if (dueBanner) dueBanner.style.display = 'none';
+      }
+
+      // Sync PWA home screen icon badge
+      if (window.updateAppBadgeSRS) {
+        window.updateAppBadgeSRS(dueCount);
       }
 
       const filtered = MASTER_VOCABULARY.filter(w => {

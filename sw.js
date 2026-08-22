@@ -1,12 +1,22 @@
 /**
- * Lumi AI Tutor - Service Worker (PWA High-Reliability Offline Engine)
+ * Lumi AI Tutor - Service Worker (PWA Resilient Offline Engine v6.1)
  * Fully compatible with Localhost, Custom Domains, and GitHub Pages subpaths.
+ * Features:
+ * 1. Dual-Tier Cache Partitioning (Core App Shell vs. Dynamic Runtime Chunks).
+ * 2. Automated LRU / Max-Entries Trimming to prevent cache storage bloat.
+ * 3. In-depth Stale Asset Pruning during Activate phase.
+ * 4. Resilient Promise.allSettled pre-caching.
  */
 
-const CACHE_NAME = 'lumi-ai-pwa-v5.1';
+const CACHE_PREFIX = 'lumi-ai-pwa';
+const CORE_CACHE_NAME = `${CACHE_PREFIX}-core-v6.1`;
+const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}-runtime-v6.1`;
+const CURRENT_CACHES = [CORE_CACHE_NAME, RUNTIME_CACHE_NAME];
 
-// Relative assets to cache based on registration base path
-const RELATIVE_ASSETS = [
+const MAX_RUNTIME_ENTRIES = 50; // Keep at most 50 dynamic chunks/assets to prevent storage bloat
+
+// Guaranteed Core Application Shell (Essential for offline operation)
+const CORE_CRITICAL_ASSETS = [
   './',
   './index.html',
   './404.html',
@@ -19,49 +29,119 @@ const RELATIVE_ASSETS = [
   './speaking-data.js',
   './settings-modal.js',
   './assets/favicon.webp',
-  './assets/img_onboarding_kv.bb65f35e.webp',
-  './_next/static/css/92dd231bb3a5bc1c.css',
-  './_next/static/css/1ba5ded7943c543d.css',
-  './_next/static/css/1bff5a024019dd7b.css',
-  './_next/static/chunks/polyfills-42372ed130431b0a.js',
-  './_next/static/chunks/webpack-50c5564d99b24dc1.js',
-  './_next/static/chunks/framework-dc0c8ce2bb6ada39.js',
-  './_next/static/chunks/main-93efd2d72a01a9d0.js',
-  './_next/static/chunks/pages/_app-17f5f6443af84651.js'
+  './assets/img_onboarding_kv.bb65f35e.webp'
 ];
 
-// Install Event: Pre-cache core shell assets
+// Helper: Trim cache to maximum allowed entries (FIFO/LRU eviction)
+async function trimCache(cacheName, maxItems) {
+  try {
+    const cache = await caches.open(cacheName);
+    const keys = await cache.keys();
+    if (keys.length > maxItems) {
+      const itemsToDelete = keys.slice(0, keys.length - maxItems);
+      await Promise.all(itemsToDelete.map(key => cache.delete(key)));
+      console.log(`[Lumi PWA Cache Manager] Evicted ${itemsToDelete.length} stale items from ${cacheName}`);
+    }
+  } catch (err) {
+    console.warn('[Lumi PWA Cache Manager] Error trimming cache:', err);
+  }
+}
+
+// Helper: Determine if a request URL belongs to the core static shell
+function isCoreAsset(requestUrl) {
+  try {
+    const url = new URL(requestUrl);
+    return CORE_CRITICAL_ASSETS.some(p => {
+      const full = new URL(p, self.registration.scope).toString();
+      return full === url.href;
+    });
+  } catch (e) {
+    return false;
+  }
+}
+
+// Install Event: Resilient Pre-caching of Core Shell (Wait for user confirmation before activating)
 self.addEventListener('install', (event) => {
-  console.log('[Lumi PWA Service Worker] Installing and caching core shell for scope:', self.registration.scope);
-  self.skipWaiting();
+  console.log('[Lumi PWA Service Worker] Installing v6.2 with Dual-Tier Resilient Cache...');
+  // Note: Unconditional skipWaiting() removed to prevent crashing in-flight SPA user sessions.
+
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      const urlsToCache = RELATIVE_ASSETS.map(path => new URL(path, self.registration.scope).toString());
-      return cache.addAll(urlsToCache).catch((err) => {
-        console.warn('[Lumi PWA] Some assets could not be pre-cached immediately:', err);
-      });
+    caches.open(CORE_CACHE_NAME).then(async (cache) => {
+      const urls = CORE_CRITICAL_ASSETS.map(path => new URL(path, self.registration.scope).toString());
+
+      const results = await Promise.allSettled(
+        urls.map(async (url) => {
+          try {
+            const response = await fetch(url, { cache: 'no-cache' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            await cache.put(url, response);
+            return url;
+          } catch (err) {
+            console.warn(`[Lumi PWA] Pre-cache skipped core asset (${err.message}): ${url}`);
+            throw err;
+          }
+        })
+      );
+
+      const cachedCount = results.filter(r => r.status === 'fulfilled').length;
+      console.log(`[Lumi PWA Service Worker] Core App Shell pre-cache complete: ${cachedCount} assets.`);
     })
   );
 });
 
-// Activate Event: Immediately delete all older caches and claim clients
+// Message Event: Listen for SKIP_WAITING from UI when user confirms update
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[Lumi PWA Service Worker] User approved update via UI. Calling skipWaiting()...');
+    self.skipWaiting();
+  }
+});
+
+// Activate Event: Comprehensive Cache Cleaning & In-Cache Stale Asset Pruning
 self.addEventListener('activate', (event) => {
-  console.log('[Lumi PWA Service Worker] Activating & cleaning older caches...');
+  console.log('[Lumi PWA Service Worker] Activating v6.1 & performing deep cache cleanup...');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            console.log('[Lumi PWA] Purging outdated cache:', cache);
+    (async () => {
+      // 1. Delete outdated cache namespaces
+      const cacheNames = await caches.keys();
+      await Promise.all(
+        cacheNames.map(async (cache) => {
+          if (!CURRENT_CACHES.includes(cache)) {
+            console.log('[Lumi PWA] Purged legacy cache storage:', cache);
             return caches.delete(cache);
           }
         })
       );
-    }).then(() => self.clients.claim())
+
+      // 2. Deep Clean Core Cache: remove any orphaned entries not in CORE_CRITICAL_ASSETS
+      try {
+        const coreCache = await caches.open(CORE_CACHE_NAME);
+        const coreKeys = await coreCache.keys();
+        const validCoreUrls = new Set(CORE_CRITICAL_ASSETS.map(p => new URL(p, self.registration.scope).toString()));
+
+        await Promise.all(
+          coreKeys.map(async (request) => {
+            if (!validCoreUrls.has(request.url)) {
+              console.log('[Lumi PWA] Pruning orphaned entry from Core Cache:', request.url);
+              await coreCache.delete(request);
+            }
+          })
+        );
+      } catch (e) {
+        console.warn('[Lumi PWA] Core cache deep clean notice:', e);
+      }
+
+      // 3. Ensure Runtime Cache stays within quota
+      await trimCache(RUNTIME_CACHE_NAME, MAX_RUNTIME_ENTRIES);
+
+      // 4. Immediately take control of all open client tabs
+      await self.clients.claim();
+      console.log('[Lumi PWA Service Worker] v6.1 active and all clients claimed.');
+    })()
   );
 });
 
-// Fetch Event: Network-First for HTML/Navigations, Stale-While-Revalidate for Assets
+// Fetch Event: Network-First for Documents, Stale-While-Revalidate + LRU Limiter for Assets
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
@@ -77,14 +157,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 1. Navigation / HTML Document requests: ALWAYS Network-First so users get latest fixes immediately
+  // 1. Navigation / HTML Document requests: ALWAYS Network-First with Offline Fallback
   if (event.request.mode === 'navigate' || event.request.destination === 'document') {
     event.respondWith(
       fetch(event.request)
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const copy = networkResponse.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+            caches.open(CORE_CACHE_NAME).then((cache) => cache.put(event.request, copy));
           }
           return networkResponse;
         })
@@ -97,18 +177,28 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Static Assets (JS, CSS, Images): Cache First with Background Update
+  // 2. Static Assets (JS, CSS, Images, Next.js dynamic chunks): Stale-While-Revalidate + LRU Limiter
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
+    (async () => {
+      // Check in Core Cache first, then Runtime Cache
+      const cachedResponse = await caches.match(event.request);
+
+      const fetchPromise = fetch(event.request).then(async (networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const copy = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          const targetCache = isCoreAsset(event.request.url) ? CORE_CACHE_NAME : RUNTIME_CACHE_NAME;
+          const cache = await caches.open(targetCache);
+          await cache.put(event.request, copy);
+
+          // If dynamically caching to runtime, enforce max entries limit
+          if (targetCache === RUNTIME_CACHE_NAME) {
+            trimCache(RUNTIME_CACHE_NAME, MAX_RUNTIME_ENTRIES);
+          }
         }
         return networkResponse;
       }).catch(() => null);
 
       return cachedResponse || fetchPromise;
-    })
+    })()
   );
 });
