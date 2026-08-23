@@ -517,6 +517,90 @@
       opacity: 0.9;
     }
 
+    /* Streamlined iOS Segmented Mode Switcher & Compact Voca Controls */
+    .voca-header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+    }
+    .voca-mode-segmented-ctrl {
+      display: inline-flex;
+      background: #F1EFE9;
+      padding: 3px;
+      border-radius: var(--radius-pill);
+      gap: 2px;
+      border: 1px solid #E2DDD4;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .voca-mode-segmented-ctrl::-webkit-scrollbar {
+      display: none;
+    }
+    .voca-mode-btn {
+      background: transparent !important;
+      border: none !important;
+      color: #64748B !important;
+      padding: 5px 12px !important;
+      border-radius: var(--radius-pill) !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .voca-mode-btn:hover {
+      color: #0F172A !important;
+    }
+    .voca-mode-btn.active {
+      background: #FFFFFF !important;
+      color: #4F46E5 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    }
+    .voca-smart-due-bar {
+      background: #FEF3C7;
+      border: 1px solid #FDE68A;
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .voca-filter-strip {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 2px 8px 2px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .voca-filter-strip::-webkit-scrollbar {
+      display: none;
+    }
+    .voca-search-action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-card);
+      padding: 6px 10px;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
     /* Vocabulary Cards Grid */
     .santa-voca-grid {
       display: grid;
@@ -975,6 +1059,34 @@
       /* iPhone: speaking & vocabulary section headers tighter */
       .santa-box h3 {
         font-size: 16px !important;
+      }
+
+      /* iPhone: ultra-clean vocabulary layout */
+      #view-voca .santa-box {
+        padding: 10px 12px !important;
+      }
+      .voca-header-container {
+        gap: 6px !important;
+        margin-bottom: 6px !important;
+        padding-bottom: 6px !important;
+      }
+      .voca-mode-segmented-ctrl {
+        width: 100% !important;
+        display: flex !important;
+      }
+      .voca-mode-btn {
+        flex: 1 !important;
+        text-align: center !important;
+        padding: 4px 6px !important;
+        font-size: 11.5px !important;
+      }
+      .voca-filter-strip {
+        margin-bottom: 6px !important;
+        padding-bottom: 4px !important;
+      }
+      .voca-search-action-bar {
+        padding: 5px 8px !important;
+        margin-bottom: 8px !important;
       }
     }
     @media (min-width: 641px) and (max-width: 1024px) {
@@ -1441,95 +1553,78 @@
       <div class="santa-container">
         <div class="santa-box" style="padding: 16px 20px;">
           
-          <!-- Vocabulary Header & Controls -->
-          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px;">
-            <div>
-              <h3 style="margin: 0; font-size: 17px; font-weight: 900; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-                <span>📖 TOEIC 必考核心單字庫</span>
-                <span id="voca-total-badge" class="santa-badge santa-badge-cyan" style="font-weight: 800; font-size: 11.5px; padding: 2px 8px;">4,000 核心詞彙 (750高頻+900高分)</span>
-                <span id="voca-due-badge" class="santa-badge santa-badge-gold" style="display: none;">⏰ 0 個待複習</span>
+          <!-- Vocabulary Header & Segmented Controls -->
+          <div class="voca-header-container">
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <h3 style="margin: 0; font-size: 16px; font-weight: 900; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                <span>📖 TOEIC 必考單字庫</span>
               </h3>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
-                艾賓浩斯間隔記憶 (SRS) 演算法：答錯自動循環重練，答對依記憶曲線定期排程複習
-              </div>
+              <span id="voca-total-badge" class="santa-badge santa-badge-cyan" style="font-weight: 800; font-size: 11px; padding: 2px 7px;">4,000 詞</span>
+              <span id="voca-due-badge" class="santa-badge santa-badge-gold" style="display: none; cursor: pointer;" onclick="filterVocaCategory('due', document.querySelector('.voca-cat-btn[data-cat=due]'))">⏰ 0 需複習</span>
             </div>
 
-            <!-- Top Mode Switch Tabs (Pill Shape) -->
-            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-              <button id="voca-tab-btn-list" class="santa-nav-btn active" onclick="switchVocaSubMode('list')">📖 單字列表</button>
-              <button id="voca-tab-btn-quiz" class="santa-nav-btn" onclick="switchVocaSubMode('quiz')">🎯 智能測驗 / 錯題重練</button>
-              <button id="voca-tab-btn-card" class="santa-nav-btn" onclick="switchVocaSubMode('card')">🎴 翻轉記憶卡</button>
-              <button id="voca-tab-btn-audio" class="santa-nav-btn" onclick="switchVocaSubMode('audio')">🎧 隨身聽自動朗讀</button>
+            <!-- Segmented Mode Switch Tabs -->
+            <div class="voca-mode-segmented-ctrl">
+              <button id="voca-tab-btn-list" class="santa-nav-btn voca-mode-btn active" onclick="switchVocaSubMode('list')">📖 列表</button>
+              <button id="voca-tab-btn-quiz" class="santa-nav-btn voca-mode-btn" onclick="switchVocaSubMode('quiz')">🎯 測驗</button>
+              <button id="voca-tab-btn-card" class="santa-nav-btn voca-mode-btn" onclick="switchVocaSubMode('card')">🎴 記憶卡</button>
+              <button id="voca-tab-btn-audio" class="santa-nav-btn voca-mode-btn" onclick="switchVocaSubMode('audio'); startAudioAutoPlay();">🎧 隨身聽</button>
             </div>
           </div>
 
           <!-- ================= SUBMODE 1: LIST VIEW ================= -->
           <div id="voca-submode-list">
             
-            <!-- Quick Review Banner if words are due -->
-            <div id="voca-due-banner" style="display: none; background: #FEF3C7; border: 1px solid #FDE68A; border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 12px; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-              <div style="font-size: 13px; color: #92400E;">
-                ⏰ <b>今日複習提醒:</b> 您有 <b id="voca-due-count-num" style="color: #78350F; font-size: 16px;">0</b> 個單字已到達遺忘臨界點，建議立即測驗鞏固長期記憶！
+            <!-- Quick Review Banner if words are due (Compact Inline Style) -->
+            <div id="voca-due-banner" style="display: none;" class="voca-smart-due-bar">
+              <div style="font-size: 12.5px; color: #92400E; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                <span>⏰</span> <span>今日有 <b id="voca-due-count-num" style="color: #78350F; font-size: 14px;">0</b> 個單字需複習</span>
               </div>
-              <button class="santa-btn" style="background: #D97706; color: #FFFFFF; font-weight: 800; font-size: 12px; padding: 6px 14px; white-space: nowrap;" onclick="startVocaQuiz('due')">
-                ⚡ 立即開始今日複習測驗
+              <button class="santa-btn" style="background: #D97706; color: #FFFFFF; font-weight: 800; font-size: 11.5px; padding: 4px 12px; white-space: nowrap; border-radius: var(--radius-pill);" onclick="startVocaQuiz('due')">
+                ⚡ 立即複習
               </button>
             </div>
 
-            <!-- Row 1: Full-Width Category & Level Filter Tabs (Smooth Horizontal Scroll) -->
-            <div style="display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px 2px; margin-bottom: 12px; scrollbar-width: thin; -webkit-overflow-scrolling: touch;">
-              <button class="santa-nav-btn active voca-cat-btn" data-cat="all" onclick="filterVocaCategory('all', this)" style="white-space: nowrap;">🌟 全部 (<span id="count-all">0</span>)</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="750" onclick="filterVocaCategory('750', this)" style="border-color: rgba(2, 132, 199, 0.4); color: #0284C7; font-weight: 800; white-space: nowrap;">🎯 750分高頻 (<span id="count-750">2400</span>)</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="900" onclick="filterVocaCategory('900', this)" style="border-color: rgba(147, 51, 234, 0.4); color: #9333EA; font-weight: 800; white-space: nowrap;">👑 900+高分 (<span id="count-900">1600</span>)</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="phrase" onclick="filterVocaCategory('phrase', this)" style="border-color: rgba(217, 119, 6, 0.4); color: #D97706; font-weight: 800; white-space: nowrap;">🔗 必考片語 (<span id="count-phrase">0</span>)</button>
-              <span style="color: var(--border-subtle); align-self: center; margin: 0 2px;">|</span>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="due" onclick="filterVocaCategory('due', this)" style="border-color: rgba(217, 119, 6, 0.4); color: var(--neon-yellow); white-space: nowrap;">⏰ 需複習 (<span id="count-due">0</span>)</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="weak" onclick="filterVocaCategory('weak', this)" style="border-color: rgba(225, 29, 72, 0.4); color: var(--neon-coral); white-space: nowrap;">🚨 易錯弱點 (<span id="count-weak">0</span>)</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="mastered" onclick="filterVocaCategory('mastered', this)" style="color: var(--neon-green); white-space: nowrap;">🟢 已掌握 (<span id="count-mastered">0</span>)</button>
-              <span style="color: var(--border-subtle); align-self: center; margin: 0 2px;">|</span>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="biz" onclick="filterVocaCategory('biz', this)" style="white-space: nowrap;">💼 商務</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="finance" onclick="filterVocaCategory('finance', this)" style="white-space: nowrap;">💰 財務</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="hr" onclick="filterVocaCategory('hr', this)" style="white-space: nowrap;">👥 人事</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="logistics" onclick="filterVocaCategory('logistics', this)" style="white-space: nowrap;">📦 物流</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="marketing" onclick="filterVocaCategory('marketing', this)" style="white-space: nowrap;">📣 行銷</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="travel" onclick="filterVocaCategory('travel', this)" style="white-space: nowrap;">✈️ 差旅</button>
-              <button class="santa-nav-btn voca-cat-btn" data-cat="tech" onclick="filterVocaCategory('tech', this)" style="white-space: nowrap;">💻 科技</button>
+            <!-- Category & Level Filter Tabs (Smooth Horizontal Scroll Strip) -->
+            <div class="voca-filter-strip">
+              <button class="santa-nav-btn active voca-cat-btn" data-cat="all" onclick="filterVocaCategory('all', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">🌟 全部 (<span id="count-all">0</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="750" onclick="filterVocaCategory('750', this)" style="border-color: rgba(2, 132, 199, 0.4); color: #0284C7; font-weight: 800; white-space: nowrap; padding: 5px 12px; font-size: 12px;">🎯 750分 (<span id="count-750">2400</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="900" onclick="filterVocaCategory('900', this)" style="border-color: rgba(147, 51, 234, 0.4); color: #9333EA; font-weight: 800; white-space: nowrap; padding: 5px 12px; font-size: 12px;">👑 900+ (<span id="count-900">1600</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="phrase" onclick="filterVocaCategory('phrase', this)" style="border-color: rgba(217, 119, 6, 0.4); color: #D97706; font-weight: 800; white-space: nowrap; padding: 5px 12px; font-size: 12px;">🔗 必考片語 (<span id="count-phrase">0</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="due" onclick="filterVocaCategory('due', this)" style="border-color: rgba(217, 119, 6, 0.4); color: var(--neon-yellow); white-space: nowrap; padding: 5px 12px; font-size: 12px;">⏰ 需複習 (<span id="count-due">0</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="weak" onclick="filterVocaCategory('weak', this)" style="border-color: rgba(225, 29, 72, 0.4); color: var(--neon-coral); white-space: nowrap; padding: 5px 12px; font-size: 12px;">🚨 易錯 (<span id="count-weak">0</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="mastered" onclick="filterVocaCategory('mastered', this)" style="color: var(--neon-green); white-space: nowrap; padding: 5px 12px; font-size: 12px;">🟢 已掌握 (<span id="count-mastered">0</span>)</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="biz" onclick="filterVocaCategory('biz', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">💼 商務</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="finance" onclick="filterVocaCategory('finance', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">💰 財務</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="hr" onclick="filterVocaCategory('hr', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">👥 人事</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="logistics" onclick="filterVocaCategory('logistics', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">📦 物流</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="marketing" onclick="filterVocaCategory('marketing', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">📣 行銷</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="travel" onclick="filterVocaCategory('travel', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">✈️ 差旅</button>
+              <button class="santa-nav-btn voca-cat-btn" data-cat="tech" onclick="filterVocaCategory('tech', this)" style="white-space: nowrap; padding: 5px 12px; font-size: 12px;">💻 科技</button>
             </div>
 
-            <!-- Row 2: Search, Sort & Quick Action Toolbar (Clean Unified Card Bar) -->
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; background: #FFFFFF; border: 1px solid var(--border-card); padding: 10px 16px; border-radius: var(--radius-lg); box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+            <!-- Search, Sort & PDF Action Toolbar (Clean Slim Strip) -->
+            <div class="voca-search-action-bar">
+              <div style="position: relative; flex: 1; min-width: 140px;">
+                <input type="text" id="voca-search-input" class="santa-input" placeholder="🔍 搜尋單字、中文或同義詞..." oninput="handleVocaSearch()" style="width: 100%; font-size: 12.5px; padding: 6px 12px; border-radius: var(--radius-pill); background: #F8F6F0;" />
+              </div>
               
-              <!-- Left: Search Box & Sort Selector -->
-              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; flex: 1;">
-                <div style="position: relative; min-width: 220px; flex: 1; max-width: 340px;">
-                  <input type="text" id="voca-search-input" class="santa-input" placeholder="🔍 搜尋單字、中文或同義詞..." oninput="handleVocaSearch()" style="width: 100%; font-size: 13px; padding: 7px 12px;" />
-                </div>
-                
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <span style="font-size: 12px; color: var(--text-muted); font-weight: 700; white-space: nowrap;">排序:</span>
-                  <select id="voca-sort-select" class="santa-input" style="padding: 7px 12px; font-size: 12.5px; border-radius: var(--radius-sm); width: auto; background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="handleVocaSortChange(this.value)">
-                    <option value="default">✨ 官方高頻推薦序</option>
-                    <option value="az">🔤 字母順序 (A &rarr; Z)</option>
-                    <option value="za">🔤 字母倒序 (Z &rarr; A)</option>
-                    <option value="level_asc">🎯 750分高頻 &rarr; 900分高分</option>
-                    <option value="level_desc">👑 900分高分 &rarr; 750分高頻</option>
-                    <option value="weak">🚨 易錯弱點優先 (錯題最多)</option>
-                    <option value="due">⏰ 記憶遺忘複習優先</option>
-                    <option value="shuffle">🎲 隨機亂序排列</option>
-                  </select>
-                </div>
-              </div>
+              <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                <select id="voca-sort-select" class="santa-input" style="padding: 6px 10px; font-size: 11.5px; border-radius: var(--radius-pill); background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="handleVocaSortChange(this.value)">
+                  <option value="default">✨ 推薦序</option>
+                  <option value="az">🔤 字母 A&rarr;Z</option>
+                  <option value="za">🔤 字母 Z&rarr;A</option>
+                  <option value="level_asc">🎯 750&rarr;900分</option>
+                  <option value="level_desc">👑 900&rarr;750分</option>
+                  <option value="weak">🚨 易錯優先</option>
+                  <option value="due">⏰ 複習優先</option>
+                  <option value="shuffle">🎲 隨機亂序</option>
+                </select>
 
-              <!-- Right: Export PDF & Audio Walkman Launch Buttons -->
-              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                <button class="santa-btn santa-btn-outline" style="font-weight: 800; font-size: 12.5px; padding: 7px 14px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-pill); cursor: pointer;" onclick="openVocaPdfModal()" title="匯出精美 A4 排版單字本 PDF / 列印">
-                  🖨️ 匯出 A4 PDF
-                </button>
-                <button class="santa-btn" style="background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color: #FFFFFF; font-weight: 800; font-size: 13px; padding: 8px 18px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; border-radius: var(--radius-pill); box-shadow: 0 3px 10px rgba(79, 70, 229, 0.25); cursor: pointer;" onclick="switchVocaSubMode('audio'); startAudioAutoPlay();" title="不看螢幕連續自動朗讀單字與中文">
-                  🎧 啟動隨身聽朗讀
+                <button class="santa-btn santa-btn-outline" style="font-weight: 800; font-size: 11.5px; padding: 6px 11px; white-space: nowrap; border-radius: var(--radius-pill); cursor: pointer;" onclick="openVocaPdfModal()" title="匯出精美 A4 排版單字本 PDF / 列印">
+                  🖨️ A4 PDF
                 </button>
               </div>
-
             </div>
 
             <!-- Vocabulary Cards Grid -->
