@@ -571,19 +571,9 @@
         scroll-snap-align: start;
       }
 
-      /* iPhone floating settings button: smaller & avoid content overlap */
+      /* Floating settings button permanently removed for clean bottom nav */
       #santa-floating-btn {
-        bottom: calc(14px + var(--mobile-safe-area-bottom)) !important;
-        right: 12px !important;
-        padding: 6px 12px !important;
-        font-size: 11px !important;
-        gap: 6px !important;
-        opacity: 0.85;
-        max-width: 140px;
-      }
-      #santa-floating-btn:hover,
-      #santa-floating-btn:active {
-        opacity: 1;
+        display: none !important;
       }
 
       /* iPhone: add bottom padding so floating button doesn't overlap content */

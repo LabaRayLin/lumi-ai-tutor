@@ -338,11 +338,10 @@
     `;
     document.head.appendChild(style);
 
-    // Create Floating Trigger
+    // Floating Trigger (Removed to keep UI clean; Settings accessed via Bottom Nav / Settings)
     const btn = document.createElement('div');
     btn.id = 'santa-floating-btn';
-    btn.innerHTML = `⚙️ <span>Lumi 控制中心</span>`;
-    document.body.appendChild(btn);
+    btn.style.display = 'none';
 
     // Create Modal
     const backdrop = document.createElement('div');

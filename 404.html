@@ -943,19 +943,9 @@
         flex-shrink: 0 !important;
       }
 
-      /* iPhone floating settings button: smaller & avoid content overlap */
+      /* Floating settings button permanently removed for clean bottom nav */
       #santa-floating-btn {
-        bottom: calc(14px + var(--mobile-safe-area-bottom)) !important;
-        right: 12px !important;
-        padding: 6px 12px !important;
-        font-size: 11px !important;
-        gap: 6px !important;
-        opacity: 0.85;
-        max-width: 140px;
-      }
-      #santa-floating-btn:hover,
-      #santa-floating-btn:active {
-        opacity: 1;
+        display: none !important;
       }
 
       /* iPhone: add bottom padding so floating button doesn't overlap content */
@@ -3785,7 +3775,7 @@
           .replace(/[（(].*?[）)]/g, '')
           .replace(/\s+/g, ' ')
           .trim();
-        return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=zh-TW&q=${encodeURIComponent(cleanedZh)}`;
+        return `https://translate.google.com/translate_tts?ie=UTF-8&client=dict-chrome-ex&tl=zh-TW&q=${encodeURIComponent(cleanedZh)}`;
       }
       const cleanedEn = text
         .replace(/["'“”]/g, '')
@@ -3794,7 +3784,7 @@
         .trim();
 
       if (cleanedEn.includes(' ') || cleanedEn.length > 25) {
-        return `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en-US&q=${encodeURIComponent(cleanedEn)}`;
+        return `https://translate.google.com/translate_tts?ie=UTF-8&client=dict-chrome-ex&tl=en-US&q=${encodeURIComponent(cleanedEn)}`;
       }
       return `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanedEn)}&type=2`;
     }
@@ -3864,17 +3854,8 @@
       // 1. Ensure any previous audio is completely stopped to prevent double voice overlap
       stopAllAudioOutputs();
 
-      const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(text);
-
-      // For Chinese text: Use native crystal-clear Web Speech API directly (guaranteed zero double-voice & zero latency)
-      if (isZh) {
-        await speakUtteranceWebSpeech(text, 'zh');
-        return;
-      }
-
-      // For English text: Use American English Audio Stream with Web Speech fallback
       let playedOnline = false;
-      const url = getTTSAudioUrl(text, 'en');
+      const url = getTTSAudioUrl(text, lang);
 
       if (url) {
         playedOnline = await new Promise((resolve) => {
@@ -3906,7 +3887,7 @@
           audio.onended = () => finish(true);
           audio.onerror = () => finish(false);
 
-          timer = setTimeout(() => finish(false), Math.max(2500, Math.min(8000, text.length * 250)));
+          timer = setTimeout(() => finish(false), Math.max(3000, Math.min(10000, text.length * 250)));
 
           try {
             audio.src = url;
@@ -3920,8 +3901,9 @@
         });
       }
 
+      // 2. If online audio stream failed (offline/blocked), fall back to native Web Speech API
       if (!playedOnline && isAudioPlaying) {
-        await speakUtteranceWebSpeech(text, 'en');
+        await speakUtteranceWebSpeech(text, lang);
       }
     }
 
