@@ -3765,21 +3765,49 @@
       }
     }
 
+    let masterAudioPlayer = null;
+    let audioPreloader = null;
     let currentAudioElement = null;
     let activeUtterance = null;
 
+    function getMasterAudioPlayer() {
+      if (!masterAudioPlayer) {
+        masterAudioPlayer = new Audio();
+        masterAudioPlayer.preload = 'auto';
+      }
+      return masterAudioPlayer;
+    }
+
+    function preloadAudioUrl(url) {
+      if (!url) return;
+      try {
+        if (!audioPreloader) {
+          audioPreloader = new Audio();
+          audioPreloader.preload = 'auto';
+        }
+        audioPreloader.src = url;
+        audioPreloader.load();
+      } catch (e) {}
+    }
+
     function stopAllAudioOutputs() {
-      if (currentAudioElement) {
+      if (masterAudioPlayer) {
+        try {
+          masterAudioPlayer.pause();
+          masterAudioPlayer.currentTime = 0;
+          masterAudioPlayer.onended = null;
+          masterAudioPlayer.onerror = null;
+        } catch (e) {}
+      }
+      if (currentAudioElement && currentAudioElement !== masterAudioPlayer) {
         try {
           currentAudioElement.pause();
           currentAudioElement.currentTime = 0;
           currentAudioElement.onended = null;
           currentAudioElement.onerror = null;
-          currentAudioElement.removeAttribute('src');
-          currentAudioElement.load();
         } catch (e) {}
-        currentAudioElement = null;
       }
+      currentAudioElement = null;
       if ('speechSynthesis' in window) {
         try {
           window.speechSynthesis.cancel();
@@ -3796,7 +3824,7 @@
           .replace(/^(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
           .replace(/\b(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
           .replace(/["'“”]/g, '')
-          .replace(/[；;]/g, '，')
+          .replace(/[；;，,、]/g, ' ')
           .replace(/[（(].*?[）)]/g, '')
           .replace(/\s+/g, ' ')
           .trim();
@@ -3814,7 +3842,7 @@
       return `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(cleanedEn)}&type=2`;
     }
 
-    function speakUtteranceWebSpeech(text, lang = 'zh') {
+    function speakUtteranceWebSpeech(text, lang = 'zh', customRate = null) {
       return new Promise((resolve) => {
         if (!text || !text.trim() || !isAudioPlaying || !('speechSynthesis' in window)) {
           resolve(false);
@@ -3828,7 +3856,7 @@
           const u = new SpeechSynthesisUtterance(text.trim());
           const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(text);
           u.lang = isZh ? 'zh-TW' : 'en-US';
-          u.rate = audioPlaybackRate || 1.0;
+          u.rate = customRate || (isZh ? (audioPlaybackRate || 1.0) * 1.25 : (audioPlaybackRate || 1.0));
 
           // Select optimal localized voice
           const voices = window.speechSynthesis.getVoices() || [];
@@ -3863,9 +3891,9 @@
 
           u.onend = () => finish(true);
           u.onerror = () => finish(false);
-          activeUtterance = u; // Keep global reference to prevent GC
+          activeUtterance = u;
 
-          tm = setTimeout(() => finish(true), Math.max(2000, Math.min(10000, text.length * 350)));
+          tm = setTimeout(() => finish(true), Math.max(2000, Math.min(10000, text.length * 300)));
           window.speechSynthesis.speak(u);
         } catch (e) {
           resolve(false);
@@ -3876,8 +3904,13 @@
     async function playAudioStreamAsync(text, lang = 'en') {
       if (!text || !text.trim() || !isAudioPlaying) return;
 
-      // 1. Ensure any previous audio is completely stopped to prevent double voice overlap
+      // 1. Ensure previous sound stops
       stopAllAudioOutputs();
+
+      const isZh = lang.startsWith('zh') || /[\u4e00-\u9fa5]/.test(text);
+      // Chinese natural cadence speed booster (1.28x rate for crisp energetic Chinese)
+      const speedFactor = isZh ? 1.28 : 1.0;
+      const targetRate = Math.min(2.5, Math.max(0.5, (audioPlaybackRate || 1.0) * speedFactor));
 
       let playedOnline = false;
       const url = getTTSAudioUrl(text, lang);
@@ -3886,37 +3919,30 @@
         playedOnline = await new Promise((resolve) => {
           let resolved = false;
           let timer = null;
-          const audio = new Audio();
-          currentAudioElement = audio;
-          audio.preload = 'auto';
-          audio.playbackRate = audioPlaybackRate || 1.0;
+          const player = getMasterAudioPlayer();
+          currentAudioElement = player;
 
           const finish = (ok) => {
             if (!resolved) {
               resolved = true;
               if (timer) clearTimeout(timer);
-              audio.onended = null;
-              audio.onerror = null;
-              if (!ok) {
-                try {
-                  audio.pause();
-                  audio.currentTime = 0;
-                  audio.removeAttribute('src');
-                } catch (e) {}
-              }
-              if (currentAudioElement === audio) currentAudioElement = null;
+              player.onended = null;
+              player.onerror = null;
+              if (currentAudioElement === player) currentAudioElement = null;
               resolve(ok);
             }
           };
 
-          audio.onended = () => finish(true);
-          audio.onerror = () => finish(false);
+          player.onended = () => finish(true);
+          player.onerror = () => finish(false);
 
-          timer = setTimeout(() => finish(false), Math.max(3000, Math.min(10000, text.length * 250)));
+          // Generous timeout based on text length
+          timer = setTimeout(() => finish(false), Math.max(3500, Math.min(12000, text.length * 300)));
 
           try {
-            audio.src = url;
-            const p = audio.play();
+            player.playbackRate = targetRate;
+            player.src = url;
+            const p = player.play();
             if (p !== undefined) {
               p.catch(() => finish(false));
             }
@@ -3926,9 +3952,9 @@
         });
       }
 
-      // 2. If online audio stream failed (offline/blocked), fall back to native Web Speech API
+      // 2. If online stream failed, fall back to native Web Speech API
       if (!playedOnline && isAudioPlaying) {
-        await speakUtteranceWebSpeech(text, lang);
+        await speakUtteranceWebSpeech(text, lang, targetRate);
       }
     }
 
@@ -4046,9 +4072,9 @@
       return (meaning || '')
         .replace(/^(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
         .replace(/\b(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '')
-        .replace(/；/g, '，')
-        .replace(/（.*?）/g, '')
-        .replace(/\(.*?\)/g, '')
+        .replace(/[（(].*?[）)]/g, '')
+        .replace(/[；;，,、]/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
     }
 
@@ -4163,18 +4189,25 @@
 
             renderCurrentAudioWordUI(currentWord, loop);
 
-            // 1. Play English word
+            // 1. Play English word & preload Chinese meaning in background
+            const zhText = cleanMeaningForSpeech(currentWord.meaning);
+            if (zhText && (audioSpeechMode === 'word_meaning' || audioSpeechMode === 'word_meaning_example')) {
+              preloadAudioUrl(getTTSAudioUrl(zhText, 'zh'));
+            }
+
             await playAudioStreamAsync(currentWord.word, 'en');
             if (!isAudioPlaying || token !== audioPlayToken) break;
-            await sleep(200);
+            await sleep(150);
 
             // 2. Play Chinese meaning
             if (audioSpeechMode === 'word_meaning' || audioSpeechMode === 'word_meaning_example') {
-              const zhText = cleanMeaningForSpeech(currentWord.meaning);
               if (zhText) {
+                if (audioSpeechMode === 'word_meaning_example' && currentWord.example) {
+                  preloadAudioUrl(getTTSAudioUrl(currentWord.example, 'en'));
+                }
                 await playAudioStreamAsync(zhText, 'zh');
                 if (!isAudioPlaying || token !== audioPlayToken) break;
-                await sleep(200);
+                await sleep(150);
               }
             }
 
@@ -4182,19 +4215,19 @@
             if (audioSpeechMode === 'word_meaning_example' && currentWord.example) {
               await playAudioStreamAsync(currentWord.example, 'en');
               if (!isAudioPlaying || token !== audioPlayToken) break;
-              await sleep(300);
+              await sleep(250);
             }
 
             // Pause between repeat loops of SAME word
             if (loop < audioRepeatCount) {
-              await sleep(Math.max(300, audioIntervalMs));
+              await sleep(Math.max(250, audioIntervalMs));
             }
           }
 
           if (!isAudioPlaying || token !== audioPlayToken) break;
 
           // Pause before next word
-          await sleep(Math.max(400, audioIntervalMs));
+          await sleep(Math.max(350, audioIntervalMs));
 
           // Automatically advance to next word in playlist!
           audioCurrentIndex = (audioCurrentIndex + 1) % audioPlayList.length;
