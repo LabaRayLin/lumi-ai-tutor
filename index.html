@@ -1175,7 +1175,7 @@
         height: auto !important;
         overflow: visible !important;
       }
-      body > *:not(#voca-print-container) {
+      #__next, #santa-settings-modal, #voca-pdf-modal, header, nav, footer, .santa-btn, audio, body > *:not(#voca-print-container) {
         display: none !important;
         visibility: hidden !important;
       }
@@ -2262,9 +2262,6 @@
       </div>
     </div>
 
-    <!-- Hidden Dedicated A4 Print Container -->
-    <div id="voca-print-container"></div>
-
     <!-- Native Fixed Bottom Navigation Bar (主頁 / 題庫 / 口說 / 單字 / 我的) -->
     <nav id="lumi-bottom-nav" class="lumi-bottom-nav">
       <div class="lumi-bottom-nav-inner">
@@ -2334,6 +2331,9 @@
     </nav>
 
   </div>
+  
+  <!-- Dedicated A4 Print Container (Direct child of body, hidden on screen, active on print) -->
+  <div id="voca-print-container"></div>
 
   <script>
     const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
