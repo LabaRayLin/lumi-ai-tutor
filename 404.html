@@ -1801,14 +1801,13 @@
           <!-- ================= SUBMODE 3: FLASHCARD FLIP ================= -->
           <div id="voca-submode-card" style="display: none; max-width: 580px; margin: 0 auto; text-align: center;">
             
-            <!-- Flashcard Top Nav & Scope Selector -->
+            <!-- Flashcard Top Nav & Scope / Sort Selector -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
               <button class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 5px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" onclick="switchVocaSubMode('list')">
                 <span>&larr;</span> <span>返回單字本</span>
               </button>
 
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 700;">範圍:</span>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 <select id="vf-scope-select" class="santa-input" style="padding: 5px 10px; font-size: 11.5px; border-radius: 9999px; width: auto; background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="setFlashcardScope(this.value)">
                   <option value="all">🌟 全部 (4,000字)</option>
                   <option value="750">🎯 750分高頻 (2,400字)</option>
@@ -1824,6 +1823,17 @@
                   <option value="marketing">📣 行銷宣傳</option>
                   <option value="travel">✈️ 差旅觀光</option>
                   <option value="tech">💻 科技資訊</option>
+                </select>
+
+                <select id="vf-sort-select" class="santa-input" style="padding: 5px 10px; font-size: 11.5px; border-radius: 9999px; width: auto; background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="setFlashcardSort(this.value)">
+                  <option value="default">✨ 推薦序</option>
+                  <option value="az">🔤 A&rarr;Z 字母順序</option>
+                  <option value="za">🔤 Z&rarr;A 字母倒序</option>
+                  <option value="level_asc">🎯 750&rarr;900分</option>
+                  <option value="level_desc">👑 900&rarr;750分</option>
+                  <option value="due">⏰ 需複習優先</option>
+                  <option value="weak">🚨 易錯優先</option>
+                  <option value="shuffle">🎲 隨機亂序</option>
                 </select>
               </div>
             </div>
@@ -3187,6 +3197,7 @@
     let flashcardList = [];
     let flashcardIndex = 0;
     let isFlashcardFlipped = false;
+    let flashcardSortKey = 'default';
 
     function switchVocaSubMode(mode) {
       vocaSubMode = mode;
@@ -3210,7 +3221,7 @@
         document.getElementById('voca-quiz-summary').style.display = 'none';
         updateVocaQuizLauncherUI();
       } else if (mode === 'card') {
-        startFlashcardSession(currentVocaFilter);
+        startFlashcardSession(currentVocaFilter, flashcardSortKey);
       } else if (mode === 'audio') {
         initAudioPlayList();
         if (audioPlayList.length > 0) {
@@ -3439,8 +3450,11 @@
     function handleVocaSortChange(val) {
       currentVocaSort = val;
       audioSortKey = val;
+      flashcardSortKey = val;
       const vaSortSelect = document.getElementById('va-sort-select');
       if (vaSortSelect) vaSortSelect.value = val;
+      const vfSortSelect = document.getElementById('vf-sort-select');
+      if (vfSortSelect) vfSortSelect.value = val;
       renderVocaWordbook();
       initAudioPlayList();
     }
@@ -3530,7 +3544,23 @@
       if (activeBtn) activeBtn.classList.add('active');
       const vqScopeEl = document.getElementById('vq-launcher-cat-select');
       if (vqScopeEl) vqScopeEl.value = currentVocaFilter;
-      startFlashcardSession(currentVocaFilter);
+      const vaScopeEl = document.getElementById('va-scope-select');
+      if (vaScopeEl) vaScopeEl.value = currentVocaFilter;
+      startFlashcardSession(currentVocaFilter, flashcardSortKey);
+    }
+
+    function setFlashcardSort(val) {
+      flashcardSortKey = val;
+      currentVocaSort = val;
+      audioSortKey = val;
+      const mainSortSelect = document.getElementById('voca-sort-select');
+      if (mainSortSelect) mainSortSelect.value = val;
+      const vaSortSelect = document.getElementById('va-sort-select');
+      if (vaSortSelect) vaSortSelect.value = val;
+      const vfSortSelect = document.getElementById('vf-sort-select');
+      if (vfSortSelect) vfSortSelect.value = val;
+
+      startFlashcardSession(currentVocaFilter, flashcardSortKey);
     }
 
     function filterVocaCategory(filterKey, btn) {
@@ -3986,14 +4016,19 @@
     // ==========================================
     // Flashcard Flip Engine
     // ==========================================
-    function startFlashcardSession(scope) {
+    function startFlashcardSession(scope, sort) {
       const targetScope = scope || currentVocaFilter || 'all';
+      const targetSort = sort || flashcardSortKey || currentVocaSort || 'default';
+      flashcardSortKey = targetSort;
+
       const vfScopeEl = document.getElementById('vf-scope-select');
       if (vfScopeEl) vfScopeEl.value = targetScope;
+      const vfSortEl = document.getElementById('vf-sort-select');
+      if (vfSortEl) vfSortEl.value = targetSort;
 
       let list = getVocabularyWordsByFilter(targetScope);
       if (list.length === 0) list = [...MASTER_VOCABULARY];
-      flashcardList = list;
+      flashcardList = sortVocabularyList(list, targetSort);
       flashcardIndex = 0;
       isFlashcardFlipped = false;
       renderCurrentFlashcard();
@@ -4906,10 +4941,13 @@
     function setAudioSort(val) {
       audioSortKey = val;
       currentVocaSort = val;
+      flashcardSortKey = val;
       const mainSortSelect = document.getElementById('voca-sort-select');
       if (mainSortSelect) mainSortSelect.value = val;
       const vaSortSelect = document.getElementById('va-sort-select');
       if (vaSortSelect) vaSortSelect.value = val;
+      const vfSortSelect = document.getElementById('vf-sort-select');
+      if (vfSortSelect) vfSortSelect.value = val;
 
       if (val === 'shuffle') {
         audioIsShuffle = true;
