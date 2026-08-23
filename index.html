@@ -1212,6 +1212,48 @@
         grid-template-columns: 1fr 1fr 1fr;
         gap: 5px 8px;
       }
+      .print-grid-simple-3col {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 3px 10px;
+        font-size: 8.5pt;
+        line-height: 1.3;
+        padding: 4px 0;
+      }
+      .print-simple-item {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        padding: 2.5px 0;
+        border-bottom: 0.5px dashed #E2E8F0;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .print-simple-bullet {
+        color: #0F172A;
+        font-weight: 900;
+        font-size: 9pt;
+        flex-shrink: 0;
+      }
+      .print-simple-word {
+        font-weight: 800;
+        color: #0F172A;
+        font-size: 9pt;
+        flex-shrink: 0;
+      }
+      .print-simple-pos {
+        color: #64748B;
+        font-size: 7.5pt;
+        font-weight: 600;
+        flex-shrink: 0;
+      }
+      .print-simple-meaning {
+        color: #1E293B;
+        font-size: 8.5pt;
+        font-weight: 600;
+        flex: 1;
+        white-space: normal;
+      }
       .print-card {
         border-bottom: 1px solid #E2E8F0;
         padding: 4px 2px 6px 2px;
@@ -1635,29 +1677,52 @@
           <div id="voca-submode-quiz" style="display: none;">
             
             <!-- Quiz Launcher Menu -->
-            <div id="voca-quiz-launcher" style="text-align: center; padding: 24px 16px; max-width: 640px; margin: 0 auto;">
-              <div style="font-size: 36px; margin-bottom: 10px;">🎯</div>
-              <h3 style="font-size: 20px; font-weight: 900; color: var(--text-primary); margin: 0 0 8px 0; letter-spacing: -0.3px;">單字智能速測與錯題循環重練</h3>
-              <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin: 0 0 20px 0;">
-                測驗中答錯的單字會<b>自動重新排入本次測驗佇列</b>，反覆出現直到您完全掌握；答對的單字將自動依記憶曲線排定下次複習時間。
+            <div id="voca-quiz-launcher" style="text-align: center; padding: 20px 14px; max-width: 640px; margin: 0 auto;">
+              <div style="font-size: 32px; margin-bottom: 8px;">🎯</div>
+              <h3 style="font-size: 18px; font-weight: 900; color: var(--text-primary); margin: 0 0 6px 0; letter-spacing: -0.3px;">單字智能速測與錯題循環重練</h3>
+              <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.55; margin: 0 0 16px 0;">
+                測驗中答錯的單字會<b>自動重新排入本次測驗佇列</b>，反覆出現直到您完全掌握；答對自動依記憶曲線排定下次複習。
               </p>
 
+              <!-- Scope Quick Switcher Dropdown -->
+              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: var(--radius-lg); padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                <div style="font-size: 12.5px; font-weight: 800; color: #334155; display: flex; align-items: center; gap: 6px;">
+                  <span>🎯 測驗自選範圍：</span>
+                </div>
+                <select id="vq-launcher-cat-select" class="santa-input" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: var(--radius-pill); background: #FFFFFF; cursor: pointer;" onchange="setQuizScope(this.value)">
+                  <option value="all">🌟 全部核心單字庫 (4,000字)</option>
+                  <option value="750">🎯 750分高頻專區 (2,400字)</option>
+                  <option value="900">👑 900+高分進階專區 (1,600字)</option>
+                  <option value="phrase">🔗 必考商務片語專區</option>
+                  <option value="due">⏰ 今日到期需複習 (SRS)</option>
+                  <option value="weak">🚨 易錯弱點單字專區</option>
+                  <option value="mastered">🟢 已掌握單字專區</option>
+                  <option value="biz">💼 商務詞彙</option>
+                  <option value="finance">💰 財務金融</option>
+                  <option value="hr">👥 人事人資</option>
+                  <option value="logistics">📦 物流倉儲</option>
+                  <option value="marketing">📣 行銷宣傳</option>
+                  <option value="travel">✈️ 差旅觀光</option>
+                  <option value="tech">💻 科技資訊</option>
+                </select>
+              </div>
+
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-yellow); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('due')">
-                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-yellow);">⏰ 今日到期複習測驗</div>
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">只測驗已達遺忘臨界點的單字</div>
+                <div class="santa-box santa-box-interactive" style="padding: 14px; border-left: 4px solid var(--neon-green); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('active_cat')">
+                  <div style="font-weight: 800; font-size: 13.5px; color: #059669;">🎯 <span id="vq-launcher-cat-title">750分高頻</span> 專項測驗</div>
+                  <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 4px;">測驗目前所選範圍 (<span id="vq-launcher-cat-count">2400</span>字)</div>
                 </div>
-                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-coral); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('weak')">
-                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-coral);">🚨 易錯弱點單字特訓</div>
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">專項攻克曾答錯的重點難詞</div>
+                <div class="santa-box santa-box-interactive" style="padding: 14px; border-left: 4px solid var(--neon-yellow); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('due')">
+                  <div style="font-weight: 800; font-size: 13.5px; color: #D97706;">⏰ 今日到期複習測驗</div>
+                  <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 4px;">只測驗已達遺忘臨界點的單字</div>
                 </div>
-                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-cyan); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('all')">
-                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-cyan);">🌟 全單字庫綜合速測 (10題)</div>
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">隨機抽取核心必考商務詞彙</div>
+                <div class="santa-box santa-box-interactive" style="padding: 14px; border-left: 4px solid var(--neon-coral); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('weak')">
+                  <div style="font-weight: 800; font-size: 13.5px; color: #E11D48;">🚨 易錯弱點特訓</div>
+                  <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 4px;">專項攻克曾答錯的重點難詞</div>
                 </div>
-                <div class="santa-box santa-box-interactive" style="padding: 16px; border-left: 4px solid var(--neon-green); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('active_cat')">
-                  <div style="font-weight: 800; font-size: 14px; color: var(--neon-green);">💼 當前分類專項測驗</div>
-                  <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">測驗目前選定分類的單字</div>
+                <div class="santa-box santa-box-interactive" style="padding: 14px; border-left: 4px solid var(--neon-cyan); text-align: left; background: #FFFFFF;" onclick="startVocaQuiz('all')">
+                  <div style="font-weight: 800; font-size: 13.5px; color: #0284C7;">🌟 全庫綜合速測 (10題)</div>
+                  <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 4px;">隨機抽取核心必考商務詞彙</div>
                 </div>
               </div>
             </div>
@@ -1726,7 +1791,7 @@
               </div>
 
               <div style="display: flex; gap: 10px; justify-content: center;">
-                <button class="santa-primary-btn" onclick="startVocaQuiz('all')">🔄 再測一輪</button>
+                <button class="santa-primary-btn" onclick="startVocaQuiz('active_cat')">🔄 再測一輪</button>
                 <button class="santa-btn santa-btn-outline" style="padding: 10px 20px; font-size: 13px;" onclick="switchVocaSubMode('list')">📖 返回單字本</button>
               </div>
             </div>
@@ -1735,9 +1800,37 @@
 
           <!-- ================= SUBMODE 3: FLASHCARD FLIP ================= -->
           <div id="voca-submode-card" style="display: none; max-width: 580px; margin: 0 auto; text-align: center;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; color: var(--text-muted);">
+            
+            <!-- Flashcard Top Nav & Scope Selector -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; flex-wrap: wrap;">
+              <button class="santa-btn santa-btn-outline" style="font-size: 12px; padding: 5px 12px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" onclick="switchVocaSubMode('list')">
+                <span>&larr;</span> <span>返回單字本</span>
+              </button>
+
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span style="font-size: 11.5px; color: var(--text-muted); font-weight: 700;">範圍:</span>
+                <select id="vf-scope-select" class="santa-input" style="padding: 5px 10px; font-size: 11.5px; border-radius: 9999px; width: auto; background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="setFlashcardScope(this.value)">
+                  <option value="all">🌟 全部 (4,000字)</option>
+                  <option value="750">🎯 750分高頻 (2,400字)</option>
+                  <option value="900">👑 900+高分 (1,600字)</option>
+                  <option value="phrase">🔗 必考商務片語</option>
+                  <option value="due">⏰ 今日到期需複習</option>
+                  <option value="weak">🚨 易錯弱點單字</option>
+                  <option value="mastered">🟢 已掌握單字</option>
+                  <option value="biz">💼 商務詞彙</option>
+                  <option value="finance">💰 財務金融</option>
+                  <option value="hr">👥 人事人資</option>
+                  <option value="logistics">📦 物流倉儲</option>
+                  <option value="marketing">📣 行銷宣傳</option>
+                  <option value="travel">✈️ 差旅觀光</option>
+                  <option value="tech">💻 科技資訊</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; color: var(--text-muted);">
               <div>卡片: <b id="vf-index-text" style="color: var(--text-primary); font-weight: 800;">1 / 48</b></div>
-              <div style="font-size: 11.5px;">點擊卡片翻面檢視中文釋義與例句</div>
+              <div style="font-size: 11.5px;">👆 點擊卡片翻面檢視中文釋義與例句</div>
             </div>
 
             <!-- Flip Card -->
@@ -1775,18 +1868,18 @@
           <!-- ================= SUBMODE 4: HANDS-FREE AUDIO PLAYER (隨身聽自動朗讀 - LISTENLEAP EDITION) ================= -->
           <div id="voca-submode-audio" style="display: none; max-width: 620px; margin: 0 auto;">
             
-            <!-- Top Navigation & Scope Selector Bar -->
+            <!-- Top Navigation & Scope / Sort Selector Bar -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 8px; flex-wrap: wrap;">
               <button class="santa-btn santa-btn-outline" style="font-size: 12.5px; padding: 6px 14px; border-radius: 9999px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" onclick="switchVocaSubMode('list')">
                 <span>&larr;</span> <span>返回單字本</span>
               </button>
 
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <select id="va-scope-select" class="santa-input" style="padding: 6px 12px; font-size: 12px; border-radius: 9999px; width: auto; background: #FFFFFF; font-weight: 700;" onchange="setAudioScope(this.value)">
-                  <option value="all">🌟 播放全部單字庫 (4,000字)</option>
-                  <option value="750">🎯 750分高頻衝刺庫 (2,400字)</option>
-                  <option value="900">👑 900+高分進階專區 (1,600字)</option>
-                  <option value="phrase">🔗 必考商務片語專區</option>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <select id="va-scope-select" class="santa-input" style="padding: 6px 10px; font-size: 11.5px; border-radius: 9999px; width: auto; background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="setAudioScope(this.value)">
+                  <option value="all">🌟 播放全部 (4,000字)</option>
+                  <option value="750">🎯 750分高頻 (2,400字)</option>
+                  <option value="900">👑 900+高分 (1,600字)</option>
+                  <option value="phrase">🔗 必考商務片語</option>
                   <option value="due">⏰ 僅需複習單字 (SRS)</option>
                   <option value="weak">🚨 僅易錯弱點單字</option>
                   <option value="biz">💼 商務相關詞彙</option>
@@ -1797,7 +1890,19 @@
                   <option value="travel">✈️ 差旅行程詞彙</option>
                   <option value="tech">💻 科技資訊詞彙</option>
                 </select>
-                <button id="va-shuffle-btn" class="santa-btn santa-btn-outline" style="padding: 6px 12px; font-size: 12px; border-radius: 9999px;" onclick="toggleAudioShuffle()">🔁 順序</button>
+
+                <select id="va-sort-select" class="santa-input" style="padding: 6px 10px; font-size: 11.5px; border-radius: 9999px; width: auto; background: #FFFFFF; font-weight: 700; color: var(--text-primary); cursor: pointer;" onchange="setAudioSort(this.value)">
+                  <option value="default">✨ 推薦序</option>
+                  <option value="az">🔤 A&rarr;Z 字母順序</option>
+                  <option value="za">🔤 Z&rarr;A 字母倒序</option>
+                  <option value="level_asc">🎯 750&rarr;900分</option>
+                  <option value="level_desc">👑 900&rarr;750分</option>
+                  <option value="due">⏰ 需複習優先</option>
+                  <option value="weak">🚨 易錯優先</option>
+                  <option value="shuffle">🎲 隨機播放</option>
+                </select>
+
+                <button id="va-shuffle-btn" class="santa-btn santa-btn-outline" style="padding: 6px 11px; font-size: 11.5px; border-radius: 9999px;" onclick="toggleAudioShuffle()">🔁 順序</button>
               </div>
             </div>
 
@@ -2080,6 +2185,20 @@
               </div>
             </div>
           </label>
+
+          <!-- Option 4: Ultra-Simple Minimalist List (最簡條列版) -->
+          <label id="voca-pdf-card-simple" class="voca-pdf-option-card" onclick="selectVocaPdfMode('simple')">
+            <input type="radio" name="voca_pdf_mode" value="simple" style="cursor: pointer;" />
+            <div style="flex: 1;">
+              <div style="font-size: 13px; font-weight: 800; color: #0F172A; display: flex; align-items: center; gap: 6px;">
+                <span>📋 最簡條列版 (* 單字 (詞性) 中文)</span>
+                <span class="santa-badge" style="background: #ECFDF5; color: #059669; font-size: 10px; padding: 1px 6px;">極致純淨・省紙省墨</span>
+              </div>
+              <div style="font-size: 11.5px; color: #64748B; margin-top: 2px;">
+                格式如：<code>* implement (v.) 實施、執行</code> (3欄緊湊高密度純淨條列，一頁容納 100+ 單字)
+              </div>
+            </div>
+          </label>
         </div>
 
         <!-- 3. Additional Print Options -->
@@ -2099,13 +2218,18 @@
         </div>
 
         <!-- Actions -->
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-          <button class="santa-btn santa-btn-outline" style="padding: 9px 18px; font-size: 13px;" onclick="closeVocaPdfModal()">
-            取消
+        <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <button class="santa-btn santa-btn-outline" style="padding: 8px 14px; font-size: 12.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" onclick="copyVocaTextList()" title="複製符合範圍的 * 單字 (詞性) 中文 清單到剪貼簿">
+            📋 複製純文字清單
           </button>
-          <button class="santa-btn" style="background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color: #FFFFFF; font-weight: 800; font-size: 13.5px; padding: 9px 24px; border-radius: var(--radius-pill); box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);" onclick="executeVocaPdfExport()">
-            🖨️ 開始列印 / 另存為 PDF
-          </button>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="santa-btn santa-btn-outline" style="padding: 8px 16px; font-size: 13px;" onclick="closeVocaPdfModal()">
+              取消
+            </button>
+            <button class="santa-btn" style="background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color: #FFFFFF; font-weight: 800; font-size: 13.5px; padding: 8px 22px; border-radius: var(--radius-pill); box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);" onclick="executeVocaPdfExport()">
+              🖨️ 開始列印 / 另存 PDF
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -3085,8 +3209,9 @@
         document.getElementById('voca-quiz-launcher').style.display = 'block';
         document.getElementById('voca-quiz-active').style.display = 'none';
         document.getElementById('voca-quiz-summary').style.display = 'none';
+        updateVocaQuizLauncherUI();
       } else if (mode === 'card') {
-        startFlashcardSession();
+        startFlashcardSession(currentVocaFilter);
       } else if (mode === 'audio') {
         initAudioPlayList();
         if (audioPlayList.length > 0) {
@@ -3220,36 +3345,14 @@
       });
 
       // Apply Sorting
-      if (currentVocaSort === 'az') {
-        filtered.sort((a, b) => a.word.localeCompare(b.word));
-      } else if (currentVocaSort === 'za') {
-        filtered.sort((a, b) => b.word.localeCompare(a.word));
-      } else if (currentVocaSort === 'level_asc') {
-        filtered.sort((a, b) => (a.level || '750').localeCompare(b.level || '750') || a.word.localeCompare(b.word));
-      } else if (currentVocaSort === 'level_desc') {
-        filtered.sort((a, b) => (b.level || '750').localeCompare(a.level || '750') || a.word.localeCompare(b.word));
-      } else if (currentVocaSort === 'weak') {
-        filtered.sort((a, b) => {
-          const sa = progress[a.word.toLowerCase()] || { wrongCount: 0 };
-          const sb = progress[b.word.toLowerCase()] || { wrongCount: 0 };
-          return (sb.wrongCount || 0) - (sa.wrongCount || 0) || a.word.localeCompare(b.word);
-        });
-      } else if (currentVocaSort === 'due') {
-        filtered.sort((a, b) => {
-          const sa = progress[a.word.toLowerCase()] || { nextReviewDue: 9999999999999 };
-          const sb = progress[b.word.toLowerCase()] || { nextReviewDue: 9999999999999 };
-          return (sa.nextReviewDue || 9999999999999) - (sb.nextReviewDue || 9999999999999);
-        });
-      } else if (currentVocaSort === 'shuffle') {
-        filtered.sort(() => Math.random() - 0.5);
-      }
+      const sorted = sortVocabularyList(filtered, currentVocaSort);
 
-      if (filtered.length === 0) {
+      if (sorted.length === 0) {
         container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px 16px; font-size: 14px;">無符合條件的單字</div>`;
         return;
       }
 
-      container.innerHTML = filtered.map(w => {
+      container.innerHTML = sorted.map(w => {
         const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0, lastReviewedAt: 0 };
         
         let srsBadge = '<span class="santa-badge" style="background: rgba(255, 255, 255, 0.06); color: #94a3b8; border-color: rgba(255, 255, 255, 0.12);">⚪ 新詞</span>';
@@ -3301,15 +3404,150 @@
       }).join('');
     }
 
+    function sortVocabularyList(list, sortKey) {
+      const sorted = [...list];
+      const now = Date.now();
+      const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
+
+      if (sortKey === 'az') {
+        sorted.sort((a, b) => (a.word || '').localeCompare(b.word || ''));
+      } else if (sortKey === 'za') {
+        sorted.sort((a, b) => (b.word || '').localeCompare(a.word || ''));
+      } else if (sortKey === 'level_asc') {
+        sorted.sort((a, b) => (a.level || '750').localeCompare(b.level || '750') || (a.word || '').localeCompare(b.word || ''));
+      } else if (sortKey === 'level_desc') {
+        sorted.sort((a, b) => (b.level || '750').localeCompare(a.level || '750') || (a.word || '').localeCompare(b.word || ''));
+      } else if (sortKey === 'weak') {
+        sorted.sort((a, b) => {
+          const sa = progress[a.word.toLowerCase()] || { wrongCount: 0 };
+          const sb = progress[b.word.toLowerCase()] || { wrongCount: 0 };
+          return (sb.wrongCount || 0) - (sa.wrongCount || 0) || (a.word || '').localeCompare(b.word || '');
+        });
+      } else if (sortKey === 'due') {
+        sorted.sort((a, b) => {
+          const sa = progress[a.word.toLowerCase()] || { nextReviewDue: 0 };
+          const sb = progress[b.word.toLowerCase()] || { nextReviewDue: 0 };
+          const da = sa.nextReviewDue > 0 ? sa.nextReviewDue : 9999999999999;
+          const db = sb.nextReviewDue > 0 ? sb.nextReviewDue : 9999999999999;
+          return da - db || (a.word || '').localeCompare(b.word || '');
+        });
+      } else if (sortKey === 'shuffle') {
+        sorted.sort(() => Math.random() - 0.5);
+      }
+      return sorted;
+    }
+
     function handleVocaSortChange(val) {
       currentVocaSort = val;
+      audioSortKey = val;
+      const vaSortSelect = document.getElementById('va-sort-select');
+      if (vaSortSelect) vaSortSelect.value = val;
       renderVocaWordbook();
+      initAudioPlayList();
+    }
+
+    function getVocaFilterDisplayName(filterKey) {
+      const names = {
+        'all': '🌟 全部核心單字庫 (4,000字)',
+        '750': '🎯 750分高頻專區 (2,400字)',
+        '900': '👑 900+高分進階 (1,600字)',
+        'phrase': '🔗 必考商務片語',
+        'due': '⏰ 記憶遺忘需複習',
+        'weak': '🚨 易錯弱點單字',
+        'mastered': '🟢 已熟練掌握',
+        'biz': '💼 商務相關詞彙',
+        'finance': '💰 財務金融詞彙',
+        'hr': '👥 人事人資詞彙',
+        'logistics': '📦 物流倉儲詞彙',
+        'marketing': '📣 行銷企劃詞彙',
+        'travel': '✈️ 差旅觀光詞彙',
+        'tech': '💻 科技資訊詞彙'
+      };
+      return names[filterKey] || filterKey;
+    }
+
+    function getVocabularyWordsByFilter(filterKey) {
+      if (window.MASTER_VOCABULARY && window.MASTER_VOCABULARY.length > 0) {
+        MASTER_VOCABULARY = window.MASTER_VOCABULARY;
+      }
+      const now = Date.now();
+      const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
+
+      if (filterKey === '750') {
+        return MASTER_VOCABULARY.filter(w => w.level === '750');
+      } else if (filterKey === '900') {
+        return MASTER_VOCABULARY.filter(w => w.level === '900');
+      } else if (filterKey === 'phrase') {
+        return MASTER_VOCABULARY.filter(w => w.pos === 'phrase' || w.cat === 'phrase_750' || (w.word && w.word.includes(' ')));
+      } else if (filterKey === 'due') {
+        return MASTER_VOCABULARY.filter(w => {
+          const s = progress[w.word.toLowerCase()];
+          return s && s.nextReviewDue > 0 && s.nextReviewDue <= now;
+        });
+      } else if (filterKey === 'weak') {
+        return MASTER_VOCABULARY.filter(w => {
+          const s = progress[w.word.toLowerCase()];
+          return s && (s.wrongCount > 0 || s.masteryLevel === 1);
+        });
+      } else if (filterKey === 'mastered') {
+        return MASTER_VOCABULARY.filter(w => {
+          const s = progress[w.word.toLowerCase()];
+          return s && s.masteryLevel >= 3;
+        });
+      } else if (filterKey && filterKey !== 'all') {
+        return MASTER_VOCABULARY.filter(w => w.cat === filterKey);
+      }
+      return [...MASTER_VOCABULARY];
+    }
+
+    function updateVocaQuizLauncherUI() {
+      const titleEl = document.getElementById('vq-launcher-cat-title');
+      const countEl = document.getElementById('vq-launcher-cat-count');
+      const catSelectEl = document.getElementById('vq-launcher-cat-select');
+
+      const targetKey = currentVocaFilter || '750';
+      const catWords = getVocabularyWordsByFilter(targetKey);
+      const catName = getVocaFilterDisplayName(targetKey).replace(/\s*\(.*?\)/g, '');
+
+      if (titleEl) titleEl.innerText = catName;
+      if (countEl) countEl.innerText = catWords.length;
+      if (catSelectEl) catSelectEl.value = targetKey;
+    }
+
+    function setQuizScope(scope) {
+      currentVocaFilter = (scope === 'current') ? currentVocaFilter : scope;
+      document.querySelectorAll('.voca-cat-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`.voca-cat-btn[data-cat="${currentVocaFilter}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      const vfScopeEl = document.getElementById('vf-scope-select');
+      if (vfScopeEl) vfScopeEl.value = currentVocaFilter;
+      updateVocaQuizLauncherUI();
+    }
+
+    function setFlashcardScope(scope) {
+      currentVocaFilter = (scope === 'current') ? currentVocaFilter : scope;
+      document.querySelectorAll('.voca-cat-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`.voca-cat-btn[data-cat="${currentVocaFilter}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      const vqScopeEl = document.getElementById('vq-launcher-cat-select');
+      if (vqScopeEl) vqScopeEl.value = currentVocaFilter;
+      startFlashcardSession(currentVocaFilter);
     }
 
     function filterVocaCategory(filterKey, btn) {
       currentVocaFilter = filterKey;
       document.querySelectorAll('.voca-cat-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        const matchingBtn = document.querySelector(`.voca-cat-btn[data-cat="${filterKey}"]`);
+        if (matchingBtn) matchingBtn.classList.add('active');
+      }
+      const vfScopeEl = document.getElementById('vf-scope-select');
+      if (vfScopeEl) vfScopeEl.value = filterKey;
+      const vqScopeEl = document.getElementById('vq-launcher-cat-select');
+      if (vqScopeEl) vqScopeEl.value = filterKey;
+      updateVocaQuizLauncherUI();
       renderVocaWordbook();
     }
 
@@ -3347,63 +3585,20 @@
       }
     }
 
-    function executeVocaPdfExport() {
+    function getTargetWordsForPdfExport(scope) {
       if (window.MASTER_VOCABULARY && window.MASTER_VOCABULARY.length > 0) {
         MASTER_VOCABULARY = window.MASTER_VOCABULARY;
       }
-      const scope = document.getElementById('voca-pdf-scope-select')?.value || 'current';
-      const mode = currentVocaPdfMode || '2col';
-      const includeExample = document.getElementById('voca-pdf-include-example')?.checked ?? true;
-      const includeSynonyms = document.getElementById('voca-pdf-include-synonyms')?.checked ?? true;
-      const includeBoxes = document.getElementById('voca-pdf-include-boxes')?.checked ?? true;
-
-      const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
-      const now = Date.now();
       const searchVal = (document.getElementById('voca-search-input')?.value || '').toLowerCase().trim();
 
       let targetWords = [];
-      let scopeLabel = '全部核心詞庫 (4,000字)';
-
       if (scope === 'current') {
-        targetWords = MASTER_VOCABULARY.filter(w => {
-          const srs = progress[w.word.toLowerCase()] || { masteryLevel: 0, wrongCount: 0, nextReviewDue: 0 };
-          let matchesFilter = true;
-          if (currentVocaFilter === '750') matchesFilter = (w.level === '750');
-          else if (currentVocaFilter === '900') matchesFilter = (w.level === '900');
-          else if (currentVocaFilter === 'phrase') matchesFilter = (w.pos === 'phrase' || w.cat === 'phrase_750' || (w.word && w.word.includes(' ')));
-          else if (currentVocaFilter === 'due') matchesFilter = (srs.nextReviewDue > 0 && srs.nextReviewDue <= now);
-          else if (currentVocaFilter === 'weak') matchesFilter = (srs.wrongCount > 0 || srs.masteryLevel === 1);
-          else if (currentVocaFilter === 'mastered') matchesFilter = (srs.masteryLevel >= 3);
-          else if (currentVocaFilter !== 'all') matchesFilter = (w.cat === currentVocaFilter);
-
-          const matchesSearch = !searchVal || w.word.toLowerCase().includes(searchVal) || w.meaning.toLowerCase().includes(searchVal) || (w.synonyms && w.synonyms.toLowerCase().includes(searchVal)) || w.example.toLowerCase().includes(searchVal);
-          return matchesFilter && matchesSearch;
+        const baseWords = getVocabularyWordsByFilter(currentVocaFilter);
+        targetWords = baseWords.filter(w => {
+          return !searchVal || w.word.toLowerCase().includes(searchVal) || w.meaning.toLowerCase().includes(searchVal) || (w.synonyms && w.synonyms.toLowerCase().includes(searchVal)) || (w.example && w.example.toLowerCase().includes(searchVal));
         });
-        scopeLabel = currentVocaFilter === 'all' ? '全部核心單字庫' : `精選分類 [${currentVocaFilter}]`;
-      } else if (scope === '750') {
-        targetWords = MASTER_VOCABULARY.filter(w => w.level === '750');
-        scopeLabel = '🎯 750分高頻衝刺專區';
-      } else if (scope === '900') {
-        targetWords = MASTER_VOCABULARY.filter(w => w.level === '900');
-        scopeLabel = '👑 900+高分進階專區';
-      } else if (scope === 'phrase') {
-        targetWords = MASTER_VOCABULARY.filter(w => w.pos === 'phrase' || w.cat === 'phrase_750' || (w.word && w.word.includes(' ')));
-        scopeLabel = '🔗 必考商務片語專區';
-      } else if (scope === 'due') {
-        targetWords = MASTER_VOCABULARY.filter(w => {
-          const s = progress[w.word.toLowerCase()];
-          return s && s.nextReviewDue > 0 && s.nextReviewDue <= now;
-        });
-        scopeLabel = '⏰ 記憶遺忘需複習單字';
-      } else if (scope === 'weak') {
-        targetWords = MASTER_VOCABULARY.filter(w => {
-          const s = progress[w.word.toLowerCase()];
-          return s && (s.wrongCount > 0 || s.masteryLevel === 1);
-        });
-        scopeLabel = '🚨 易錯弱點單字專區';
       } else {
-        targetWords = [...MASTER_VOCABULARY];
-        scopeLabel = '🌟 全部核心單字庫 (4,000字)';
+        targetWords = getVocabularyWordsByFilter(scope);
       }
 
       if (targetWords.length === 0) {
@@ -3421,6 +3616,55 @@
         targetWords.sort((a, b) => (b.level || '750').localeCompare(a.level || '750') || a.word.localeCompare(b.word));
       }
 
+      return targetWords;
+    }
+
+    function copyVocaTextList() {
+      const scope = document.getElementById('voca-pdf-scope-select')?.value || 'current';
+      const targetWords = getTargetWordsForPdfExport(scope);
+      const lines = targetWords.map(w => {
+        let pos = (w.pos || 'n.').trim();
+        if (!pos.endsWith('.')) pos += '.';
+        const cleanMeaning = (w.meaning || '').replace(/^(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '').replace(/[；;]/g, '、').trim();
+        return `* ${w.word} (${pos}) ${cleanMeaning}`;
+      });
+      const text = lines.join('\n');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert(`📋 已成功複製 ${targetWords.length} 個單字的極簡清單至剪貼簿！\n\n範例格式：\n* implement (v.) 實施、執行\n* conduct (v.) 進行、實施\n* postpone (v.) 延期、延後`);
+        }).catch(() => {
+          prompt('請複製以下純文字清單：', text);
+        });
+      } else {
+        prompt('請複製以下純文字清單：', text);
+      }
+    }
+
+    function executeVocaPdfExport() {
+      const scope = document.getElementById('voca-pdf-scope-select')?.value || 'current';
+      const mode = currentVocaPdfMode || '2col';
+      const includeExample = document.getElementById('voca-pdf-include-example')?.checked ?? true;
+      const includeSynonyms = document.getElementById('voca-pdf-include-synonyms')?.checked ?? true;
+      const includeBoxes = document.getElementById('voca-pdf-include-boxes')?.checked ?? true;
+
+      const targetWords = getTargetWordsForPdfExport(scope);
+
+      let scopeLabel = '全部核心詞庫 (4,000字)';
+      if (scope === 'current') {
+        scopeLabel = currentVocaFilter === 'all' ? '全部核心單字庫' : `精選分類 [${currentVocaFilter}]`;
+      } else if (scope === '750') {
+        scopeLabel = '🎯 750分高頻衝刺專區';
+      } else if (scope === '900') {
+        scopeLabel = '👑 900+高分進階專區';
+      } else if (scope === 'phrase') {
+        scopeLabel = '🔗 必考商務片語專區';
+      } else if (scope === 'due') {
+        scopeLabel = '⏰ 記憶遺忘需複習單字';
+      } else if (scope === 'weak') {
+        scopeLabel = '🚨 易錯弱點單字專區';
+      }
+
       const printContainer = document.getElementById('voca-print-container');
       if (!printContainer) return;
 
@@ -3428,6 +3672,7 @@
       let modeTitle = '雙欄精讀背誦本';
       if (mode === '3col') modeTitle = '三欄高密度速記表';
       if (mode === 'quiz') modeTitle = '自我默寫自測卷';
+      if (mode === 'simple') modeTitle = '最簡條列速查本';
 
       let itemsHTML = '';
 
@@ -3475,6 +3720,24 @@
                   <div class="print-phonetic" style="font-size: 7.5pt; margin-top: 1px;">${w.phonetic || ''}</div>
                   <div class="print-meaning" style="font-size: 8.5pt; margin: 1px 0;">${w.meaning}</div>
                   ${(includeSynonyms && w.synonyms) ? `<div class="print-synonyms" style="font-size: 7.5pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">同: ${w.synonyms}</div>` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else if (mode === 'simple') {
+        itemsHTML = `
+          <div class="print-grid-simple-3col">
+            ${targetWords.map((w, idx) => {
+              let pos = (w.pos || 'n.').trim();
+              if (!pos.endsWith('.')) pos += '.';
+              const cleanMeaning = (w.meaning || '').replace(/^(n|v|adj|adv|prep|conj|pron|art|num|int|phrase)\.\s*/gi, '').replace(/[；;]/g, '、').trim();
+              return `
+                <div class="print-simple-item print-no-break">
+                  <span class="print-simple-bullet">*</span>
+                  <span class="print-simple-word">${w.word}</span>
+                  <span class="print-simple-pos">(${pos})</span>
+                  <span class="print-simple-meaning">${cleanMeaning}</span>
                 </div>
               `;
             }).join('')}
@@ -3549,29 +3812,30 @@
       let candidateWords = [];
 
       if (type === 'due') {
-        candidateWords = MASTER_VOCABULARY.filter(w => {
-          const s = progress[w.word.toLowerCase()];
-          return s && s.nextReviewDue > 0 && s.nextReviewDue <= now;
-        });
+        candidateWords = getVocabularyWordsByFilter('due');
         if (candidateWords.length === 0) {
-          alert('🎉 太棒了！今日暫無到達遺忘臨界點的單字，已為您載入易錯與新詞進行測驗。');
-          candidateWords = MASTER_VOCABULARY.slice(0, 10);
+          alert('🎉 太棒了！今日暫無到達遺忘臨界點的單字，已為您載入推薦詞彙進行測驗。');
+          candidateWords = getVocabularyWordsByFilter(currentVocaFilter || '750');
         }
       } else if (type === 'weak') {
-        candidateWords = MASTER_VOCABULARY.filter(w => {
-          const s = progress[w.word.toLowerCase()];
-          return s && (s.wrongCount > 0 || s.masteryLevel === 1);
-        });
+        candidateWords = getVocabularyWordsByFilter('weak');
         if (candidateWords.length === 0) {
-          alert('🎉 目前沒有易錯單字，已為您隨機抽取 10 個核心單字！');
-          candidateWords = [...MASTER_VOCABULARY].sort(() => Math.random() - 0.5).slice(0, 10);
+          alert('🎉 目前沒有易錯單字，已為您載入精選核心單字！');
+          candidateWords = getVocabularyWordsByFilter(currentVocaFilter || '750');
         }
-      } else if (type === 'active_cat' && currentVocaFilter !== 'all' && currentVocaFilter !== 'due' && currentVocaFilter !== 'weak' && currentVocaFilter !== 'mastered') {
-        candidateWords = MASTER_VOCABULARY.filter(w => w.cat === currentVocaFilter);
+      } else if (type === 'active_cat' || type === '750' || type === '900' || type === 'phrase' || (type !== 'all' && type)) {
+        const targetCat = (type === 'active_cat') ? (currentVocaFilter || '750') : type;
+        candidateWords = getVocabularyWordsByFilter(targetCat);
+        if (candidateWords.length === 0) {
+          candidateWords = [...MASTER_VOCABULARY];
+        }
       } else {
-        // Random 10 words
-        candidateWords = [...MASTER_VOCABULARY].sort(() => Math.random() - 0.5).slice(0, 10);
+        // Random 10 words from all
+        candidateWords = [...MASTER_VOCABULARY];
       }
+
+      // Pick 10 random words from candidate pool (or all if pool < 10)
+      candidateWords = [...candidateWords].sort(() => Math.random() - 0.5).slice(0, Math.min(10, candidateWords.length));
 
       vocaQuizQueue = candidateWords.map(w => ({ ...w, isFirstAttempt: true }));
       vocaQuizTotalInitial = vocaQuizQueue.length;
@@ -3723,8 +3987,14 @@
     // ==========================================
     // Flashcard Flip Engine
     // ==========================================
-    function startFlashcardSession() {
-      flashcardList = [...MASTER_VOCABULARY];
+    function startFlashcardSession(scope) {
+      const targetScope = scope || currentVocaFilter || 'all';
+      const vfScopeEl = document.getElementById('vf-scope-select');
+      if (vfScopeEl) vfScopeEl.value = targetScope;
+
+      let list = getVocabularyWordsByFilter(targetScope);
+      if (list.length === 0) list = [...MASTER_VOCABULARY];
+      flashcardList = list;
       flashcardIndex = 0;
       isFlashcardFlipped = false;
       renderCurrentFlashcard();
@@ -3814,6 +4084,7 @@
     let audioSpeechMode = 'word_meaning'; // 'word_meaning' | 'word_meaning_example' | 'word_only'
     let audioIsShuffle = false;
     let audioScope = 'all';
+    let audioSortKey = 'default';
     let audioPlaybackRate = 1.0; // 0.8x, 1.0x, 1.2x, 1.5x
     let audioSubtitleMode = 0; // 0: Dual (En+Zh), 1: En only, 2: Zh only
     let isBlindMaskActive = false;
@@ -4138,37 +4409,16 @@
       if (window.MASTER_VOCABULARY && window.MASTER_VOCABULARY.length > 0) {
         MASTER_VOCABULARY = window.MASTER_VOCABULARY;
       }
-      const now = Date.now();
-      const progress = window.SantaDB ? window.SantaDB.getVocabularyProgress() : {};
       
-      let baseList = [...MASTER_VOCABULARY];
-      if (audioScope === '750') {
-        baseList = MASTER_VOCABULARY.filter(w => w.level === '750');
-      } else if (audioScope === '900') {
-        baseList = MASTER_VOCABULARY.filter(w => w.level === '900');
-      } else if (audioScope === 'phrase') {
-        baseList = MASTER_VOCABULARY.filter(w => w.pos === 'phrase' || w.cat === 'phrase_750' || (w.word && w.word.includes(' ')));
-      } else if (audioScope === 'due') {
-        baseList = MASTER_VOCABULARY.filter(w => {
-          const s = progress[w.word.toLowerCase()];
-          return s && s.nextReviewDue > 0 && s.nextReviewDue <= now;
-        });
-        if (baseList.length === 0) baseList = [...MASTER_VOCABULARY];
-      } else if (audioScope === 'weak') {
-        baseList = MASTER_VOCABULARY.filter(w => {
-          const s = progress[w.word.toLowerCase()];
-          return s && (s.wrongCount > 0 || s.masteryLevel === 1);
-        });
-        if (baseList.length === 0) baseList = [...MASTER_VOCABULARY];
-      } else if (audioScope !== 'all') {
-        baseList = MASTER_VOCABULARY.filter(w => w.cat === audioScope);
-        if (baseList.length === 0) baseList = [...MASTER_VOCABULARY];
-      }
+      let baseList = getVocabularyWordsByFilter(audioScope || currentVocaFilter || 'all');
+      if (baseList.length === 0) baseList = [...MASTER_VOCABULARY];
 
-      if (audioIsShuffle) {
+      const currentSort = audioSortKey || currentVocaSort || 'default';
+      
+      if (audioIsShuffle || currentSort === 'shuffle') {
         audioPlayList = [...baseList].sort(() => Math.random() - 0.5);
       } else {
-        audioPlayList = [...baseList];
+        audioPlayList = sortVocabularyList(baseList, currentSort);
       }
       
       if (audioCurrentIndex >= audioPlayList.length) {
@@ -4649,8 +4899,36 @@
       audioScope = scope;
       initAudioPlayList();
       if (audioPlayList.length > 0) {
-        renderCurrentAudioWordUI(audioPlayList[audioCurrentIndex], 1);
+        audioCurrentIndex = 0;
+        renderCurrentAudioWordUI(audioPlayList[0], 1);
       }
+    }
+
+    function setAudioSort(val) {
+      audioSortKey = val;
+      currentVocaSort = val;
+      const mainSortSelect = document.getElementById('voca-sort-select');
+      if (mainSortSelect) mainSortSelect.value = val;
+      const vaSortSelect = document.getElementById('va-sort-select');
+      if (vaSortSelect) vaSortSelect.value = val;
+
+      if (val === 'shuffle') {
+        audioIsShuffle = true;
+      } else {
+        audioIsShuffle = false;
+      }
+      const shuffleBtn = document.getElementById('va-shuffle-btn');
+      if (shuffleBtn) {
+        shuffleBtn.classList.toggle('active', audioIsShuffle);
+        shuffleBtn.innerHTML = audioIsShuffle ? '🔀 隨機' : '🔁 順序';
+      }
+
+      initAudioPlayList();
+      if (audioPlayList.length > 0) {
+        audioCurrentIndex = 0;
+        renderCurrentAudioWordUI(audioPlayList[0], 1);
+      }
+      updateAudioPlayerControlsUI();
     }
 
     function toggleAudioShuffle() {
@@ -4660,7 +4938,14 @@
         btn.classList.toggle('active', audioIsShuffle);
         btn.innerHTML = audioIsShuffle ? '🔀 隨機' : '🔁 順序';
       }
+      const vaSortSelect = document.getElementById('va-sort-select');
+      if (vaSortSelect) {
+        vaSortSelect.value = audioIsShuffle ? 'shuffle' : (audioSortKey !== 'shuffle' ? audioSortKey : 'default');
+      }
       initAudioPlayList();
+      if (audioPlayList.length > 0) {
+        renderCurrentAudioWordUI(audioPlayList[audioCurrentIndex] || audioPlayList[0], 1);
+      }
     }
 
     function speakCurrentAudioWord() {
