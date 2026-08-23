@@ -206,6 +206,12 @@
         });
       }
 
+      // Sync in-app bottom navigation badge dot
+      const bnavBadge = document.getElementById('bnav-voca-badge');
+      if (bnavBadge) {
+        bnavBadge.style.display = (dueCount > 0) ? 'block' : 'none';
+      }
+
       if (dueCount > 0) {
         navigator.setAppBadge(dueCount).then(() => {
           console.log(`[Lumi PWA App Badge] Badge set to ${dueCount} due SRS vocabulary items.`);

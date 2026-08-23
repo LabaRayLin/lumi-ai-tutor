@@ -92,26 +92,7 @@
     const style = document.createElement('style');
     style.textContent = `
       #santa-floating-btn {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        z-index: 999999;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        background: #FFFFFF;
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        color: #1E293B;
-        border: 1px solid #E2DDD4;
-        border-radius: 9999px;
-        padding: 9px 18px;
-        font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        cursor: pointer;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
-        transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        display: none !important;
       }
       #santa-floating-btn:hover {
         transform: translateY(-2px) scale(1.02);
@@ -555,6 +536,9 @@
       backdrop.style.display = 'flex';
     };
     const closeModal = () => { backdrop.style.display = 'none'; };
+
+    window.openSettingsModal = openModal;
+    window.closeSettingsModal = closeModal;
 
     btn.addEventListener('click', openModal);
     document.getElementById('santa-modal-close').addEventListener('click', closeModal);
