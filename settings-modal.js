@@ -35,23 +35,6 @@
     renderLogsToUI();
   }
 
-  function updateErrorBadge() {
-    const btn = document.getElementById('santa-floating-btn');
-    if (!btn) return;
-    const badgeEl = btn.querySelector('.santa-error-count-badge');
-    if (errorCount > 0) {
-      if (badgeEl) {
-        badgeEl.innerText = `${errorCount} 錯誤`;
-      } else {
-        const span = document.createElement('span');
-        span.className = 'santa-error-count-badge';
-        span.style.cssText = 'background: #ff3b5c; color: #fff; padding: 2px 7px; border-radius: 10px; font-size: 11px; margin-left: 4px; font-weight: 700;';
-        span.innerText = `${errorCount} 錯誤`;
-        btn.appendChild(span);
-      }
-    }
-  }
-
   // Intercept Global Errors
   window.addEventListener('error', (e) => {
     addLog('error', e.message || 'JavaScript Error', `${e.filename}:${e.lineno}:${e.colno}\n${e.error?.stack || ''}`);
@@ -91,64 +74,58 @@
     // Inject Styles
     const style = document.createElement('style');
     style.textContent = `
-      #santa-floating-btn {
-        display: none !important;
-      }
-      #santa-floating-btn:hover {
-        transform: translateY(-2px) scale(1.02);
-        background: #FAF8F5;
-        border-color: #4F46E5;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-      }
       #santa-modal-backdrop {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(30, 41, 59, 0.45);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: rgba(15, 23, 42, 0.48);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         z-index: 1000000;
         align-items: center;
         justify-content: center;
-        font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        padding: 16px;
+        font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
       }
       #santa-modal-container {
         background: #FFFFFF;
-        color: #1E293B;
-        border: 1px solid #E8E4DC;
+        color: #0F172A;
+        border: 1px solid #E2DDD4;
         border-radius: 24px;
-        width: 92%;
-        max-width: 660px;
+        width: 100%;
+        max-width: 620px;
         max-height: 88vh;
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.15), 0 4px 16px rgba(0, 0, 0, 0.05);
-        animation: santaFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16), 0 4px 16px rgba(0, 0, 0, 0.06);
+        animation: santaFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       }
       @keyframes santaFadeIn {
-        from { opacity: 0; transform: translateY(12px) scale(0.96); }
+        from { opacity: 0; transform: translateY(12px) scale(0.97); }
         to { opacity: 1; transform: translateY(0) scale(1); }
       }
       .santa-modal-header {
-        padding: 16px 22px;
-        background: #FAF8F5;
+        padding: 18px 24px;
+        background: #FAF9F6;
         border-bottom: 1px solid #E8E4DC;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 12px;
       }
       .santa-modal-header h3 {
         margin: 0;
-        font-size: 16px;
-        font-weight: 800;
+        font-size: 16.5px;
+        font-weight: 900;
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #1E293B;
+        color: #0F172A;
+        letter-spacing: -0.3px;
       }
       .santa-close-btn {
-        background: #F0ECE4;
+        background: #F1EFE9;
         border: 1px solid #E2DDD4;
         color: #64748B;
         font-size: 18px;
@@ -160,171 +137,173 @@
         align-items: center;
         justify-content: center;
         transition: all 0.2s;
+        flex-shrink: 0;
       }
-      .santa-close-btn:hover { color: #E11D48; background: #FFF1F2; border-color: #FECDD3; }
+      .santa-close-btn:hover { color: #E11D48; background: #FFF1F2; border-color: #FECDD3; transform: scale(1.05); }
       
       .santa-modal-tabs {
         display: flex;
-        background: #FAF8F5;
-        padding: 10px 16px;
+        background: #FAF9F6;
+        padding: 12px 20px;
         gap: 8px;
         border-bottom: 1px solid #E8E4DC;
         overflow-x: auto;
         flex-wrap: nowrap;
         scrollbar-width: none;
+        align-items: center;
       }
       .santa-modal-tabs::-webkit-scrollbar { display: none; }
       .santa-modal-tab {
-        padding: 7px 16px;
-        font-size: 12.5px;
-        font-weight: 700;
-        color: #64748B;
-        background: #F0ECE4;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 34px;
+        padding: 0 16px;
+        font-size: 13px;
+        font-weight: 800;
+        color: #475569;
+        background: #F1EFE9;
         border: 1px solid #E2DDD4;
         border-radius: 9999px;
         cursor: pointer;
         white-space: nowrap;
         flex-shrink: 0;
-        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        line-height: 1;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       }
       .santa-modal-tab:hover {
         background: #E5E0D5;
-        color: #1E293B;
-        border-color: #D8D2C5;
+        color: #0F172A;
+        border-color: #CBD5E1;
       }
       .santa-modal-tab.active {
         background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
         color: #FFFFFF;
         border-color: #4338CA;
-        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.25);
+        box-shadow: 0 3px 12px rgba(79, 70, 229, 0.28);
       }
       
       .santa-modal-body {
-        padding: 18px 22px;
+        padding: 20px 24px;
         overflow-y: auto;
         flex: 1;
+        background: #FFFFFF;
       }
       .santa-m-form-group {
-        margin-bottom: 14px;
+        margin-bottom: 16px;
       }
       .santa-m-label {
         display: block;
-        font-size: 11.5px;
+        font-size: 12px;
         font-weight: 800;
-        color: #64748B;
+        color: #475569;
         margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.3px;
       }
       .santa-m-input, .santa-m-select {
         width: 100%;
-        background: #FBF9F5;
-        border: 1px solid #E2DDD4;
-        border-radius: 14px;
-        padding: 10px 14px;
-        color: #1E293B;
-        font-size: 13px;
+        background: #FFFFFF;
+        border: 1.5px solid #E2DDD4;
+        border-radius: 12px;
+        padding: 11px 14px;
+        color: #0F172A;
+        font-size: 13.5px;
         box-sizing: border-box;
         transition: all 0.2s;
+        font-family: inherit;
       }
       .santa-m-input:focus, .santa-m-select:focus {
         outline: none;
         border-color: #4F46E5;
-        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
       }
       .santa-m-btn {
         background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
         color: #ffffff;
         border: none;
         border-radius: 9999px;
-        padding: 10px 18px;
+        padding: 11px 20px;
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 800;
         cursor: pointer;
-        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.2);
-        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 3px 12px rgba(79, 70, 229, 0.25);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 6px;
       }
       .santa-m-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 16px rgba(79, 70, 229, 0.35);
         filter: brightness(1.05);
       }
       .santa-m-btn-danger {
-        background: linear-gradient(135deg, #E11D48 0%, #F43F5E 100%);
-        box-shadow: 0 2px 10px rgba(225, 29, 72, 0.2);
+        background: #FFF1F2;
+        color: #E11D48;
+        border: 1.5px solid #FECDD3;
+        box-shadow: none;
       }
       .santa-m-btn-danger:hover {
-        box-shadow: 0 4px 14px rgba(225, 29, 72, 0.35);
+        background: #FFE4E6;
+        border-color: #FDA4AF;
+        transform: translateY(-1px);
       }
       .santa-m-btn-outline {
         background: #FFFFFF;
-        border: 1px solid #E2DDD4;
-        color: #475569;
+        border: 1.5px solid #E2DDD4;
+        color: #334155;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
       }
       .santa-m-btn-outline:hover {
-        background: #F5F2EB;
-        color: #1E293B;
+        background: #F8F6F0;
+        color: #0F172A;
         border-color: #CBD5E1;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      }
-      .santa-m-badge {
-        display: inline-block;
-        padding: 3px 9px;
-        border-radius: 9999px;
-        font-size: 11px;
-        font-weight: 700;
-        background: rgba(22, 163, 74, 0.1);
-        color: #16A34A;
-        border: 1px solid rgba(22, 163, 74, 0.25);
+        transform: translateY(-1px);
       }
       .santa-m-card {
-        background: #F8F6F0;
+        background: #FBF9F5;
         border: 1px solid #E8E4DC;
-        border-radius: 18px;
-        padding: 14px 16px;
-        margin-bottom: 12px;
+        border-radius: 16px;
+        padding: 14px 18px;
+        margin-bottom: 14px;
       }
       
       /* Provider Grid Cards */
       .santa-provider-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 8px;
-        margin-bottom: 12px;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
       }
       .santa-provider-card {
-        background: #F8F6F0;
+        background: #FFFFFF;
         border: 1.5px solid #E2DDD4;
         border-radius: 16px;
-        padding: 12px 10px;
+        padding: 14px 12px;
         cursor: pointer;
         text-align: center;
-        color: #1E293B;
-        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        color: #0F172A;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
       }
       .santa-provider-card:hover {
         border-color: #4F46E5;
-        background: #F2EFE9;
-        transform: translateY(-2px);
+        background: #F8F6F0;
+        transform: translateY(-1px);
       }
       .santa-provider-card.selected {
         border-color: #4F46E5;
-        background: #EFF6FF;
-        color: #1E40AF;
-        box-shadow: 0 2px 10px rgba(79, 70, 229, 0.15);
+        background: #EEF2FF;
+        box-shadow: 0 2px 12px rgba(79, 70, 229, 0.16);
       }
       
       /* Logs UI */
       .santa-log-item {
-        background: #F8F6F0;
+        background: #FAF9F6;
         border-left: 3px solid #4F46E5;
         padding: 8px 12px;
-        border-radius: 10px;
+        border-radius: 8px;
         margin-bottom: 6px;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 11.5px;
@@ -337,11 +316,6 @@
       .santa-log-api { border-left: 3px solid #0284C7; background: #EFF6FF; color: #075985; }
     `;
     document.head.appendChild(style);
-
-    // Floating Trigger (Removed to keep UI clean; Settings accessed via Bottom Nav / Settings)
-    const btn = document.createElement('div');
-    btn.id = 'santa-floating-btn';
-    btn.style.display = 'none';
 
     // Create Modal
     const backdrop = document.createElement('div');
@@ -365,34 +339,34 @@
 
           <!-- TAB: E2EE Cloud Sync -->
           <div id="santa-tab-sync" class="santa-modal-tab-content" style="display: block;">
-            <div class="santa-m-card" style="border-left: 3px solid #10b981; margin-bottom: 8px;">
-              <div style="font-weight: 700; font-size: 12.5px; margin-bottom: 2px; color: #6ee7b7;">🔒 零知識端到端加密同步 (E2EE)</div>
-              <div style="font-size: 11.5px; color: #9da5b4; line-height: 1.45;">
-                所有錯題本、能力曲線、單字庫與 API 金鑰在離開瀏覽器前皆已在本地以 AES-GCM 完全加密。在 iPhone、iPad 或電腦登入即可即時雙向同步。
+            <div class="santa-m-card" style="background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #16A34A; margin-bottom: 12px;">
+              <div style="font-weight: 800; font-size: 13px; margin-bottom: 4px; color: #15803D;">🔒 零知識端到端加密同步 (E2EE)</div>
+              <div style="font-size: 12px; color: #334155; line-height: 1.55;">
+                所有錯題本、能力曲線與單字庫進度在離開瀏覽器前皆已在本地以 AES-GCM 完全加密。在 iPhone、iPad 或電腦登入即可即時雙向無縫同步。
               </div>
             </div>
 
-            <div class="santa-m-card">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="santa-m-card" style="background: #FFFFFF; border: 1px solid #E2DDD4;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
                 <div>
-                  <div style="font-size: 11px; color: #9da5b4;">目前同步狀態</div>
-                  <div id="settings-sync-status" style="font-size: 13px; font-weight: 700; margin-top: 2px;">⚪ 未登入 (僅保存在此裝置)</div>
+                  <div style="font-size: 11.5px; font-weight: 700; color: #64748B;">目前同步狀態</div>
+                  <div id="settings-sync-status" style="font-size: 13.5px; font-weight: 800; color: #0F172A; margin-top: 2px;">⚪ 未登入 (僅保存在此裝置)</div>
                 </div>
-                <div id="sync-last-time" style="font-size: 10.5px; color: #64748b;"></div>
+                <div id="sync-last-time" style="font-size: 11.5px; color: #64748B; font-weight: 600;"></div>
               </div>
             </div>
 
             <!-- Sync Mode Selector -->
             <div class="santa-m-form-group">
               <label class="santa-m-label">選擇同步方式</label>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <div class="santa-provider-grid">
                 <div id="sync-mode-gist" class="santa-provider-card selected" onclick="selectSyncMode('gist')">
-                  <div style="font-weight: 700; font-size: 12.5px;">🐙 GitHub Gist</div>
-                  <div style="font-size: 10px; color: #9da5b4;">推薦 (免費雲端槽)</div>
+                  <div style="font-weight: 800; font-size: 13.5px; color: #0F172A;">🐙 GitHub Gist</div>
+                  <div style="font-size: 11px; color: #64748B; margin-top: 2px;">推薦 (免費個人雲端槽)</div>
                 </div>
                 <div id="sync-mode-server" class="santa-provider-card" onclick="selectSyncMode('server')">
-                  <div style="font-weight: 700; font-size: 12.5px;">🏠 本機伺服器</div>
-                  <div style="font-size: 10px; color: #9da5b4;">帳號密碼登入</div>
+                  <div style="font-weight: 800; font-size: 13.5px; color: #0F172A;">🏠 本機伺服器</div>
+                  <div style="font-size: 11px; color: #64748B; margin-top: 2px;">帳號密碼登入</div>
                 </div>
               </div>
             </div>
@@ -400,9 +374,9 @@
             <!-- Mode A: GitHub Gist Form -->
             <div id="sync-gist-form">
               <div class="santa-m-form-group">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <label class="santa-m-label" style="margin: 0;">GitHub Token (需勾選 gist 權限)</label>
-                  <a href="https://github.com/settings/tokens/new?scopes=gist&description=SantaAI_Sync" target="_blank" style="font-size: 11px; color: #4da2ff; text-decoration: none;">產生 Token &rarr;</a>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <label class="santa-m-label" style="margin: 0;">GitHub Token (需勾選 Gist 權限)</label>
+                  <a href="https://github.com/settings/tokens/new?scopes=gist&description=SantaAI_Sync" target="_blank" style="font-size: 12px; color: #4F46E5; font-weight: 800; text-decoration: none;">產生 Token &rarr;</a>
                 </div>
                 <input type="password" id="sync-gist-token" class="santa-m-input" placeholder="ghp_..." />
               </div>
@@ -417,9 +391,9 @@
                 <input type="password" id="sync-gist-pass" class="santa-m-input" placeholder="請設定安全密碼（用於解密本機資料）" />
               </div>
 
-              <div style="display: flex; gap: 6px; margin-top: 10px;">
-                <button id="sync-btn-gist-save" class="santa-m-btn" style="flex: 1;">🚀 建立 Gist 同步 / 首次上傳</button>
-                <button id="sync-btn-gist-pull" class="santa-m-btn santa-m-btn-outline" style="flex: 1;">📥 從 Gist 下載還原</button>
+              <div style="display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
+                <button id="sync-btn-gist-save" class="santa-m-btn" style="flex: 1; min-width: 180px;">🚀 建立 Gist 同步 / 首次上傳</button>
+                <button id="sync-btn-gist-pull" class="santa-m-btn santa-m-btn-outline" style="flex: 1; min-width: 160px;">📥 從 Gist 下載還原</button>
               </div>
             </div>
 
@@ -435,89 +409,89 @@
                 <input type="password" id="sync-input-pass" class="santa-m-input" placeholder="請輸入安全密碼" />
               </div>
 
-              <div style="display: flex; gap: 6px; margin-top: 10px;">
-                <button id="sync-btn-login" class="santa-m-btn" style="flex: 1;">🔑 登入並解密拉取</button>
-                <button id="sync-btn-register" class="santa-m-btn santa-m-btn-outline" style="flex: 1;">📝 註冊新帳號</button>
+              <div style="display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
+                <button id="sync-btn-login" class="santa-m-btn" style="flex: 1; min-width: 160px;">🔑 登入並解密拉取</button>
+                <button id="sync-btn-register" class="santa-m-btn santa-m-btn-outline" style="flex: 1; min-width: 140px;">📝 註冊新帳號</button>
               </div>
             </div>
 
-            <div style="display: flex; gap: 6px; margin-top: 8px;">
-              <button id="sync-btn-push" class="santa-m-btn santa-m-btn-outline" style="flex: 1; font-size: 11.5px;">☁️ 立即手動上傳同步</button>
-              <button id="sync-btn-logout" class="santa-m-btn santa-m-btn-danger" style="flex: 1; font-size: 11.5px;">🚪 登出同步</button>
+            <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid #E8E4DC; padding-top: 12px; flex-wrap: wrap;">
+              <button id="sync-btn-push" class="santa-m-btn santa-m-btn-outline" style="flex: 1; font-size: 12px; padding: 8px 14px;">☁️ 立即手動上傳同步</button>
+              <button id="sync-btn-logout" class="santa-m-btn santa-m-btn-danger" style="flex: 1; font-size: 12px; padding: 8px 14px;">🚪 登出同步</button>
             </div>
 
-            <div id="sync-result-msg" style="margin-top: 8px; font-size: 12px; line-height: 1.4;"></div>
+            <div id="sync-result-msg" style="margin-top: 10px; font-size: 12.5px; line-height: 1.45;"></div>
           </div>
 
           <!-- TAB 2: Audio STT Tester -->
           <div id="santa-tab-audio" class="santa-modal-tab-content" style="display: none;">
             <div class="santa-m-card">
-              <div style="font-weight: 700; font-size: 13px; margin-bottom: 4px;">🎙️ 即時麥克風錄音與語音辨識測試</div>
-              <div style="font-size: 11.5px; color: #9da5b4; margin-bottom: 10px;">
-                點擊開始錄音並朗讀英文，測試 Whisper STT 語音轉錄與文法評分。
+              <div style="font-weight: 800; font-size: 13.5px; margin-bottom: 4px; color: #0F172A;">🎙️ 即時麥克風錄音與語音測試</div>
+              <div style="font-size: 12px; color: #64748B; margin-bottom: 12px;">
+                點擊開始錄音並朗讀英文，測試麥克風收音與本機音訊管線。
               </div>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <button id="santa-record-btn" class="santa-m-btn" style="background: #ff3b5c;">🔴 開始錄音 (Record)</button>
-                <span id="santa-record-status" style="font-size: 11.5px; color: #9da5b4;">待命</span>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button id="santa-record-btn" class="santa-m-btn" style="background: #E11D48;">🔴 開始錄音 (Record)</button>
+                <span id="santa-record-status" style="font-size: 12px; color: #64748B; font-weight: 600;">待命</span>
               </div>
-              <audio id="santa-audio-preview" controls style="width: 100%; margin-top: 10px; display: none;"></audio>
+              <audio id="santa-audio-preview" controls style="width: 100%; margin-top: 12px; display: none; border-radius: 9999px;"></audio>
             </div>
-            <div id="santa-stt-output" class="santa-m-card" style="display: none; background: #14161f;">
-              <div style="font-size: 11.5px; font-weight: 700; color: #4da2ff; margin-bottom: 4px;">轉錄結果 (Transcription):</div>
-              <div id="santa-stt-text" style="font-size: 13px; color: #ffffff; line-height: 1.45; margin-bottom: 8px;"></div>
-              <div id="santa-eval-details" style="font-size: 11.5px; color: #9da5b4;"></div>
+            <div id="santa-stt-output" class="santa-m-card" style="display: none; background: #F8F6F0;">
+              <div style="font-size: 12px; font-weight: 800; color: #4F46E5; margin-bottom: 4px;">轉錄結果 (Transcription):</div>
+              <div id="santa-stt-text" style="font-size: 13.5px; color: #0F172A; line-height: 1.5; margin-bottom: 8px;"></div>
+              <div id="santa-eval-details" style="font-size: 12px; color: #64748B;"></div>
             </div>
           </div>
 
           <!-- TAB 3: Profile & DB -->
           <div id="santa-tab-profile" class="santa-modal-tab-content" style="display: none;">
             <div class="santa-m-card">
-              <div style="font-weight: 700; font-size: 13px; margin-bottom: 6px;">👤 本機學習者狀態</div>
-              <div id="santa-profile-summary" style="font-size: 12px; line-height: 1.7; color: #cbd5e1;"></div>
+              <div style="font-weight: 800; font-size: 13.5px; margin-bottom: 8px; color: #0F172A;">👤 本機學習者狀態</div>
+              <div id="santa-profile-summary" style="font-size: 12.5px; line-height: 1.8; color: #334155;"></div>
             </div>
 
-            <div style="margin-top: 16px; border-top: 1px solid #2c3040; padding-top: 12px;">
-              <div style="font-weight: 700; font-size: 12px; margin-bottom: 8px; color: #ff6b84;">資料管理</div>
-              <div style="display: flex; gap: 8px;">
-                <button id="santa-export-btn" class="santa-m-btn santa-m-btn-outline" style="flex: 1;">匯出紀錄 (JSON)</button>
-                <button id="santa-reset-db-btn" class="santa-m-btn santa-m-btn-danger" style="flex: 1;">重設本機資料庫</button>
+            <div style="margin-top: 16px; border-top: 1px solid #E8E4DC; padding-top: 14px;">
+              <div style="font-weight: 800; font-size: 12.5px; margin-bottom: 8px; color: #E11D48;">資料管理</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button id="santa-export-btn" class="santa-m-btn santa-m-btn-outline" style="flex: 1; min-width: 140px;">匯出紀錄 (JSON)</button>
+                <button id="santa-reset-db-btn" class="santa-m-btn santa-m-btn-danger" style="flex: 1; min-width: 140px;">重設本機資料庫</button>
               </div>
             </div>
           </div>
 
           <!-- TAB 4: Error & System Logs -->
           <div id="santa-tab-logs" class="santa-modal-tab-content" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <div style="display: flex; gap: 4px;">
-                <button class="santa-m-btn santa-m-btn-outline santa-log-filter active" data-filter="all" style="padding: 3px 8px; font-size: 11px;">全部 (<span id="santa-log-count-all">0</span>)</button>
-                <button class="santa-m-btn santa-m-btn-outline santa-log-filter" data-filter="error" style="padding: 3px 8px; font-size: 11px; color: #ff6b84;">僅錯誤 (<span id="santa-log-count-err">0</span>)</button>
-                <button class="santa-m-btn santa-m-btn-outline santa-log-filter" data-filter="api" style="padding: 3px 8px; font-size: 11px; color: #38bdf8;">API 攔截 (<span id="santa-log-count-api">0</span>)</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; gap: 6px;">
+                <button class="santa-m-btn santa-m-btn-outline santa-log-filter active" data-filter="all" style="padding: 4px 10px; font-size: 11.5px;">全部 (<span id="santa-log-count-all">0</span>)</button>
+                <button class="santa-m-btn santa-m-btn-outline santa-log-filter" data-filter="error" style="padding: 4px 10px; font-size: 11.5px; color: #E11D48;">僅錯誤 (<span id="santa-log-count-err">0</span>)</button>
+                <button class="santa-m-btn santa-m-btn-outline santa-log-filter" data-filter="api" style="padding: 4px 10px; font-size: 11.5px; color: #0284C7;">API 攔截 (<span id="santa-log-count-api">0</span>)</button>
               </div>
-              <div style="display: flex; gap: 4px;">
-                <button id="santa-copy-logs-btn" class="santa-m-btn santa-m-btn-outline" style="padding: 3px 8px; font-size: 11px;">📋 複製</button>
-                <button id="santa-clear-logs-btn" class="santa-m-btn santa-m-btn-danger" style="padding: 3px 8px; font-size: 11px;">清空</button>
+              <div style="display: flex; gap: 6px;">
+                <button id="santa-copy-logs-btn" class="santa-m-btn santa-m-btn-outline" style="padding: 4px 10px; font-size: 11.5px;">📋 複製</button>
+                <button id="santa-clear-logs-btn" class="santa-m-btn santa-m-btn-danger" style="padding: 4px 10px; font-size: 11.5px;">清空</button>
               </div>
             </div>
 
-            <div id="santa-log-list-container" style="max-height: 48vh; overflow-y: auto; padding-right: 2px;">
-              <div style="font-size: 12px; color: #64748b; text-align: center; padding: 20px;">尚無日誌記錄</div>
+            <div id="santa-log-list-container" style="max-height: 44vh; overflow-y: auto; padding-right: 2px;">
+              <div style="font-size: 12px; color: #64748B; text-align: center; padding: 24px;">尚無日誌記錄</div>
             </div>
           </div>
 
           <!-- TAB 5: Privacy & Log -->
           <div id="santa-tab-privacy" class="santa-modal-tab-content" style="display: none;">
-            <div class="santa-m-card" style="border-left: 3px solid #10b981;">
-              <div style="font-weight: 700; font-size: 12.5px; margin-bottom: 2px; color: #6ee7b7;">🛡️ 隱私優先架構運作中</div>
-              <div style="font-size: 11.5px; color: #9da5b4; line-height: 1.45;">
-                所有遙測追蹤（Sentry, Facebook Pixel, Google Tag Manager, Datadog）均已在瀏覽器端完全攔截並靜默 200 回應，確保所有資料 100% 留存在本地。
+            <div class="santa-m-card" style="background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #16A34A; margin-bottom: 12px;">
+              <div style="font-weight: 800; font-size: 13px; margin-bottom: 4px; color: #15803D;">🛡️ 隱私優先架構運作中</div>
+              <div style="font-size: 12px; color: #334155; line-height: 1.55;">
+                所有遙測追蹤（Sentry, Facebook Pixel, Google Tag Manager, Datadog）均已在瀏覽器端完全攔截並靜默 200 回應，確保所有學習資料 100% 留存在本地或您個人的加密空間。
               </div>
             </div>
             <div class="santa-m-card">
-              <div style="font-size: 11.5px; color: #9da5b4; line-height: 1.6;">
-                <div>🔒 <b>本地服務端點</b>: http://127.0.0.1:8080</div>
-                <div>📦 <b>本地快取 Chunks 數量</b>: 268+ 模組完整加載</div>
-                <div>💽 <b>持久化引擎</b>: IndexedDB (SantaOfflineDB)</div>
-                <div>🚀 <b>SPA Fallback</b>: 啟用</div>
+              <div style="font-size: 12px; color: #334155; line-height: 1.7;">
+                <div>🔒 <b>本機端點</b>: 離線純淨運行模式</div>
+                <div>📚 <b>內建題庫</b>: 2,500+ 擬真多益題目全收錄</div>
+                <div>📖 <b>內建單字</b>: 4,000+ 核心詞彙即時檢索</div>
+                <div>💽 <b>持久化引擎</b>: IndexedDB / LocalStorage 本機快照</div>
               </div>
             </div>
           </div>
@@ -539,7 +513,6 @@
     window.openSettingsModal = openModal;
     window.closeSettingsModal = closeModal;
 
-    btn.addEventListener('click', openModal);
     document.getElementById('santa-modal-close').addEventListener('click', closeModal);
     backdrop.addEventListener('click', (e) => {
       if (e.target === backdrop) closeModal();
