@@ -9,8 +9,8 @@
  */
 
 const CACHE_PREFIX = 'lumi-ai-pwa';
-const CORE_CACHE_NAME = `${CACHE_PREFIX}-core-v6.2`;
-const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}-runtime-v6.2`;
+const CORE_CACHE_NAME = `${CACHE_PREFIX}-core-v6.1`;
+const RUNTIME_CACHE_NAME = `${CACHE_PREFIX}-runtime-v6.1`;
 const CURRENT_CACHES = [CORE_CACHE_NAME, RUNTIME_CACHE_NAME];
 
 const MAX_RUNTIME_ENTRIES = 50; // Keep at most 50 dynamic chunks/assets to prevent storage bloat

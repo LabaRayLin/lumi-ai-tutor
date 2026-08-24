@@ -571,9 +571,14 @@
         scroll-snap-align: start;
       }
 
-      /* Mobile views safe area padding */
+      /* Floating settings button permanently removed for clean bottom nav */
+      #santa-floating-btn {
+        display: none !important;
+      }
+
+      /* iPhone: add bottom padding so floating button doesn't overlap content */
       .santa-view {
-        padding-bottom: calc(40px + var(--mobile-safe-area-bottom)) !important;
+        padding-bottom: calc(70px + var(--mobile-safe-area-bottom)) !important;
       }
 
       /* iPhone: floating walkman player bar */
